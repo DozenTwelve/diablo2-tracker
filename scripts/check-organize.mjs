@@ -197,6 +197,10 @@ try {
     assert.deepEqual(trashMules(saves(organized), "HardCore:Modern"), []);
     const rich = trashMules(saves(edit(organized, `${trash[0].name}.d2s`, (j) => j.stats.push({ id: 14, layer: 0, value: 1 }))), "SoftCore:Modern");
     assert.equal(rich[0].refused, "gold");
+    // A hardcore TRASH-named hero: listed while alive, never once dead
+    const hardcore = (dead) => (j) => (j.character.flags = dead ? "HARDCORE | DEAD" : "HARDCORE");
+    const htrash = (dead) => trashMules(saves(edit(organized, `${trash[0].name}.d2s`, hardcore(dead), `H${trash[0].name}.d2s`)), "HardCore:Modern");
+    assert.deepEqual([htrash(false).length, htrash(true).length], [1, 0]);
     // As the plugin deletes them; then a TRASH item found again goes to a new TRASH-A cloned from the template
     const gone = organized.filter((f) => !trash.some((m) => f.name.startsWith(`${m.name}.`)));
     assert.deepEqual(run(gone).report.moves.filter((m) => m.group === "TRASH"), []);

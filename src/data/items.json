@@ -2788,6 +2788,8 @@
     "img": "axe/hand_axe",
     "starter": true,
     "maxSockets": 2,
+    "minDamage": 3,
+    "maxDamage": 6,
     "gemSlot": "weapon"
   },
   "axe": {
@@ -2801,6 +2803,8 @@
     "h": 3,
     "img": "axe/axe",
     "maxSockets": 4,
+    "minDamage": 4,
+    "maxDamage": 11,
     "gemSlot": "weapon"
   },
   "2ax": {
@@ -2814,6 +2818,8 @@
     "h": 3,
     "img": "axe/double_axe",
     "maxSockets": 5,
+    "minDamage": 5,
+    "maxDamage": 13,
     "gemSlot": "weapon"
   },
   "mpi": {
@@ -2827,6 +2833,8 @@
     "h": 3,
     "img": "axe/military_pick",
     "maxSockets": 6,
+    "minDamage": 7,
+    "maxDamage": 11,
     "gemSlot": "weapon"
   },
   "wax": {
@@ -2840,6 +2848,8 @@
     "h": 3,
     "img": "axe/war_axe",
     "maxSockets": 6,
+    "minDamage": 10,
+    "maxDamage": 18,
     "gemSlot": "weapon"
   },
   "lax": {
@@ -2853,6 +2863,8 @@
     "h": 3,
     "img": "axe/large_axe",
     "maxSockets": 4,
+    "minDamage": 6,
+    "maxDamage": 13,
     "gemSlot": "weapon"
   },
   "bax": {
@@ -2866,6 +2878,8 @@
     "h": 3,
     "img": "axe/broad_axe",
     "maxSockets": 5,
+    "minDamage": 10,
+    "maxDamage": 18,
     "gemSlot": "weapon"
   },
   "btx": {
@@ -2879,6 +2893,8 @@
     "h": 3,
     "img": "axe/battle_axe",
     "maxSockets": 5,
+    "minDamage": 12,
+    "maxDamage": 32,
     "gemSlot": "weapon"
   },
   "gax": {
@@ -2892,6 +2908,8 @@
     "h": 4,
     "img": "axe/great_axe",
     "maxSockets": 6,
+    "minDamage": 9,
+    "maxDamage": 30,
     "gemSlot": "weapon"
   },
   "gix": {
@@ -2905,6 +2923,8 @@
     "h": 3,
     "img": "axe/giant_axe",
     "maxSockets": 6,
+    "minDamage": 22,
+    "maxDamage": 45,
     "gemSlot": "weapon"
   },
   "wnd": {
@@ -2919,6 +2939,8 @@
     "img": "wand/wand",
     "starter": true,
     "maxSockets": 1,
+    "minDamage": 2,
+    "maxDamage": 4,
     "gemSlot": "weapon"
   },
   "ywn": {
@@ -2932,6 +2954,8 @@
     "h": 2,
     "img": "wand/yew_wand",
     "maxSockets": 1,
+    "minDamage": 2,
+    "maxDamage": 8,
     "gemSlot": "weapon"
   },
   "bwn": {
@@ -2945,6 +2969,8 @@
     "h": 2,
     "img": "wand/bone_wand",
     "maxSockets": 2,
+    "minDamage": 3,
+    "maxDamage": 7,
     "gemSlot": "weapon"
   },
   "gwn": {
@@ -2958,6 +2984,8 @@
     "h": 2,
     "img": "wand/grim_wand",
     "maxSockets": 2,
+    "minDamage": 5,
+    "maxDamage": 11,
     "gemSlot": "weapon"
   },
   "clb": {
@@ -2972,6 +3000,8 @@
     "img": "club/club",
     "starter": true,
     "maxSockets": 2,
+    "minDamage": 1,
+    "maxDamage": 6,
     "gemSlot": "weapon"
   },
   "scp": {
@@ -2985,6 +3015,8 @@
     "h": 3,
     "img": "scepter/scepter",
     "maxSockets": 2,
+    "minDamage": 6,
+    "maxDamage": 11,
     "gemSlot": "weapon"
   },
   "gsc": {
@@ -2998,6 +3030,8 @@
     "h": 3,
     "img": "scepter/grand_scepter",
     "maxSockets": 3,
+    "minDamage": 8,
+    "maxDamage": 18,
     "gemSlot": "weapon"
   },
   "wsp": {
@@ -3011,6 +3045,8 @@
     "h": 3,
     "img": "scepter/war_scepter",
     "maxSockets": 5,
+    "minDamage": 10,
+    "maxDamage": 17,
     "gemSlot": "weapon"
   },
   "spc": {
@@ -3024,6 +3060,8 @@
     "h": 3,
     "img": "club/spiked_club",
     "maxSockets": 2,
+    "minDamage": 5,
+    "maxDamage": 8,
     "gemSlot": "weapon"
   },
   "mac": {
@@ -3037,6 +3075,8 @@
     "h": 3,
     "img": "mace/mace",
     "maxSockets": 2,
+    "minDamage": 3,
+    "maxDamage": 10,
     "gemSlot": "weapon"
   },
   "mst": {
@@ -3050,6 +3090,8 @@
     "h": 3,
     "img": "mace/morning_star",
     "maxSockets": 3,
+    "minDamage": 7,
+    "maxDamage": 16,
     "gemSlot": "weapon"
   },
   "fla": {
@@ -3063,6 +3105,8 @@
     "h": 3,
     "img": "mace/flail",
     "maxSockets": 5,
+    "minDamage": 1,
+    "maxDamage": 24,
     "gemSlot": "weapon"
   },
   "whm": {
@@ -3076,6 +3120,8 @@
     "h": 3,
     "img": "hammer/war_hammer",
     "maxSockets": 4,
+    "minDamage": 19,
+    "maxDamage": 29,
     "gemSlot": "weapon"
   },
   "mau": {
@@ -3089,6 +3135,8 @@
     "h": 4,
     "img": "hammer/maul",
     "maxSockets": 6,
+    "minDamage": 30,
+    "maxDamage": 43,
     "gemSlot": "weapon"
   },
   "gma": {
@@ -3102,6 +3150,8 @@
     "h": 3,
     "img": "hammer/great_maul",
     "maxSockets": 6,
+    "minDamage": 38,
+    "maxDamage": 58,
     "gemSlot": "weapon"
   },
   "ssd": {
@@ -3116,6 +3166,8 @@
     "img": "sword/short_sword",
     "starter": true,
     "maxSockets": 2,
+    "minDamage": 2,
+    "maxDamage": 7,
     "gemSlot": "weapon"
   },
   "scm": {
@@ -3129,6 +3181,8 @@
     "h": 3,
     "img": "sword/scimitar",
     "maxSockets": 2,
+    "minDamage": 2,
+    "maxDamage": 6,
     "gemSlot": "weapon"
   },
   "sbr": {
@@ -3142,6 +3196,8 @@
     "h": 3,
     "img": "sword/saber",
     "maxSockets": 2,
+    "minDamage": 3,
+    "maxDamage": 8,
     "gemSlot": "weapon"
   },
   "flc": {
@@ -3155,6 +3211,8 @@
     "h": 3,
     "img": "sword/falchion",
     "maxSockets": 2,
+    "minDamage": 9,
+    "maxDamage": 17,
     "gemSlot": "weapon"
   },
   "crs": {
@@ -3168,6 +3226,8 @@
     "h": 3,
     "img": "sword/crystal_sword",
     "maxSockets": 6,
+    "minDamage": 5,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "bsd": {
@@ -3181,6 +3241,8 @@
     "h": 3,
     "img": "sword/broad_sword",
     "maxSockets": 4,
+    "minDamage": 7,
+    "maxDamage": 14,
     "gemSlot": "weapon"
   },
   "lsd": {
@@ -3194,6 +3256,8 @@
     "h": 3,
     "img": "sword/long_sword",
     "maxSockets": 4,
+    "minDamage": 3,
+    "maxDamage": 19,
     "gemSlot": "weapon"
   },
   "wsd": {
@@ -3207,6 +3271,8 @@
     "h": 3,
     "img": "sword/war_sword",
     "maxSockets": 3,
+    "minDamage": 8,
+    "maxDamage": 20,
     "gemSlot": "weapon"
   },
   "2hs": {
@@ -3220,6 +3286,8 @@
     "h": 4,
     "img": "sword/two_handed_sword",
     "maxSockets": 3,
+    "minDamage": 8,
+    "maxDamage": 17,
     "gemSlot": "weapon"
   },
   "clm": {
@@ -3233,6 +3301,8 @@
     "h": 4,
     "img": "sword/claymore",
     "maxSockets": 4,
+    "minDamage": 13,
+    "maxDamage": 30,
     "gemSlot": "weapon"
   },
   "gis": {
@@ -3246,6 +3316,8 @@
     "h": 4,
     "img": "sword/giant_sword",
     "maxSockets": 4,
+    "minDamage": 9,
+    "maxDamage": 28,
     "gemSlot": "weapon"
   },
   "bsw": {
@@ -3259,6 +3331,8 @@
     "h": 4,
     "img": "sword/bastard_sword",
     "maxSockets": 4,
+    "minDamage": 20,
+    "maxDamage": 28,
     "gemSlot": "weapon"
   },
   "flb": {
@@ -3272,6 +3346,8 @@
     "h": 4,
     "img": "sword/flamberge",
     "maxSockets": 5,
+    "minDamage": 13,
+    "maxDamage": 26,
     "gemSlot": "weapon"
   },
   "gsd": {
@@ -3285,6 +3361,8 @@
     "h": 4,
     "img": "sword/great_sword",
     "maxSockets": 6,
+    "minDamage": 25,
+    "maxDamage": 42,
     "gemSlot": "weapon"
   },
   "dgr": {
@@ -3299,6 +3377,8 @@
     "img": "knife/dagger",
     "starter": true,
     "maxSockets": 1,
+    "minDamage": 1,
+    "maxDamage": 4,
     "gemSlot": "weapon"
   },
   "dir": {
@@ -3312,6 +3392,8 @@
     "h": 2,
     "img": "knife/dirk",
     "maxSockets": 1,
+    "minDamage": 3,
+    "maxDamage": 9,
     "gemSlot": "weapon"
   },
   "kri": {
@@ -3325,6 +3407,8 @@
     "h": 3,
     "img": "knife/kriss",
     "maxSockets": 3,
+    "minDamage": 2,
+    "maxDamage": 11,
     "gemSlot": "weapon"
   },
   "bld": {
@@ -3338,6 +3422,8 @@
     "h": 3,
     "img": "knife/blade",
     "maxSockets": 3,
+    "minDamage": 4,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "tkf": {
@@ -3350,6 +3436,8 @@
     "w": 1,
     "h": 2,
     "img": "knife/throwing_knife",
+    "minDamage": 2,
+    "maxDamage": 3,
     "gemSlot": "weapon"
   },
   "tax": {
@@ -3362,6 +3450,8 @@
     "w": 1,
     "h": 2,
     "img": "axe/throwing_axe",
+    "minDamage": 4,
+    "maxDamage": 7,
     "gemSlot": "weapon"
   },
   "bkf": {
@@ -3374,6 +3464,8 @@
     "w": 1,
     "h": 2,
     "img": "knife/balanced_knife",
+    "minDamage": 1,
+    "maxDamage": 8,
     "gemSlot": "weapon"
   },
   "bal": {
@@ -3386,6 +3478,8 @@
     "w": 2,
     "h": 3,
     "img": "axe/balanced_axe",
+    "minDamage": 5,
+    "maxDamage": 10,
     "gemSlot": "weapon"
   },
   "jav": {
@@ -3399,6 +3493,8 @@
     "h": 3,
     "img": "javelin/javelin",
     "starter": true,
+    "minDamage": 1,
+    "maxDamage": 5,
     "gemSlot": "weapon"
   },
   "pil": {
@@ -3411,6 +3507,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/pilum",
+    "minDamage": 4,
+    "maxDamage": 9,
     "gemSlot": "weapon"
   },
   "ssp": {
@@ -3423,6 +3521,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/short_spear",
+    "minDamage": 2,
+    "maxDamage": 13,
     "gemSlot": "weapon"
   },
   "glv": {
@@ -3435,6 +3535,8 @@
     "w": 1,
     "h": 4,
     "img": "javelin/glaive",
+    "minDamage": 5,
+    "maxDamage": 17,
     "gemSlot": "weapon"
   },
   "tsp": {
@@ -3447,6 +3549,8 @@
     "w": 1,
     "h": 4,
     "img": "javelin/throwing_spear",
+    "minDamage": 5,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "spr": {
@@ -3460,6 +3564,8 @@
     "h": 4,
     "img": "spear/spear",
     "maxSockets": 3,
+    "minDamage": 3,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "tri": {
@@ -3473,6 +3579,8 @@
     "h": 4,
     "img": "spear/trident",
     "maxSockets": 4,
+    "minDamage": 9,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "brn": {
@@ -3486,6 +3594,8 @@
     "h": 4,
     "img": "spear/brandistock",
     "maxSockets": 5,
+    "minDamage": 7,
+    "maxDamage": 17,
     "gemSlot": "weapon"
   },
   "spt": {
@@ -3499,6 +3609,8 @@
     "h": 4,
     "img": "spear/spetum",
     "maxSockets": 6,
+    "minDamage": 15,
+    "maxDamage": 23,
     "gemSlot": "weapon"
   },
   "pik": {
@@ -3512,6 +3624,8 @@
     "h": 4,
     "img": "spear/pike",
     "maxSockets": 6,
+    "minDamage": 14,
+    "maxDamage": 63,
     "gemSlot": "weapon"
   },
   "bar": {
@@ -3525,6 +3639,8 @@
     "h": 4,
     "img": "polearm/bardiche",
     "maxSockets": 3,
+    "minDamage": 1,
+    "maxDamage": 27,
     "gemSlot": "weapon"
   },
   "vou": {
@@ -3538,6 +3654,8 @@
     "h": 4,
     "img": "polearm/voulge",
     "maxSockets": 4,
+    "minDamage": 6,
+    "maxDamage": 21,
     "gemSlot": "weapon"
   },
   "scy": {
@@ -3551,6 +3669,8 @@
     "h": 4,
     "img": "polearm/scythe",
     "maxSockets": 5,
+    "minDamage": 8,
+    "maxDamage": 20,
     "gemSlot": "weapon"
   },
   "pax": {
@@ -3564,6 +3684,8 @@
     "h": 4,
     "img": "polearm/poleaxe",
     "maxSockets": 5,
+    "minDamage": 18,
+    "maxDamage": 39,
     "gemSlot": "weapon"
   },
   "hal": {
@@ -3577,6 +3699,8 @@
     "h": 4,
     "img": "polearm/halberd",
     "maxSockets": 6,
+    "minDamage": 12,
+    "maxDamage": 45,
     "gemSlot": "weapon"
   },
   "wsc": {
@@ -3590,6 +3714,8 @@
     "h": 4,
     "img": "polearm/war_scythe",
     "maxSockets": 6,
+    "minDamage": 15,
+    "maxDamage": 36,
     "gemSlot": "weapon"
   },
   "sst": {
@@ -3604,6 +3730,8 @@
     "img": "staff/short_staff",
     "starter": true,
     "maxSockets": 2,
+    "minDamage": 1,
+    "maxDamage": 5,
     "gemSlot": "weapon"
   },
   "lst": {
@@ -3617,6 +3745,8 @@
     "h": 4,
     "img": "staff/long_staff",
     "maxSockets": 3,
+    "minDamage": 2,
+    "maxDamage": 8,
     "gemSlot": "weapon"
   },
   "cst": {
@@ -3630,6 +3760,8 @@
     "h": 4,
     "img": "staff/gnarled_staff",
     "maxSockets": 4,
+    "minDamage": 4,
+    "maxDamage": 12,
     "gemSlot": "weapon"
   },
   "bst": {
@@ -3643,6 +3775,8 @@
     "h": 4,
     "img": "staff/battle_staff",
     "maxSockets": 4,
+    "minDamage": 6,
+    "maxDamage": 13,
     "gemSlot": "weapon"
   },
   "wst": {
@@ -3656,6 +3790,8 @@
     "h": 4,
     "img": "staff/war_staff",
     "maxSockets": 6,
+    "minDamage": 12,
+    "maxDamage": 28,
     "gemSlot": "weapon"
   },
   "sbw": {
@@ -3669,6 +3805,8 @@
     "h": 3,
     "img": "bow/short_bow",
     "maxSockets": 3,
+    "minDamage": 1,
+    "maxDamage": 4,
     "gemSlot": "weapon"
   },
   "hbw": {
@@ -3682,6 +3820,8 @@
     "h": 3,
     "img": "bow/hunters_bow",
     "maxSockets": 4,
+    "minDamage": 2,
+    "maxDamage": 6,
     "gemSlot": "weapon"
   },
   "lbw": {
@@ -3695,6 +3835,8 @@
     "h": 4,
     "img": "bow/long_bow",
     "maxSockets": 5,
+    "minDamage": 3,
+    "maxDamage": 10,
     "gemSlot": "weapon"
   },
   "cbw": {
@@ -3708,6 +3850,8 @@
     "h": 3,
     "img": "bow/composite_bow",
     "maxSockets": 4,
+    "minDamage": 4,
+    "maxDamage": 8,
     "gemSlot": "weapon"
   },
   "sbb": {
@@ -3721,6 +3865,8 @@
     "h": 3,
     "img": "bow/short_battle_bow",
     "maxSockets": 5,
+    "minDamage": 5,
+    "maxDamage": 11,
     "gemSlot": "weapon"
   },
   "lbb": {
@@ -3734,6 +3880,8 @@
     "h": 4,
     "img": "bow/long_battle_bow",
     "maxSockets": 6,
+    "minDamage": 3,
+    "maxDamage": 18,
     "gemSlot": "weapon"
   },
   "swb": {
@@ -3747,6 +3895,8 @@
     "h": 3,
     "img": "bow/short_war_bow",
     "maxSockets": 5,
+    "minDamage": 6,
+    "maxDamage": 14,
     "gemSlot": "weapon"
   },
   "lwb": {
@@ -3760,6 +3910,8 @@
     "h": 4,
     "img": "bow/long_war_bow",
     "maxSockets": 6,
+    "minDamage": 3,
+    "maxDamage": 23,
     "gemSlot": "weapon"
   },
   "lxb": {
@@ -3773,6 +3925,8 @@
     "h": 3,
     "img": "bow/light_crossbow",
     "maxSockets": 3,
+    "minDamage": 6,
+    "maxDamage": 9,
     "gemSlot": "weapon"
   },
   "mxb": {
@@ -3786,6 +3940,8 @@
     "h": 3,
     "img": "bow/crossbow",
     "maxSockets": 4,
+    "minDamage": 9,
+    "maxDamage": 16,
     "gemSlot": "weapon"
   },
   "hxb": {
@@ -3799,6 +3955,8 @@
     "h": 4,
     "img": "bow/heavy_crossbow",
     "maxSockets": 6,
+    "minDamage": 14,
+    "maxDamage": 26,
     "gemSlot": "weapon"
   },
   "rxb": {
@@ -3812,6 +3970,8 @@
     "h": 3,
     "img": "bow/repeating_crossbow",
     "maxSockets": 5,
+    "minDamage": 6,
+    "maxDamage": 12,
     "gemSlot": "weapon"
   },
   "gps": {
@@ -3824,6 +3984,7 @@
     "w": 1,
     "h": 1,
     "img": "potion/rancid_gas_potion",
+    "maxDamage": 1,
     "gemSlot": "weapon"
   },
   "ops": {
@@ -3836,6 +3997,7 @@
     "w": 1,
     "h": 1,
     "img": "potion/oil_potion",
+    "maxDamage": 1,
     "gemSlot": "weapon"
   },
   "gpm": {
@@ -3848,6 +4010,7 @@
     "w": 1,
     "h": 1,
     "img": "potion/choking_gas_potion",
+    "maxDamage": 1,
     "gemSlot": "weapon"
   },
   "opm": {
@@ -3860,6 +4023,7 @@
     "w": 1,
     "h": 1,
     "img": "potion/exploding_potion",
+    "maxDamage": 1,
     "gemSlot": "weapon"
   },
   "gpl": {
@@ -3872,6 +4036,7 @@
     "w": 1,
     "h": 1,
     "img": "potion/strangling_gas_potion",
+    "maxDamage": 1,
     "gemSlot": "weapon"
   },
   "opl": {
@@ -3884,6 +4049,7 @@
     "w": 1,
     "h": 1,
     "img": "potion/fulminating_potion",
+    "maxDamage": 1,
     "gemSlot": "weapon"
   },
   "d33": {
@@ -3896,6 +4062,8 @@
     "w": 1,
     "h": 2,
     "img": "knife/decoy_dagger",
+    "minDamage": 1,
+    "maxDamage": 2,
     "gemSlot": "weapon"
   },
   "g33": {
@@ -3908,6 +4076,8 @@
     "w": 1,
     "h": 2,
     "img": "knife/gidbinn",
+    "minDamage": 3,
+    "maxDamage": 7,
     "gemSlot": "weapon"
   },
   "leg": {
@@ -3921,6 +4091,8 @@
     "h": 3,
     "img": "club/wirts_leg",
     "maxSockets": 3,
+    "minDamage": 2,
+    "maxDamage": 8,
     "gemSlot": "weapon"
   },
   "hdm": {
@@ -3933,6 +4105,8 @@
     "w": 1,
     "h": 2,
     "img": "hammer/horadric_malus",
+    "minDamage": 6,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "hfh": {
@@ -3946,6 +4120,8 @@
     "h": 3,
     "img": "hammer/hellforge_hammer",
     "maxSockets": 5,
+    "minDamage": 6,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "hst": {
@@ -3958,6 +4134,8 @@
     "w": 1,
     "h": 4,
     "img": "staff/horadric_staff",
+    "minDamage": 12,
+    "maxDamage": 20,
     "gemSlot": "weapon"
   },
   "msf": {
@@ -3970,6 +4148,8 @@
     "w": 1,
     "h": 3,
     "img": "staff/staff_of_the_kings",
+    "minDamage": 10,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "9ha": {
@@ -3983,6 +4163,8 @@
     "h": 3,
     "img": "axe/hand_axe",
     "maxSockets": 2,
+    "minDamage": 10,
+    "maxDamage": 21,
     "gemSlot": "weapon"
   },
   "9ax": {
@@ -3996,6 +4178,8 @@
     "h": 3,
     "img": "axe/axe",
     "maxSockets": 4,
+    "minDamage": 10,
+    "maxDamage": 33,
     "gemSlot": "weapon"
   },
   "92a": {
@@ -4009,6 +4193,8 @@
     "h": 3,
     "img": "axe/double_axe",
     "maxSockets": 5,
+    "minDamage": 13,
+    "maxDamage": 38,
     "gemSlot": "weapon"
   },
   "9mp": {
@@ -4022,6 +4208,8 @@
     "h": 3,
     "img": "axe/military_pick",
     "maxSockets": 6,
+    "minDamage": 14,
+    "maxDamage": 34,
     "gemSlot": "weapon"
   },
   "9wa": {
@@ -4035,6 +4223,8 @@
     "h": 3,
     "img": "axe/war_axe",
     "maxSockets": 6,
+    "minDamage": 16,
+    "maxDamage": 45,
     "gemSlot": "weapon"
   },
   "9la": {
@@ -4048,6 +4238,8 @@
     "h": 3,
     "img": "axe/large_axe",
     "maxSockets": 4,
+    "minDamage": 14,
+    "maxDamage": 34,
     "gemSlot": "weapon"
   },
   "9ba": {
@@ -4061,6 +4253,8 @@
     "h": 3,
     "img": "axe/broad_axe",
     "maxSockets": 5,
+    "minDamage": 21,
+    "maxDamage": 49,
     "gemSlot": "weapon"
   },
   "9bt": {
@@ -4074,6 +4268,8 @@
     "h": 3,
     "img": "axe/battle_axe",
     "maxSockets": 5,
+    "minDamage": 24,
+    "maxDamage": 77,
     "gemSlot": "weapon"
   },
   "9ga": {
@@ -4087,6 +4283,8 @@
     "h": 4,
     "img": "axe/great_axe",
     "maxSockets": 6,
+    "minDamage": 18,
+    "maxDamage": 70,
     "gemSlot": "weapon"
   },
   "9gi": {
@@ -4100,6 +4298,8 @@
     "h": 3,
     "img": "axe/giant_axe",
     "maxSockets": 6,
+    "minDamage": 43,
+    "maxDamage": 85,
     "gemSlot": "weapon"
   },
   "9wn": {
@@ -4113,6 +4313,8 @@
     "h": 2,
     "img": "wand/wand",
     "maxSockets": 1,
+    "minDamage": 8,
+    "maxDamage": 18,
     "gemSlot": "weapon"
   },
   "9yw": {
@@ -4126,6 +4328,8 @@
     "h": 2,
     "img": "wand/yew_wand",
     "maxSockets": 2,
+    "minDamage": 8,
+    "maxDamage": 24,
     "gemSlot": "weapon"
   },
   "9bw": {
@@ -4139,6 +4343,8 @@
     "h": 2,
     "img": "wand/bone_wand",
     "maxSockets": 2,
+    "minDamage": 10,
+    "maxDamage": 22,
     "gemSlot": "weapon"
   },
   "9gw": {
@@ -4152,6 +4358,8 @@
     "h": 2,
     "img": "wand/grim_wand",
     "maxSockets": 2,
+    "minDamage": 13,
+    "maxDamage": 29,
     "gemSlot": "weapon"
   },
   "9cl": {
@@ -4165,6 +4373,8 @@
     "h": 3,
     "img": "club/club",
     "maxSockets": 2,
+    "minDamage": 6,
+    "maxDamage": 21,
     "gemSlot": "weapon"
   },
   "9sc": {
@@ -4178,6 +4388,8 @@
     "h": 3,
     "img": "scepter/scepter",
     "maxSockets": 2,
+    "minDamage": 13,
+    "maxDamage": 24,
     "gemSlot": "weapon"
   },
   "9qs": {
@@ -4191,6 +4403,8 @@
     "h": 3,
     "img": "scepter/grand_scepter",
     "maxSockets": 3,
+    "minDamage": 14,
+    "maxDamage": 36,
     "gemSlot": "weapon"
   },
   "9ws": {
@@ -4204,6 +4418,8 @@
     "h": 3,
     "img": "scepter/war_scepter",
     "maxSockets": 5,
+    "minDamage": 16,
+    "maxDamage": 38,
     "gemSlot": "weapon"
   },
   "9sp": {
@@ -4217,6 +4433,8 @@
     "h": 3,
     "img": "club/spiked_club",
     "maxSockets": 3,
+    "minDamage": 13,
+    "maxDamage": 25,
     "gemSlot": "weapon"
   },
   "9ma": {
@@ -4230,6 +4448,8 @@
     "h": 3,
     "img": "mace/mace",
     "maxSockets": 2,
+    "minDamage": 15,
+    "maxDamage": 23,
     "gemSlot": "weapon"
   },
   "9mt": {
@@ -4243,6 +4463,8 @@
     "h": 3,
     "img": "mace/morning_star",
     "maxSockets": 3,
+    "minDamage": 20,
+    "maxDamage": 31,
     "gemSlot": "weapon"
   },
   "9fl": {
@@ -4256,6 +4478,8 @@
     "h": 3,
     "img": "mace/flail",
     "maxSockets": 5,
+    "minDamage": 13,
+    "maxDamage": 35,
     "gemSlot": "weapon"
   },
   "9wh": {
@@ -4269,6 +4493,8 @@
     "h": 3,
     "img": "hammer/war_hammer",
     "maxSockets": 4,
+    "minDamage": 35,
+    "maxDamage": 58,
     "gemSlot": "weapon"
   },
   "9m9": {
@@ -4282,6 +4508,8 @@
     "h": 4,
     "img": "hammer/maul",
     "maxSockets": 6,
+    "minDamage": 53,
+    "maxDamage": 78,
     "gemSlot": "weapon"
   },
   "9gm": {
@@ -4295,6 +4523,8 @@
     "h": 3,
     "img": "hammer/great_maul",
     "maxSockets": 6,
+    "minDamage": 61,
+    "maxDamage": 99,
     "gemSlot": "weapon"
   },
   "9ss": {
@@ -4308,6 +4538,8 @@
     "h": 3,
     "img": "sword/short_sword",
     "maxSockets": 2,
+    "minDamage": 8,
+    "maxDamage": 22,
     "gemSlot": "weapon"
   },
   "9sm": {
@@ -4321,6 +4553,8 @@
     "h": 3,
     "img": "sword/scimitar",
     "maxSockets": 2,
+    "minDamage": 8,
+    "maxDamage": 21,
     "gemSlot": "weapon"
   },
   "9sb": {
@@ -4334,6 +4568,8 @@
     "h": 3,
     "img": "sword/saber",
     "maxSockets": 2,
+    "minDamage": 10,
+    "maxDamage": 24,
     "gemSlot": "weapon"
   },
   "9fc": {
@@ -4347,6 +4583,8 @@
     "h": 3,
     "img": "sword/falchion",
     "maxSockets": 2,
+    "minDamage": 16,
+    "maxDamage": 35,
     "gemSlot": "weapon"
   },
   "9cr": {
@@ -4360,6 +4598,8 @@
     "h": 3,
     "img": "sword/crystal_sword",
     "maxSockets": 6,
+    "minDamage": 13,
+    "maxDamage": 35,
     "gemSlot": "weapon"
   },
   "9bs": {
@@ -4373,6 +4613,8 @@
     "h": 3,
     "img": "sword/broad_sword",
     "maxSockets": 4,
+    "minDamage": 16,
+    "maxDamage": 34,
     "gemSlot": "weapon"
   },
   "9ls": {
@@ -4386,6 +4628,8 @@
     "h": 3,
     "img": "sword/long_sword",
     "maxSockets": 4,
+    "minDamage": 10,
+    "maxDamage": 42,
     "gemSlot": "weapon"
   },
   "9wd": {
@@ -4399,6 +4643,8 @@
     "h": 3,
     "img": "sword/war_sword",
     "maxSockets": 3,
+    "minDamage": 18,
+    "maxDamage": 43,
     "gemSlot": "weapon"
   },
   "92h": {
@@ -4412,6 +4658,8 @@
     "h": 4,
     "img": "sword/two_handed_sword",
     "maxSockets": 3,
+    "minDamage": 18,
+    "maxDamage": 40,
     "gemSlot": "weapon"
   },
   "9cm": {
@@ -4425,6 +4673,8 @@
     "h": 4,
     "img": "sword/claymore",
     "maxSockets": 4,
+    "minDamage": 26,
+    "maxDamage": 61,
     "gemSlot": "weapon"
   },
   "9gs": {
@@ -4438,6 +4688,8 @@
     "h": 4,
     "img": "sword/giant_sword",
     "maxSockets": 4,
+    "minDamage": 19,
+    "maxDamage": 58,
     "gemSlot": "weapon"
   },
   "9b9": {
@@ -4451,6 +4703,8 @@
     "h": 4,
     "img": "sword/bastard_sword",
     "maxSockets": 4,
+    "minDamage": 39,
+    "maxDamage": 60,
     "gemSlot": "weapon"
   },
   "9fb": {
@@ -4464,6 +4718,8 @@
     "h": 4,
     "img": "sword/flamberge",
     "maxSockets": 5,
+    "minDamage": 29,
+    "maxDamage": 54,
     "gemSlot": "weapon"
   },
   "9gd": {
@@ -4477,6 +4733,8 @@
     "h": 4,
     "img": "sword/great_sword",
     "maxSockets": 6,
+    "minDamage": 47,
+    "maxDamage": 80,
     "gemSlot": "weapon"
   },
   "9dg": {
@@ -4490,6 +4748,8 @@
     "h": 2,
     "img": "knife/dagger",
     "maxSockets": 1,
+    "minDamage": 6,
+    "maxDamage": 18,
     "gemSlot": "weapon"
   },
   "9di": {
@@ -4503,6 +4763,8 @@
     "h": 2,
     "img": "knife/dirk",
     "maxSockets": 1,
+    "minDamage": 10,
+    "maxDamage": 26,
     "gemSlot": "weapon"
   },
   "9kr": {
@@ -4516,6 +4778,8 @@
     "h": 3,
     "img": "knife/kriss",
     "maxSockets": 3,
+    "minDamage": 15,
+    "maxDamage": 31,
     "gemSlot": "weapon"
   },
   "9bl": {
@@ -4529,6 +4793,8 @@
     "h": 3,
     "img": "knife/blade",
     "maxSockets": 3,
+    "minDamage": 19,
+    "maxDamage": 36,
     "gemSlot": "weapon"
   },
   "9tk": {
@@ -4541,6 +4807,8 @@
     "w": 1,
     "h": 2,
     "img": "knife/throwing_knife",
+    "minDamage": 8,
+    "maxDamage": 16,
     "gemSlot": "weapon"
   },
   "9ta": {
@@ -4553,6 +4821,8 @@
     "w": 1,
     "h": 2,
     "img": "axe/throwing_axe",
+    "minDamage": 11,
+    "maxDamage": 22,
     "gemSlot": "weapon"
   },
   "9bk": {
@@ -4565,6 +4835,8 @@
     "w": 1,
     "h": 2,
     "img": "knife/balanced_knife",
+    "minDamage": 6,
+    "maxDamage": 24,
     "gemSlot": "weapon"
   },
   "9b8": {
@@ -4577,6 +4849,8 @@
     "w": 2,
     "h": 3,
     "img": "axe/balanced_axe",
+    "minDamage": 13,
+    "maxDamage": 27,
     "gemSlot": "weapon"
   },
   "9ja": {
@@ -4589,6 +4863,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/javelin",
+    "minDamage": 6,
+    "maxDamage": 19,
     "gemSlot": "weapon"
   },
   "9pi": {
@@ -4601,6 +4877,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/pilum",
+    "minDamage": 11,
+    "maxDamage": 26,
     "gemSlot": "weapon"
   },
   "9s9": {
@@ -4613,6 +4891,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/short_spear",
+    "minDamage": 8,
+    "maxDamage": 32,
     "gemSlot": "weapon"
   },
   "9gl": {
@@ -4625,6 +4905,8 @@
     "w": 1,
     "h": 4,
     "img": "javelin/glaive",
+    "minDamage": 13,
+    "maxDamage": 38,
     "gemSlot": "weapon"
   },
   "9ts": {
@@ -4637,6 +4919,8 @@
     "w": 1,
     "h": 4,
     "img": "javelin/throwing_spear",
+    "minDamage": 13,
+    "maxDamage": 35,
     "gemSlot": "weapon"
   },
   "9sr": {
@@ -4650,6 +4934,8 @@
     "h": 4,
     "img": "spear/spear",
     "maxSockets": 3,
+    "minDamage": 10,
+    "maxDamage": 37,
     "gemSlot": "weapon"
   },
   "9tr": {
@@ -4663,6 +4949,8 @@
     "h": 4,
     "img": "spear/trident",
     "maxSockets": 4,
+    "minDamage": 19,
+    "maxDamage": 37,
     "gemSlot": "weapon"
   },
   "9br": {
@@ -4676,6 +4964,8 @@
     "h": 4,
     "img": "spear/brandistock",
     "maxSockets": 5,
+    "minDamage": 16,
+    "maxDamage": 40,
     "gemSlot": "weapon"
   },
   "9st": {
@@ -4689,6 +4979,8 @@
     "h": 4,
     "img": "spear/spetum",
     "maxSockets": 6,
+    "minDamage": 29,
+    "maxDamage": 59,
     "gemSlot": "weapon"
   },
   "9p9": {
@@ -4702,6 +4994,8 @@
     "h": 4,
     "img": "spear/pike",
     "maxSockets": 6,
+    "minDamage": 27,
+    "maxDamage": 114,
     "gemSlot": "weapon"
   },
   "9b7": {
@@ -4715,6 +5009,8 @@
     "h": 4,
     "img": "polearm/bardiche",
     "maxSockets": 3,
+    "minDamage": 6,
+    "maxDamage": 58,
     "gemSlot": "weapon"
   },
   "9vo": {
@@ -4728,6 +5024,8 @@
     "h": 4,
     "img": "polearm/voulge",
     "maxSockets": 4,
+    "minDamage": 14,
+    "maxDamage": 53,
     "gemSlot": "weapon"
   },
   "9s8": {
@@ -4741,6 +5039,8 @@
     "h": 4,
     "img": "polearm/scythe",
     "maxSockets": 5,
+    "minDamage": 18,
+    "maxDamage": 45,
     "gemSlot": "weapon"
   },
   "9pa": {
@@ -4754,6 +5054,8 @@
     "h": 4,
     "img": "polearm/poleaxe",
     "maxSockets": 5,
+    "minDamage": 34,
+    "maxDamage": 75,
     "gemSlot": "weapon"
   },
   "9h9": {
@@ -4767,6 +5069,8 @@
     "h": 4,
     "img": "polearm/halberd",
     "maxSockets": 6,
+    "minDamage": 13,
+    "maxDamage": 85,
     "gemSlot": "weapon"
   },
   "9wc": {
@@ -4780,6 +5084,8 @@
     "h": 4,
     "img": "polearm/war_scythe",
     "maxSockets": 6,
+    "minDamage": 30,
+    "maxDamage": 70,
     "gemSlot": "weapon"
   },
   "8ss": {
@@ -4793,6 +5099,8 @@
     "h": 3,
     "img": "staff/short_staff",
     "maxSockets": 2,
+    "minDamage": 6,
+    "maxDamage": 21,
     "gemSlot": "weapon"
   },
   "8ls": {
@@ -4806,6 +5114,8 @@
     "h": 4,
     "img": "staff/long_staff",
     "maxSockets": 3,
+    "minDamage": 8,
+    "maxDamage": 26,
     "gemSlot": "weapon"
   },
   "8cs": {
@@ -4819,6 +5129,8 @@
     "h": 4,
     "img": "staff/gnarled_staff",
     "maxSockets": 4,
+    "minDamage": 11,
+    "maxDamage": 32,
     "gemSlot": "weapon"
   },
   "8bs": {
@@ -4832,6 +5144,8 @@
     "h": 4,
     "img": "staff/battle_staff",
     "maxSockets": 4,
+    "minDamage": 14,
+    "maxDamage": 34,
     "gemSlot": "weapon"
   },
   "8ws": {
@@ -4845,6 +5159,8 @@
     "h": 4,
     "img": "staff/war_staff",
     "maxSockets": 6,
+    "minDamage": 24,
+    "maxDamage": 58,
     "gemSlot": "weapon"
   },
   "8sb": {
@@ -4858,6 +5174,8 @@
     "h": 3,
     "img": "bow/short_bow",
     "maxSockets": 3,
+    "minDamage": 6,
+    "maxDamage": 19,
     "gemSlot": "weapon"
   },
   "8hb": {
@@ -4871,6 +5189,8 @@
     "h": 3,
     "img": "bow/hunters_bow",
     "maxSockets": 4,
+    "minDamage": 8,
+    "maxDamage": 22,
     "gemSlot": "weapon"
   },
   "8lb": {
@@ -4884,6 +5204,8 @@
     "h": 4,
     "img": "bow/long_bow",
     "maxSockets": 5,
+    "minDamage": 10,
+    "maxDamage": 29,
     "gemSlot": "weapon"
   },
   "8cb": {
@@ -4897,6 +5219,8 @@
     "h": 3,
     "img": "bow/composite_bow",
     "maxSockets": 4,
+    "minDamage": 11,
+    "maxDamage": 26,
     "gemSlot": "weapon"
   },
   "8s8": {
@@ -4910,6 +5234,8 @@
     "h": 3,
     "img": "bow/short_battle_bow",
     "maxSockets": 5,
+    "minDamage": 13,
+    "maxDamage": 30,
     "gemSlot": "weapon"
   },
   "8l8": {
@@ -4923,6 +5249,8 @@
     "h": 4,
     "img": "bow/long_battle_bow",
     "maxSockets": 6,
+    "minDamage": 10,
+    "maxDamage": 42,
     "gemSlot": "weapon"
   },
   "8sw": {
@@ -4936,6 +5264,8 @@
     "h": 3,
     "img": "bow/short_war_bow",
     "maxSockets": 5,
+    "minDamage": 14,
+    "maxDamage": 35,
     "gemSlot": "weapon"
   },
   "8lw": {
@@ -4949,6 +5279,8 @@
     "h": 4,
     "img": "bow/long_war_bow",
     "maxSockets": 6,
+    "minDamage": 10,
+    "maxDamage": 50,
     "gemSlot": "weapon"
   },
   "8lx": {
@@ -4962,6 +5294,8 @@
     "h": 3,
     "img": "bow/light_crossbow",
     "maxSockets": 3,
+    "minDamage": 14,
+    "maxDamage": 27,
     "gemSlot": "weapon"
   },
   "8mx": {
@@ -4975,6 +5309,8 @@
     "h": 3,
     "img": "bow/crossbow",
     "maxSockets": 4,
+    "minDamage": 20,
+    "maxDamage": 42,
     "gemSlot": "weapon"
   },
   "8hx": {
@@ -4988,6 +5324,8 @@
     "h": 4,
     "img": "bow/heavy_crossbow",
     "maxSockets": 6,
+    "minDamage": 33,
+    "maxDamage": 55,
     "gemSlot": "weapon"
   },
   "8rx": {
@@ -5001,6 +5339,8 @@
     "h": 3,
     "img": "bow/repeating_crossbow",
     "maxSockets": 5,
+    "minDamage": 14,
+    "maxDamage": 32,
     "gemSlot": "weapon"
   },
   "qf1": {
@@ -5014,6 +5354,8 @@
     "h": 3,
     "img": "mace/khalim_flail",
     "maxSockets": 3,
+    "minDamage": 1,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "qf2": {
@@ -5027,6 +5369,8 @@
     "h": 3,
     "img": "mace/super_khalim_flail",
     "maxSockets": 3,
+    "minDamage": 1,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "ktr": {
@@ -5041,6 +5385,8 @@
     "img": "h2h/katar",
     "starter": true,
     "maxSockets": 2,
+    "minDamage": 4,
+    "maxDamage": 7,
     "gemSlot": "weapon"
   },
   "wrb": {
@@ -5054,6 +5400,8 @@
     "h": 3,
     "img": "h2h/katar",
     "maxSockets": 2,
+    "minDamage": 5,
+    "maxDamage": 9,
     "gemSlot": "weapon"
   },
   "axf": {
@@ -5067,6 +5415,8 @@
     "h": 3,
     "img": "h2h/hatchet_hands",
     "maxSockets": 2,
+    "minDamage": 2,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "ces": {
@@ -5080,6 +5430,8 @@
     "h": 3,
     "img": "h2h/hatchet_hands",
     "maxSockets": 2,
+    "minDamage": 7,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "clw": {
@@ -5093,6 +5445,8 @@
     "h": 3,
     "img": "h2h/claws",
     "maxSockets": 3,
+    "minDamage": 8,
+    "maxDamage": 15,
     "gemSlot": "weapon"
   },
   "btl": {
@@ -5106,6 +5460,8 @@
     "h": 3,
     "img": "h2h/claws",
     "maxSockets": 3,
+    "minDamage": 10,
+    "maxDamage": 14,
     "gemSlot": "weapon"
   },
   "skr": {
@@ -5119,6 +5475,8 @@
     "h": 3,
     "img": "h2h/scissors_katar",
     "maxSockets": 3,
+    "minDamage": 9,
+    "maxDamage": 17,
     "gemSlot": "weapon"
   },
   "9ar": {
@@ -5132,6 +5490,8 @@
     "h": 3,
     "img": "h2h/katar",
     "maxSockets": 3,
+    "minDamage": 11,
+    "maxDamage": 24,
     "gemSlot": "weapon"
   },
   "9wb": {
@@ -5145,6 +5505,8 @@
     "h": 3,
     "img": "h2h/katar",
     "maxSockets": 2,
+    "minDamage": 13,
+    "maxDamage": 27,
     "gemSlot": "weapon"
   },
   "9xf": {
@@ -5158,6 +5520,8 @@
     "h": 3,
     "img": "h2h/hatchet_hands",
     "maxSockets": 2,
+    "minDamage": 8,
+    "maxDamage": 37,
     "gemSlot": "weapon"
   },
   "9cs": {
@@ -5171,6 +5535,8 @@
     "h": 3,
     "img": "h2h/hatchet_hands",
     "maxSockets": 2,
+    "minDamage": 16,
+    "maxDamage": 37,
     "gemSlot": "weapon"
   },
   "9lw": {
@@ -5184,6 +5550,8 @@
     "h": 3,
     "img": "h2h/claws",
     "maxSockets": 3,
+    "minDamage": 18,
+    "maxDamage": 37,
     "gemSlot": "weapon"
   },
   "9tw": {
@@ -5197,6 +5565,8 @@
     "h": 3,
     "img": "h2h/claws",
     "maxSockets": 3,
+    "minDamage": 21,
+    "maxDamage": 35,
     "gemSlot": "weapon"
   },
   "9qr": {
@@ -5210,6 +5580,8 @@
     "h": 3,
     "img": "h2h/scissors_katar",
     "maxSockets": 3,
+    "minDamage": 19,
+    "maxDamage": 40,
     "gemSlot": "weapon"
   },
   "7ar": {
@@ -5223,6 +5595,8 @@
     "h": 3,
     "img": "h2h/katar",
     "maxSockets": 3,
+    "minDamage": 39,
+    "maxDamage": 52,
     "gemSlot": "weapon"
   },
   "7wb": {
@@ -5236,6 +5610,8 @@
     "h": 3,
     "img": "h2h/katar",
     "maxSockets": 3,
+    "minDamage": 34,
+    "maxDamage": 45,
     "gemSlot": "weapon"
   },
   "7xf": {
@@ -5249,6 +5625,8 @@
     "h": 3,
     "img": "h2h/hatchet_hands",
     "maxSockets": 2,
+    "minDamage": 44,
+    "maxDamage": 53,
     "gemSlot": "weapon"
   },
   "7cs": {
@@ -5262,6 +5640,8 @@
     "h": 3,
     "img": "h2h/hatchet_hands",
     "maxSockets": 2,
+    "minDamage": 36,
+    "maxDamage": 42,
     "gemSlot": "weapon"
   },
   "7lw": {
@@ -5275,6 +5655,8 @@
     "h": 3,
     "img": "h2h/claws",
     "maxSockets": 3,
+    "minDamage": 22,
+    "maxDamage": 53,
     "gemSlot": "weapon"
   },
   "7tw": {
@@ -5288,6 +5670,8 @@
     "h": 3,
     "img": "h2h/claws",
     "maxSockets": 3,
+    "minDamage": 24,
+    "maxDamage": 44,
     "gemSlot": "weapon"
   },
   "7qr": {
@@ -5301,6 +5685,8 @@
     "h": 3,
     "img": "h2h/scissors_katar",
     "maxSockets": 3,
+    "minDamage": 40,
+    "maxDamage": 51,
     "gemSlot": "weapon"
   },
   "7ha": {
@@ -5314,6 +5700,8 @@
     "h": 3,
     "img": "axe/hand_axe",
     "maxSockets": 2,
+    "minDamage": 33,
+    "maxDamage": 58,
     "gemSlot": "weapon"
   },
   "7ax": {
@@ -5327,6 +5715,8 @@
     "h": 3,
     "img": "axe/axe",
     "maxSockets": 4,
+    "minDamage": 38,
+    "maxDamage": 60,
     "gemSlot": "weapon"
   },
   "72a": {
@@ -5340,6 +5730,8 @@
     "h": 3,
     "img": "axe/double_axe",
     "maxSockets": 5,
+    "minDamage": 33,
+    "maxDamage": 66,
     "gemSlot": "weapon"
   },
   "7mp": {
@@ -5353,6 +5745,8 @@
     "h": 3,
     "img": "axe/military_pick",
     "maxSockets": 6,
+    "minDamage": 30,
+    "maxDamage": 48,
     "gemSlot": "weapon"
   },
   "7wa": {
@@ -5366,6 +5760,8 @@
     "h": 3,
     "img": "axe/war_axe",
     "maxSockets": 6,
+    "minDamage": 24,
+    "maxDamage": 71,
     "gemSlot": "weapon"
   },
   "7la": {
@@ -5379,6 +5775,8 @@
     "h": 3,
     "img": "axe/large_axe",
     "maxSockets": 4,
+    "minDamage": 25,
+    "maxDamage": 123,
     "gemSlot": "weapon"
   },
   "7ba": {
@@ -5392,6 +5790,8 @@
     "h": 3,
     "img": "axe/broad_axe",
     "maxSockets": 5,
+    "minDamage": 62,
+    "maxDamage": 110,
     "gemSlot": "weapon"
   },
   "7bt": {
@@ -5405,6 +5805,8 @@
     "h": 3,
     "img": "axe/battle_axe",
     "maxSockets": 5,
+    "minDamage": 49,
+    "maxDamage": 137,
     "gemSlot": "weapon"
   },
   "7ga": {
@@ -5418,6 +5820,8 @@
     "h": 4,
     "img": "axe/great_axe",
     "maxSockets": 6,
+    "minDamage": 59,
+    "maxDamage": 94,
     "gemSlot": "weapon"
   },
   "7gi": {
@@ -5431,6 +5835,8 @@
     "h": 3,
     "img": "axe/giant_axe",
     "maxSockets": 6,
+    "minDamage": 60,
+    "maxDamage": 124,
     "gemSlot": "weapon"
   },
   "7wn": {
@@ -5444,6 +5850,8 @@
     "h": 2,
     "img": "wand/wand",
     "maxSockets": 2,
+    "minDamage": 18,
+    "maxDamage": 33,
     "gemSlot": "weapon"
   },
   "7yw": {
@@ -5457,6 +5865,8 @@
     "h": 2,
     "img": "wand/yew_wand",
     "maxSockets": 2,
+    "minDamage": 20,
+    "maxDamage": 40,
     "gemSlot": "weapon"
   },
   "7bw": {
@@ -5470,6 +5880,8 @@
     "h": 2,
     "img": "wand/bone_wand",
     "maxSockets": 2,
+    "minDamage": 10,
+    "maxDamage": 31,
     "gemSlot": "weapon"
   },
   "7gw": {
@@ -5483,6 +5895,8 @@
     "h": 2,
     "img": "wand/grim_wand",
     "maxSockets": 2,
+    "minDamage": 22,
+    "maxDamage": 28,
     "gemSlot": "weapon"
   },
   "7cl": {
@@ -5496,6 +5910,8 @@
     "h": 3,
     "img": "club/club",
     "maxSockets": 2,
+    "minDamage": 35,
+    "maxDamage": 43,
     "gemSlot": "weapon"
   },
   "7sc": {
@@ -5509,6 +5925,8 @@
     "h": 3,
     "img": "scepter/scepter",
     "maxSockets": 2,
+    "minDamage": 40,
+    "maxDamage": 52,
     "gemSlot": "weapon"
   },
   "7qs": {
@@ -5522,6 +5940,8 @@
     "h": 3,
     "img": "scepter/grand_scepter",
     "maxSockets": 3,
+    "minDamage": 45,
+    "maxDamage": 54,
     "gemSlot": "weapon"
   },
   "7ws": {
@@ -5535,6 +5955,8 @@
     "h": 3,
     "img": "scepter/war_scepter",
     "maxSockets": 5,
+    "minDamage": 37,
+    "maxDamage": 43,
     "gemSlot": "weapon"
   },
   "7sp": {
@@ -5548,6 +5970,8 @@
     "h": 3,
     "img": "club/spiked_club",
     "maxSockets": 3,
+    "minDamage": 32,
+    "maxDamage": 58,
     "gemSlot": "weapon"
   },
   "7ma": {
@@ -5561,6 +5985,8 @@
     "h": 3,
     "img": "mace/mace",
     "maxSockets": 2,
+    "minDamage": 41,
+    "maxDamage": 49,
     "gemSlot": "weapon"
   },
   "7mt": {
@@ -5574,6 +6000,8 @@
     "h": 3,
     "img": "mace/morning_star",
     "maxSockets": 3,
+    "minDamage": 43,
+    "maxDamage": 53,
     "gemSlot": "weapon"
   },
   "7fl": {
@@ -5587,6 +6015,8 @@
     "h": 3,
     "img": "mace/flail",
     "maxSockets": 5,
+    "minDamage": 3,
+    "maxDamage": 80,
     "gemSlot": "weapon"
   },
   "7wh": {
@@ -5600,6 +6030,8 @@
     "h": 3,
     "img": "hammer/war_hammer",
     "maxSockets": 4,
+    "minDamage": 50,
+    "maxDamage": 61,
     "gemSlot": "weapon"
   },
   "7m7": {
@@ -5613,6 +6045,8 @@
     "h": 4,
     "img": "hammer/maul",
     "maxSockets": 6,
+    "minDamage": 77,
+    "maxDamage": 106,
     "gemSlot": "weapon"
   },
   "7gm": {
@@ -5626,6 +6060,8 @@
     "h": 3,
     "img": "hammer/great_maul",
     "maxSockets": 6,
+    "minDamage": 33,
+    "maxDamage": 180,
     "gemSlot": "weapon"
   },
   "7ss": {
@@ -5639,6 +6075,8 @@
     "h": 3,
     "img": "sword/short_sword",
     "maxSockets": 2,
+    "minDamage": 31,
+    "maxDamage": 59,
     "gemSlot": "weapon"
   },
   "7sm": {
@@ -5652,6 +6090,8 @@
     "h": 3,
     "img": "sword/scimitar",
     "maxSockets": 2,
+    "minDamage": 26,
+    "maxDamage": 46,
     "gemSlot": "weapon"
   },
   "7sb": {
@@ -5665,6 +6105,8 @@
     "h": 3,
     "img": "sword/saber",
     "maxSockets": 2,
+    "minDamage": 33,
+    "maxDamage": 45,
     "gemSlot": "weapon"
   },
   "7fc": {
@@ -5678,6 +6120,8 @@
     "h": 3,
     "img": "sword/falchion",
     "maxSockets": 2,
+    "minDamage": 28,
+    "maxDamage": 68,
     "gemSlot": "weapon"
   },
   "7cr": {
@@ -5691,6 +6135,8 @@
     "h": 3,
     "img": "sword/crystal_sword",
     "maxSockets": 6,
+    "minDamage": 31,
+    "maxDamage": 35,
     "gemSlot": "weapon"
   },
   "7bs": {
@@ -5704,6 +6150,8 @@
     "h": 3,
     "img": "sword/broad_sword",
     "maxSockets": 4,
+    "minDamage": 37,
+    "maxDamage": 53,
     "gemSlot": "weapon"
   },
   "7ls": {
@@ -5717,6 +6165,8 @@
     "h": 3,
     "img": "sword/long_sword",
     "maxSockets": 4,
+    "minDamage": 5,
+    "maxDamage": 77,
     "gemSlot": "weapon"
   },
   "7wd": {
@@ -5730,6 +6180,8 @@
     "h": 3,
     "img": "sword/war_sword",
     "maxSockets": 3,
+    "minDamage": 40,
+    "maxDamage": 50,
     "gemSlot": "weapon"
   },
   "72h": {
@@ -5743,6 +6195,8 @@
     "h": 4,
     "img": "sword/two_handed_sword",
     "maxSockets": 3,
+    "minDamage": 50,
+    "maxDamage": 94,
     "gemSlot": "weapon"
   },
   "7cm": {
@@ -5756,6 +6210,8 @@
     "h": 4,
     "img": "sword/claymore",
     "maxSockets": 4,
+    "minDamage": 67,
+    "maxDamage": 96,
     "gemSlot": "weapon"
   },
   "7gs": {
@@ -5769,6 +6225,8 @@
     "h": 4,
     "img": "sword/giant_sword",
     "maxSockets": 4,
+    "minDamage": 55,
+    "maxDamage": 118,
     "gemSlot": "weapon"
   },
   "7b7": {
@@ -5782,6 +6240,8 @@
     "h": 4,
     "img": "sword/bastard_sword",
     "maxSockets": 4,
+    "minDamage": 71,
+    "maxDamage": 83,
     "gemSlot": "weapon"
   },
   "7fb": {
@@ -5795,6 +6255,8 @@
     "h": 4,
     "img": "sword/flamberge",
     "maxSockets": 5,
+    "minDamage": 61,
+    "maxDamage": 121,
     "gemSlot": "weapon"
   },
   "7gd": {
@@ -5808,6 +6270,8 @@
     "h": 4,
     "img": "sword/great_sword",
     "maxSockets": 6,
+    "minDamage": 58,
+    "maxDamage": 115,
     "gemSlot": "weapon"
   },
   "7dg": {
@@ -5821,6 +6285,8 @@
     "h": 2,
     "img": "knife/dagger",
     "maxSockets": 1,
+    "minDamage": 23,
+    "maxDamage": 49,
     "gemSlot": "weapon"
   },
   "7di": {
@@ -5834,6 +6300,8 @@
     "h": 2,
     "img": "knife/dirk",
     "maxSockets": 1,
+    "minDamage": 37,
+    "maxDamage": 53,
     "gemSlot": "weapon"
   },
   "7kr": {
@@ -5847,6 +6315,8 @@
     "h": 3,
     "img": "knife/kriss",
     "maxSockets": 3,
+    "minDamage": 15,
+    "maxDamage": 57,
     "gemSlot": "weapon"
   },
   "7bl": {
@@ -5860,6 +6330,8 @@
     "h": 3,
     "img": "knife/blade",
     "maxSockets": 3,
+    "minDamage": 31,
+    "maxDamage": 47,
     "gemSlot": "weapon"
   },
   "7tk": {
@@ -5872,6 +6344,8 @@
     "w": 1,
     "h": 2,
     "img": "knife/throwing_knife",
+    "minDamage": 23,
+    "maxDamage": 54,
     "gemSlot": "weapon"
   },
   "7ta": {
@@ -5884,6 +6358,8 @@
     "w": 1,
     "h": 2,
     "img": "axe/throwing_axe",
+    "minDamage": 17,
+    "maxDamage": 65,
     "gemSlot": "weapon"
   },
   "7bk": {
@@ -5896,6 +6372,8 @@
     "w": 1,
     "h": 2,
     "img": "knife/balanced_knife",
+    "minDamage": 27,
+    "maxDamage": 35,
     "gemSlot": "weapon"
   },
   "7b8": {
@@ -5908,6 +6386,8 @@
     "w": 2,
     "h": 3,
     "img": "axe/balanced_axe",
+    "minDamage": 11,
+    "maxDamage": 56,
     "gemSlot": "weapon"
   },
   "7ja": {
@@ -5920,6 +6400,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/javelin",
+    "minDamage": 21,
+    "maxDamage": 57,
     "gemSlot": "weapon"
   },
   "7pi": {
@@ -5932,6 +6414,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/pilum",
+    "minDamage": 14,
+    "maxDamage": 64,
     "gemSlot": "weapon"
   },
   "7s7": {
@@ -5944,6 +6428,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/short_spear",
+    "minDamage": 33,
+    "maxDamage": 63,
     "gemSlot": "weapon"
   },
   "7gl": {
@@ -5956,6 +6442,8 @@
     "w": 1,
     "h": 4,
     "img": "javelin/glaive",
+    "minDamage": 19,
+    "maxDamage": 60,
     "gemSlot": "weapon"
   },
   "7ts": {
@@ -5968,6 +6456,8 @@
     "w": 1,
     "h": 4,
     "img": "javelin/throwing_spear",
+    "minDamage": 27,
+    "maxDamage": 35,
     "gemSlot": "weapon"
   },
   "7sr": {
@@ -5981,6 +6471,8 @@
     "h": 4,
     "img": "spear/spear",
     "maxSockets": 3,
+    "minDamage": 35,
+    "maxDamage": 119,
     "gemSlot": "weapon"
   },
   "7tr": {
@@ -5994,6 +6486,8 @@
     "h": 4,
     "img": "spear/trident",
     "maxSockets": 4,
+    "minDamage": 29,
+    "maxDamage": 144,
     "gemSlot": "weapon"
   },
   "7br": {
@@ -6007,6 +6501,8 @@
     "h": 4,
     "img": "spear/brandistock",
     "maxSockets": 5,
+    "minDamage": 42,
+    "maxDamage": 92,
     "gemSlot": "weapon"
   },
   "7st": {
@@ -6020,6 +6516,8 @@
     "h": 4,
     "img": "spear/spetum",
     "maxSockets": 6,
+    "minDamage": 18,
+    "maxDamage": 155,
     "gemSlot": "weapon"
   },
   "7p7": {
@@ -6033,6 +6531,8 @@
     "h": 4,
     "img": "spear/pike",
     "maxSockets": 6,
+    "minDamage": 33,
+    "maxDamage": 178,
     "gemSlot": "weapon"
   },
   "7o7": {
@@ -6046,6 +6546,8 @@
     "h": 4,
     "img": "polearm/bardiche",
     "maxSockets": 3,
+    "minDamage": 28,
+    "maxDamage": 145,
     "gemSlot": "weapon"
   },
   "7vo": {
@@ -6059,6 +6561,8 @@
     "h": 4,
     "img": "polearm/voulge",
     "maxSockets": 4,
+    "minDamage": 17,
+    "maxDamage": 165,
     "gemSlot": "weapon"
   },
   "7s8": {
@@ -6072,6 +6576,8 @@
     "h": 4,
     "img": "polearm/scythe",
     "maxSockets": 5,
+    "minDamage": 12,
+    "maxDamage": 141,
     "gemSlot": "weapon"
   },
   "7pa": {
@@ -6085,6 +6591,8 @@
     "h": 4,
     "img": "polearm/poleaxe",
     "maxSockets": 5,
+    "minDamage": 33,
+    "maxDamage": 150,
     "gemSlot": "weapon"
   },
   "7h7": {
@@ -6098,6 +6606,8 @@
     "h": 4,
     "img": "polearm/halberd",
     "maxSockets": 6,
+    "minDamage": 46,
+    "maxDamage": 127,
     "gemSlot": "weapon"
   },
   "7wc": {
@@ -6111,6 +6621,8 @@
     "h": 4,
     "img": "polearm/war_scythe",
     "maxSockets": 6,
+    "minDamage": 40,
+    "maxDamage": 114,
     "gemSlot": "weapon"
   },
   "6ss": {
@@ -6124,6 +6636,8 @@
     "h": 3,
     "img": "staff/short_staff",
     "maxSockets": 2,
+    "minDamage": 69,
+    "maxDamage": 85,
     "gemSlot": "weapon"
   },
   "6ls": {
@@ -6137,6 +6651,8 @@
     "h": 4,
     "img": "staff/long_staff",
     "maxSockets": 3,
+    "minDamage": 75,
+    "maxDamage": 107,
     "gemSlot": "weapon"
   },
   "6cs": {
@@ -6150,6 +6666,8 @@
     "h": 4,
     "img": "staff/gnarled_staff",
     "maxSockets": 4,
+    "minDamage": 80,
+    "maxDamage": 93,
     "gemSlot": "weapon"
   },
   "6bs": {
@@ -6163,6 +6681,8 @@
     "h": 4,
     "img": "staff/battle_staff",
     "maxSockets": 4,
+    "minDamage": 65,
+    "maxDamage": 108,
     "gemSlot": "weapon"
   },
   "6ws": {
@@ -6176,6 +6696,8 @@
     "h": 4,
     "img": "staff/war_staff",
     "maxSockets": 6,
+    "minDamage": 83,
+    "maxDamage": 99,
     "gemSlot": "weapon"
   },
   "6sb": {
@@ -6189,6 +6711,8 @@
     "h": 3,
     "img": "bow/short_bow",
     "maxSockets": 3,
+    "minDamage": 23,
+    "maxDamage": 50,
     "gemSlot": "weapon"
   },
   "6hb": {
@@ -6202,6 +6726,8 @@
     "h": 3,
     "img": "bow/hunters_bow",
     "maxSockets": 4,
+    "minDamage": 21,
+    "maxDamage": 41,
     "gemSlot": "weapon"
   },
   "6lb": {
@@ -6215,6 +6741,8 @@
     "h": 4,
     "img": "bow/long_bow",
     "maxSockets": 5,
+    "minDamage": 15,
+    "maxDamage": 59,
     "gemSlot": "weapon"
   },
   "6cb": {
@@ -6228,6 +6756,8 @@
     "h": 3,
     "img": "bow/composite_bow",
     "maxSockets": 4,
+    "minDamage": 12,
+    "maxDamage": 52,
     "gemSlot": "weapon"
   },
   "6s7": {
@@ -6241,6 +6771,8 @@
     "h": 3,
     "img": "bow/short_battle_bow",
     "maxSockets": 5,
+    "minDamage": 33,
+    "maxDamage": 40,
     "gemSlot": "weapon"
   },
   "6l7": {
@@ -6254,6 +6786,8 @@
     "h": 4,
     "img": "bow/long_battle_bow",
     "maxSockets": 6,
+    "minDamage": 15,
+    "maxDamage": 63,
     "gemSlot": "weapon"
   },
   "6sw": {
@@ -6267,6 +6801,8 @@
     "h": 3,
     "img": "bow/short_war_bow",
     "maxSockets": 5,
+    "minDamage": 20,
+    "maxDamage": 53,
     "gemSlot": "weapon"
   },
   "6lw": {
@@ -6280,6 +6816,8 @@
     "h": 4,
     "img": "bow/long_war_bow",
     "maxSockets": 6,
+    "minDamage": 10,
+    "maxDamage": 68,
     "gemSlot": "weapon"
   },
   "6lx": {
@@ -6293,6 +6831,8 @@
     "h": 3,
     "img": "bow/light_crossbow",
     "maxSockets": 3,
+    "minDamage": 28,
+    "maxDamage": 73,
     "gemSlot": "weapon"
   },
   "6mx": {
@@ -6306,6 +6846,8 @@
     "h": 3,
     "img": "bow/crossbow",
     "maxSockets": 4,
+    "minDamage": 25,
+    "maxDamage": 87,
     "gemSlot": "weapon"
   },
   "6hx": {
@@ -6319,6 +6861,8 @@
     "h": 4,
     "img": "bow/heavy_crossbow",
     "maxSockets": 6,
+    "minDamage": 32,
+    "maxDamage": 91,
     "gemSlot": "weapon"
   },
   "6rx": {
@@ -6332,6 +6876,8 @@
     "h": 3,
     "img": "bow/repeating_crossbow",
     "maxSockets": 5,
+    "minDamage": 26,
+    "maxDamage": 40,
     "gemSlot": "weapon"
   },
   "ob1": {
@@ -6345,6 +6891,8 @@
     "h": 2,
     "img": "orb/eagle_orb",
     "maxSockets": 4,
+    "minDamage": 2,
+    "maxDamage": 5,
     "gemSlot": "weapon"
   },
   "ob2": {
@@ -6358,6 +6906,8 @@
     "h": 2,
     "img": "orb/sacred_globe",
     "maxSockets": 4,
+    "minDamage": 3,
+    "maxDamage": 8,
     "gemSlot": "weapon"
   },
   "ob3": {
@@ -6371,6 +6921,8 @@
     "h": 2,
     "img": "orb/smoked_sphere",
     "maxSockets": 4,
+    "minDamage": 4,
+    "maxDamage": 10,
     "gemSlot": "weapon"
   },
   "ob4": {
@@ -6384,6 +6936,8 @@
     "h": 2,
     "img": "orb/clasped_orb",
     "maxSockets": 4,
+    "minDamage": 5,
+    "maxDamage": 12,
     "gemSlot": "weapon"
   },
   "ob5": {
@@ -6397,6 +6951,8 @@
     "h": 3,
     "img": "orb/dragon_stone",
     "maxSockets": 4,
+    "minDamage": 8,
+    "maxDamage": 18,
     "gemSlot": "weapon"
   },
   "am1": {
@@ -6410,6 +6966,8 @@
     "h": 4,
     "img": "bow/stag_bow",
     "maxSockets": 5,
+    "minDamage": 7,
+    "maxDamage": 12,
     "gemSlot": "weapon"
   },
   "am2": {
@@ -6423,6 +6981,8 @@
     "h": 4,
     "img": "bow/reflex_bow",
     "maxSockets": 5,
+    "minDamage": 9,
+    "maxDamage": 19,
     "gemSlot": "weapon"
   },
   "am3": {
@@ -6436,6 +6996,8 @@
     "h": 4,
     "img": "spear/maiden_spear",
     "maxSockets": 6,
+    "minDamage": 18,
+    "maxDamage": 24,
     "gemSlot": "weapon"
   },
   "am4": {
@@ -6449,6 +7011,8 @@
     "h": 4,
     "img": "spear/maiden_pike",
     "maxSockets": 6,
+    "minDamage": 23,
+    "maxDamage": 55,
     "gemSlot": "weapon"
   },
   "am5": {
@@ -6461,6 +7025,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/maiden_javelin",
+    "minDamage": 8,
+    "maxDamage": 14,
     "gemSlot": "weapon"
   },
   "ob6": {
@@ -6474,6 +7040,8 @@
     "h": 2,
     "img": "orb/eagle_orb",
     "maxSockets": 4,
+    "minDamage": 8,
+    "maxDamage": 21,
     "gemSlot": "weapon"
   },
   "ob7": {
@@ -6487,6 +7055,8 @@
     "h": 2,
     "img": "orb/sacred_globe",
     "maxSockets": 4,
+    "minDamage": 10,
+    "maxDamage": 26,
     "gemSlot": "weapon"
   },
   "ob8": {
@@ -6500,6 +7070,8 @@
     "h": 2,
     "img": "orb/smoked_sphere",
     "maxSockets": 4,
+    "minDamage": 11,
+    "maxDamage": 29,
     "gemSlot": "weapon"
   },
   "ob9": {
@@ -6513,6 +7085,8 @@
     "h": 2,
     "img": "orb/clasped_orb",
     "maxSockets": 4,
+    "minDamage": 13,
+    "maxDamage": 32,
     "gemSlot": "weapon"
   },
   "oba": {
@@ -6526,6 +7100,8 @@
     "h": 3,
     "img": "orb/dragon_stone",
     "maxSockets": 4,
+    "minDamage": 18,
+    "maxDamage": 42,
     "gemSlot": "weapon"
   },
   "am6": {
@@ -6539,6 +7115,8 @@
     "h": 4,
     "img": "bow/stag_bow",
     "maxSockets": 5,
+    "minDamage": 16,
+    "maxDamage": 29,
     "gemSlot": "weapon"
   },
   "am7": {
@@ -6552,6 +7130,8 @@
     "h": 4,
     "img": "bow/reflex_bow",
     "maxSockets": 5,
+    "minDamage": 19,
+    "maxDamage": 41,
     "gemSlot": "weapon"
   },
   "am8": {
@@ -6565,6 +7145,8 @@
     "h": 4,
     "img": "spear/maiden_spear",
     "maxSockets": 6,
+    "minDamage": 34,
+    "maxDamage": 51,
     "gemSlot": "weapon"
   },
   "am9": {
@@ -6578,6 +7160,8 @@
     "h": 4,
     "img": "spear/maiden_pike",
     "maxSockets": 6,
+    "minDamage": 42,
+    "maxDamage": 101,
     "gemSlot": "weapon"
   },
   "ama": {
@@ -6590,6 +7174,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/maiden_javelin",
+    "minDamage": 18,
+    "maxDamage": 35,
     "gemSlot": "weapon"
   },
   "obb": {
@@ -6603,6 +7189,8 @@
     "h": 2,
     "img": "orb/eagle_orb",
     "maxSockets": 4,
+    "minDamage": 21,
+    "maxDamage": 46,
     "gemSlot": "weapon"
   },
   "obc": {
@@ -6616,6 +7204,8 @@
     "h": 2,
     "img": "orb/sacred_globe",
     "maxSockets": 4,
+    "minDamage": 18,
+    "maxDamage": 50,
     "gemSlot": "weapon"
   },
   "obd": {
@@ -6629,6 +7219,8 @@
     "h": 2,
     "img": "orb/smoked_sphere",
     "maxSockets": 4,
+    "minDamage": 23,
+    "maxDamage": 55,
     "gemSlot": "weapon"
   },
   "obe": {
@@ -6642,6 +7234,8 @@
     "h": 2,
     "img": "orb/clasped_orb",
     "maxSockets": 4,
+    "minDamage": 12,
+    "maxDamage": 66,
     "gemSlot": "weapon"
   },
   "obf": {
@@ -6655,6 +7249,8 @@
     "h": 3,
     "img": "orb/dragon_stone",
     "maxSockets": 4,
+    "minDamage": 30,
+    "maxDamage": 53,
     "gemSlot": "weapon"
   },
   "amb": {
@@ -6668,6 +7264,8 @@
     "h": 4,
     "img": "bow/stag_bow",
     "maxSockets": 5,
+    "minDamage": 20,
+    "maxDamage": 47,
     "gemSlot": "weapon"
   },
   "amc": {
@@ -6681,6 +7279,8 @@
     "h": 4,
     "img": "bow/reflex_bow",
     "maxSockets": 5,
+    "minDamage": 14,
+    "maxDamage": 72,
     "gemSlot": "weapon"
   },
   "amd": {
@@ -6694,6 +7294,8 @@
     "h": 4,
     "img": "spear/maiden_spear",
     "maxSockets": 6,
+    "minDamage": 65,
+    "maxDamage": 95,
     "gemSlot": "weapon"
   },
   "ame": {
@@ -6707,6 +7309,8 @@
     "h": 4,
     "img": "spear/maiden_pike",
     "maxSockets": 6,
+    "minDamage": 37,
+    "maxDamage": 153,
     "gemSlot": "weapon"
   },
   "amf": {
@@ -6719,6 +7323,8 @@
     "w": 1,
     "h": 3,
     "img": "javelin/maiden_javelin",
+    "minDamage": 30,
+    "maxDamage": 54,
     "gemSlot": "weapon"
   },
   "elx": {

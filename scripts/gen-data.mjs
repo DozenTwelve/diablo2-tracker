@@ -208,6 +208,9 @@ for (const t of ["armor", "weapons", "misc"]) {
         stack: r.AdvancedStashStackable === "1" || undefined, // goes in the stackable tab
         starter: starterCodes.has(r.code) || undefined,
         maxSockets: (t !== "misc" && Number(r.gemsockets)) || undefined, // its type may allow fewer (itemtypes.json)
+        // Weapon damage, two-handed where it has that (bows and crossbows only have one-handed), for ranking copies
+        minDamage: (t === "weapons" && (Number(r["2handmindam"]) || Number(r.mindam))) || undefined,
+        maxDamage: (t === "weapons" && (Number(r["2handmaxdam"]) || Number(r.maxdam))) || undefined,
         gemSlot: t === "misc" ? undefined : gemSlotOf(r.type),
       };
   }

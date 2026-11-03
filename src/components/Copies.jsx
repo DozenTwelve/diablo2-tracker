@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef } from "react";
 import { baseNameOf, imageOf, labelOf } from "../lib/gameData";
 import { ownerLabel, placeLabel, statLines, totalCount } from "../lib/inventory";
-import { compareCopies, copyScore, ranksBest } from "../lib/props";
+import { compareCopies, copyScore, damageOf, ranksBest } from "../lib/props";
 import { t } from "../lib/i18n";
 import { colorOf, STAT_COLOR } from "./StashGrid";
 
@@ -40,7 +40,7 @@ export function Modal({ open, title, onClose, lang, children }) {
 }
 
 // Every copy of one catalog entry, best first (compareCopies): where it is, its base, and its stats. records: null when
-// closed. Entries ranked by their own stats (Insight) mark the top copy as the best.
+// closed. Entries ranked by their own stats (Insight) mark the top copy as the best and show the damage it is ranked by.
 export default function Copies({ entryKey, records, onClose, lang }) {
   const copies = [...(records ?? [])].sort(compareCopies).map((r) => ({ r, score: copyScore(r) }));
   const markBest = copies.length > 1 && ranksBest(entryKey);
@@ -74,6 +74,7 @@ export default function Copies({ entryKey, records, onClose, lang }) {
                 {baseNameOf(r.code, lang)}
                 {r.ethereal && ` · ${t("ethereal", lang)}`}
                 {r.sockets > 0 && ` · ${t("sockets", lang, r.sockets)}`}
+                {markBest && damageOf(r) && ` · ${t("damageRange", lang, ...damageOf(r))}`}
               </div>
               {statLines(r, lang).map((line, j) => (
                 <div key={j} style={{ color: STAT_COLOR }}>

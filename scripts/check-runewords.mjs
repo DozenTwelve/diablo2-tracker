@@ -11,7 +11,7 @@ try {
   const { GROUPS, fitOf, maxSocketsOf, runewordOptions } = await vite.ssrLoadModule("/src/lib/runewordMaker.js");
   const { runewords, labelOf } = await vite.ssrLoadModule("/src/lib/gameData.js");
   const { ownersOf } = await vite.ssrLoadModule("/src/lib/inventory.js");
-  const { compareCopies } = await vite.ssrLoadModule("/src/lib/props.js");
+  const { compareCopies, damageOf } = await vite.ssrLoadModule("/src/lib/props.js");
   const rw = (en) => runewords.find((w) => w.en === en);
   const fits = (w, r) => fitOf(w, r) === "ready";
   const base = (code, more) => ({ key: `b:${code}:Normal`, code, quality: "Normal", ilvl: 85, sockets: 4, filled: 0, place: "stash", owner: "M", count: 1, ...more });
@@ -61,14 +61,17 @@ try {
     const names = readdirSync(dir, { withFileTypes: true }).filter((d) => d.isFile()).map((d) => d.name);
     const data = await parseSaveFiles(names.map((name) => new File([readFileSync(join(dir, name))], name)));
     const modeOf = new Map(ownersOf(data).map((o) => [o.name, o.mode]));
-    // Copies of Insight best first: Meditation level, then enhanced damage, then the roll score (Copies.jsx)
-    const stat = (r, id) => r.stats.find(([i]) => i === id)?.[2];
+    // Copies of Insight best first: Meditation level, then average damage (Sol's +9 min included), then roll score
     const insight = data.items.filter((r) => r.key === "w:61").sort(compareCopies);
-    console.log("Insight copies:", insight.map((r) => `${r.owner}/${r.place} ${stat(r, 151)}/${stat(r, 17)}`).join(", "));
-    for (let i = 1; i < insight.length; i++) {
-      const [a, b] = [insight[i - 1], insight[i]];
-      assert.ok(stat(a, 151) > stat(b, 151) || (stat(a, 151) === stat(b, 151) && stat(a, 17) >= stat(b, 17)), "Insight copies out of order");
-    }
+    const ranked = insight.map((r) => `${r.owner}/${r.place} ${r.code} ${r.stats.find(([i]) => i === 151)[2]}/${damageOf(r).join("-")}`);
+    console.log("Insight copies:", ranked.join(", "));
+    // Averages as worked out by hand without Sol, +4.5 with it: 291.5, 306, 306, 286, 281.5, 88.5, 306, 297, 297, 323.5
+    if (dir.includes("D2R-snapshot-2026-11-03"))
+      assert.deepEqual(ranked, [
+        "sdw/merc 7vo 17/62-521", "RW-A/stash 7vo 16/65-547", "yzr/merc 7vo 16/65-547", "ModernSharedStashSoftCoreV2/shared1 7h7 16/158-414",
+        "JavaZon/merc 7h7 16/156-407", "RW-A/stash wsc 16/58-119", "lqj/merc 7pa 14/117-495", "LastOne/merc 7pa 14/114-480",
+        "ModernSharedStashSoftCoreV2/shared1 7pa 14/114-480", "Zanna/merc 7pa 12/124-523",
+      ]);
     for (const mode of [...new Set(modeOf.values())].filter(Boolean).sort()) {
       const options = runewordOptions(data.items.filter((r) => modeOf.get(r.owner) === mode));
       console.log(mode);

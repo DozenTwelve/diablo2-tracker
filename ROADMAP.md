@@ -64,3 +64,17 @@ dashboard); the Netlify site is deleted. Done.
   About. The Organize page folds its explanation after the first visit and the Deck's backup list.
 - The museum keeps the best-rolled copy; duplicates past `copiesNeeded` go to TRASH; DUP mules mark each copy
   better or worse than the museum's; mules are dated below the other characters so D2R lists the mains first.
+
+## 7. Clean TRASH, runewords to make, saved loadouts (2026-11-03)
+
+- Clean TRASH (Deck): the Organize page lists every item in this mode's TRASH mules; confirmed twice, the plugin
+  backs up and deletes those mules. Restorable from the backups.
+- Runewords to make: runes owned per mode plus fitting bases (exact empty sockets, normal/superior, allowed type),
+  filter "can miss" 0/1/2 runes like d2runewizard's calculator, and "all runes, no base". 0-socket bases count when
+  Larzuk gives the exact count (min of the item's gemsockets and the type's ilvl cap), the cube recipes as random.
+  No cube rune upgrades. Several Insights: Meditation level first, then real physical damage.
+- Saved loadouts (next, not started): like WoW's equipment manager. The player equips a character (and its
+  mercenary) by hand, then saves it in the plugin as that character's best setup. The plugin then shows, per main,
+  which saved pieces are on it and where the others went (another main, a mule), so shared items are easy to find.
+  Items are told apart by their seed. Picked entirely by hand, no recommendations. Moving pieces back with one
+  click would be the first write to mains' saves: ask the user before building it.

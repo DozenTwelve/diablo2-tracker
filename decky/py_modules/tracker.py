@@ -151,6 +151,14 @@ SAVE_NAME = re.compile(r"[^./\\\x00][^/\\\x00]*\.d2[si]")
 COMPANIONS = (".ctl", ".key", ".ma0", ".map")  # a character's other files, copied from the template for new mules
 
 
+class BadRequest(ValueError):
+    """Not written: the page asked for something it never sends (a 400, not the server's own failure)."""
+
+
+# A TRASH mule of any mode, as trashMules in src/lib/organize.js: all a clean may delete
+TRASH_NAME = re.compile(r"H?[LC]?TRASH-[A-Z]+", re.I)
+
+
 class SavesChanged(Exception):
     """Not written: the saves are not the ones the page organized (the game saved since, or another write ran)."""
 
@@ -183,7 +191,10 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, re
             if not SAVE_NAME.fullmatch(name + ".d2s") or any(f["name"] == name + ".d2s" for f in files):
                 raise ValueError(f"not a character to delete: {name}")
         if reason not in ("organize", "clean"):
-            raise ValueError(f"not a reason: {reason}")
+            raise BadRequest(f"not a reason: {reason}")
+        # A clean only deletes TRASH mules: the label a backup gets must not hide that other saves changed
+        if reason == "clean" and (files or not all(TRASH_NAME.fullmatch(name) for name in delete)):
+            raise BadRequest("a clean only deletes TRASH mules")
         for name in mules:
             if not SAVE_NAME.fullmatch(name + ".d2s"):
                 raise ValueError(f"not a mule name: {name}")
@@ -582,6 +593,8 @@ class Handler(SimpleHTTPRequestHandler):
             result, status = {"error": str(e), "running": True}, 409
         except SavesChanged as e:
             result, status = {"error": str(e), "changed": True}, 409
+        except BadRequest as e:
+            result, status = {"error": str(e)}, 400
         except Exception as e:
             result, status = {"error": str(e)}, 500
         data = json.dumps(result).encode()

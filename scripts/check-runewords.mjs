@@ -8,11 +8,12 @@ import { createServer } from "vite";
 const dir = process.argv[2];
 const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
 try {
-  const { GROUPS, fits, runewordOptions } = await vite.ssrLoadModule("/src/lib/runewordMaker.js");
+  const { GROUPS, fitOf, maxSocketsOf, runewordOptions } = await vite.ssrLoadModule("/src/lib/runewordMaker.js");
   const { runewords, labelOf } = await vite.ssrLoadModule("/src/lib/gameData.js");
   const { ownersOf } = await vite.ssrLoadModule("/src/lib/inventory.js");
   const rw = (en) => runewords.find((w) => w.en === en);
-  const base = (code, more) => ({ key: `b:${code}:Normal`, code, quality: "Normal", sockets: 4, filled: 0, place: "stash", owner: "M", count: 1, ...more });
+  const fits = (w, r) => fitOf(w, r) === "ready";
+  const base = (code, more) => ({ key: `b:${code}:Normal`, code, quality: "Normal", ilvl: 85, sockets: 4, filled: 0, place: "stash", owner: "M", count: 1, ...more });
   const rune = (code, more) => ({ key: `r:${code}`, code, quality: "Normal", sockets: 0, filled: 0, place: "stash", owner: "M", count: 1, ...more });
   const spirit = rw("Spirit"); // Tal Thul Ort Amn, swords and shields
 
@@ -24,6 +25,20 @@ try {
   assert.ok(!fits(spirit, base("crs", { filled: undefined })), "saves read before filled was kept");
   assert.ok(!fits(rw("Insight"), base("crs")) && fits(rw("Insight"), base("7wc")), "Insight: polearms, not swords");
   assert.ok(fits(rw("Enigma"), base("uar", { sockets: 3 })) && !fits(rw("Enigma"), base("uap", { sockets: 3 })), "Enigma: body armor, not helms");
+
+  // Larzuk: min(base gemsockets, type's limit for the ilvl band); Cryptic Axe has 5, polearms 3/4/6 by ilvl 25/40
+  assert.deepEqual([10, 25, 26, 40, 41, 81].map((ilvl) => maxSocketsOf("7pa", ilvl)), [3, 3, 4, 4, 5, 5]);
+  const cryptic = base("7pa", { ilvl: 81, sockets: 0 });
+  assert.equal(fitOf(rw("Insight"), cryptic), "cube", "ilvl 81 Cryptic Axe gets 5 from Larzuk: Insight only by the cube's roll");
+  assert.equal(fitOf(rw("Doom"), cryptic), "larzuk", "but fits a 5 rune polearm runeword");
+  assert.equal(fitOf(rw("Insight"), base("7pa", { ilvl: 30, sockets: 0 })), "larzuk", "ilvl 26-40: Larzuk gives 4");
+  assert.equal(fitOf(rw("Insight"), base("7pa", { sockets: 5 })), null, "5 sockets don't take 4 runes");
+  assert.equal(fitOf(rw("Lore"), base("uap", { sockets: 0 })), "larzuk", "Shako: its own 2 caps helms' 3");
+  // Crystal Sword gets 6 from Larzuk: Spirit's 4 only by the cube's random roll, and only on a normal one
+  assert.equal(fitOf(rw("Spirit"), base("crs", { sockets: 0 })), "cube");
+  assert.equal(fitOf(rw("Spirit"), base("crs", { sockets: 0, quality: "Superior" })), null);
+  assert.equal(fitOf(rw("Spirit"), base("crs", { sockets: 0, ilvl: undefined })), null, "saves read before ilvl was kept");
+  assert.equal(fitOf(rw("Doom"), base("uap", { sockets: 0 })), null, "a helm can't roll 5");
 
   const option = (en, records) => runewordOptions(records).find((o) => o.w === rw(en));
   const tal = ["r07", "r10", "r09", "r11"].map((c) => rune(c));
@@ -51,7 +66,9 @@ try {
       for (const [group, test] of Object.entries(GROUPS)) {
         const lines = options.filter(test).map((o) => {
           const missing = o.recipe.filter((x) => x.have < x.need).map((x) => `${x.code}×${x.need - x.have}`);
-          const bases = o.bases.map((r) => `${labelOf(r.key, "en")}${r.ethereal ? " (eth)" : ""} @ ${r.owner}/${r.place}`);
+          const bases = Object.entries(o.bases).flatMap(([kind, list]) =>
+            list.map((r) => `${labelOf(r.key, "en")}${r.ethereal ? " (eth)" : ""} @ ${r.owner}/${r.place}${kind === "ready" ? "" : ` [${kind}]`}`),
+          );
           return `    ${o.w.en}${missing.length ? ` missing ${missing}` : ""}${bases.length ? `: ${bases.join(", ")}` : ""}`;
         });
         console.log(`  ${group} ${lines.length}`);

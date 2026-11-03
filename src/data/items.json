@@ -9,6 +9,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/cap_hat",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "skp": {
@@ -21,6 +22,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/skull_cap",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "hlm": {
@@ -33,6 +35,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/helm",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "fhl": {
@@ -45,6 +48,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/full_helm",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "ghm": {
@@ -57,6 +61,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/great_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "crn": {
@@ -69,6 +74,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/crown",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "msk": {
@@ -81,6 +87,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/mask",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "qui": {
@@ -93,6 +100,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/quilted_armor",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "lea": {
@@ -105,6 +113,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/leather_armor",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "hla": {
@@ -117,6 +126,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/hard_leather_armor",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "stu": {
@@ -129,6 +139,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/studded_leather",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "rng": {
@@ -141,6 +152,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/ring_mail",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "scl": {
@@ -153,6 +165,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/scale_mail",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "chn": {
@@ -165,6 +178,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/chain_mail",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "brs": {
@@ -177,6 +191,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/breast_plate",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "spl": {
@@ -189,6 +204,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/splint_mail",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "plt": {
@@ -201,6 +217,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/plate_mail",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "fld": {
@@ -213,6 +230,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/field_plate",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "gth": {
@@ -225,6 +243,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/gothic_plate",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "ful": {
@@ -237,6 +256,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/full_plate_mail",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "aar": {
@@ -249,6 +269,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/ancient_armor",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "ltp": {
@@ -261,6 +282,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/light_plate",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "buc": {
@@ -274,6 +296,7 @@
     "h": 2,
     "img": "shield/buckler",
     "starter": true,
+    "maxSockets": 1,
     "gemSlot": "shield"
   },
   "sml": {
@@ -286,6 +309,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/small_shield",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "lrg": {
@@ -298,6 +322,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/large_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "kit": {
@@ -310,6 +335,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/kite_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "tow": {
@@ -322,6 +348,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/tower_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "gts": {
@@ -334,6 +361,7 @@
     "w": 2,
     "h": 4,
     "img": "shield/gothic_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "lgl": {
@@ -526,6 +554,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/bone_helm",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "bsh": {
@@ -538,6 +567,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/bone_shield",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "spk": {
@@ -550,6 +580,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/spiked_shield",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "xap": {
@@ -562,6 +593,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/cap_hat",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "xkp": {
@@ -574,6 +606,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/skull_cap",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "xlm": {
@@ -586,6 +619,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/helm",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "xhl": {
@@ -598,6 +632,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/full_helm",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "xhm": {
@@ -610,6 +645,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/great_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xrn": {
@@ -622,6 +658,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/crown",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xsk": {
@@ -634,6 +671,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/mask",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xui": {
@@ -646,6 +684,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/quilted_armor",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "xea": {
@@ -658,6 +697,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/leather_armor",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "xla": {
@@ -670,6 +710,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/hard_leather_armor",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "xtu": {
@@ -682,6 +723,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/studded_leather",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "xng": {
@@ -694,6 +736,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/ring_mail",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xcl": {
@@ -706,6 +749,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/scale_mail",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xhn": {
@@ -718,6 +762,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/chain_mail",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xrs": {
@@ -730,6 +775,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/breast_plate",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xpl": {
@@ -742,6 +788,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/splint_mail",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xlt": {
@@ -754,6 +801,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/plate_mail",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xld": {
@@ -766,6 +814,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/field_plate",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xth": {
@@ -778,6 +827,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/gothic_plate",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "xul": {
@@ -790,6 +840,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/full_plate_mail",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "xar": {
@@ -802,6 +853,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/ancient_armor",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "xtp": {
@@ -814,6 +866,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/light_plate",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "xuc": {
@@ -826,6 +879,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/buckler",
+    "maxSockets": 1,
     "gemSlot": "shield"
   },
   "xml": {
@@ -838,6 +892,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/small_shield",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "xrg": {
@@ -850,6 +905,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/large_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "xit": {
@@ -862,6 +918,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/kite_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "xow": {
@@ -874,6 +931,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/tower_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "xts": {
@@ -886,6 +944,7 @@
     "w": 2,
     "h": 4,
     "img": "shield/gothic_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "xlg": {
@@ -1078,6 +1137,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/bone_helm",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "xsh": {
@@ -1090,6 +1150,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/bone_shield",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "xpk": {
@@ -1102,6 +1163,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/spiked_shield",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "dr1": {
@@ -1114,6 +1176,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/wolf_head",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "dr2": {
@@ -1126,6 +1189,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/hawk_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "dr3": {
@@ -1138,6 +1202,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/antlers",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "dr4": {
@@ -1150,6 +1215,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/falcon_mask",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "dr5": {
@@ -1162,6 +1228,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/spirit_mask",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ba1": {
@@ -1174,6 +1241,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/jawbone_cap",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ba2": {
@@ -1186,6 +1254,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/fanged_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ba3": {
@@ -1198,6 +1267,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/horned_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ba4": {
@@ -1210,6 +1280,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/assault_helmet",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ba5": {
@@ -1222,6 +1293,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/avenger_guard",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "pa1": {
@@ -1234,6 +1306,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/targe",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "pa2": {
@@ -1246,6 +1319,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/rondache",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "pa3": {
@@ -1258,6 +1332,7 @@
     "w": 2,
     "h": 4,
     "img": "shield/heraldic_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "pa4": {
@@ -1270,6 +1345,7 @@
     "w": 2,
     "h": 4,
     "img": "shield/aerin_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "pa5": {
@@ -1282,6 +1358,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/crown_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "ne1": {
@@ -1294,6 +1371,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/preserved_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "ne2": {
@@ -1306,6 +1384,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/zombie_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "ne3": {
@@ -1318,6 +1397,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/unraveller_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "ne4": {
@@ -1330,6 +1410,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/gargoyle_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "ne5": {
@@ -1342,6 +1423,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/demon_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "ci0": {
@@ -1354,6 +1436,7 @@
     "w": 2,
     "h": 2,
     "img": "circlet/circlet",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "ci1": {
@@ -1366,6 +1449,7 @@
     "w": 2,
     "h": 2,
     "img": "circlet/coronet",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "ci2": {
@@ -1378,6 +1462,7 @@
     "w": 2,
     "h": 2,
     "img": "circlet/tiara",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ci3": {
@@ -1390,6 +1475,7 @@
     "w": 2,
     "h": 2,
     "img": "circlet/diadem",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "uap": {
@@ -1402,6 +1488,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/cap_hat",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "ukp": {
@@ -1414,6 +1501,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/skull_cap",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "ulm": {
@@ -1426,6 +1514,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/helm",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "uhl": {
@@ -1438,6 +1527,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/full_helm",
+    "maxSockets": 2,
     "gemSlot": "helm"
   },
   "uhm": {
@@ -1450,6 +1540,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/great_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "urn": {
@@ -1462,6 +1553,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/crown",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "usk": {
@@ -1474,6 +1566,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/mask",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "uui": {
@@ -1486,6 +1579,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/quilted_armor",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "uea": {
@@ -1498,6 +1592,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/leather_armor",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "ula": {
@@ -1510,6 +1605,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/hard_leather_armor",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "utu": {
@@ -1522,6 +1618,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/studded_leather",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "ung": {
@@ -1534,6 +1631,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/ring_mail",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "ucl": {
@@ -1546,6 +1644,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/scale_mail",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "uhn": {
@@ -1558,6 +1657,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/chain_mail",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "urs": {
@@ -1570,6 +1670,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/breast_plate",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "upl": {
@@ -1582,6 +1683,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/splint_mail",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "ult": {
@@ -1594,6 +1696,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/plate_mail",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "uld": {
@@ -1606,6 +1709,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/field_plate",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "uth": {
@@ -1618,6 +1722,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/gothic_plate",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "uul": {
@@ -1630,6 +1735,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/full_plate_mail",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "uar": {
@@ -1642,6 +1748,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/ancient_armor",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "utp": {
@@ -1654,6 +1761,7 @@
     "w": 2,
     "h": 3,
     "img": "armor/light_plate",
+    "maxSockets": 4,
     "gemSlot": "helm"
   },
   "uuc": {
@@ -1666,6 +1774,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/buckler",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "uml": {
@@ -1678,6 +1787,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/small_shield",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "urg": {
@@ -1690,6 +1800,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/large_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "uit": {
@@ -1702,6 +1813,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/kite_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "uow": {
@@ -1714,6 +1826,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/tower_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "uts": {
@@ -1726,6 +1839,7 @@
     "w": 2,
     "h": 4,
     "img": "shield/gothic_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "ulg": {
@@ -1918,6 +2032,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/bone_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ush": {
@@ -1930,6 +2045,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/bone_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "upk": {
@@ -1942,6 +2058,7 @@
     "w": 2,
     "h": 3,
     "img": "shield/spiked_shield",
+    "maxSockets": 3,
     "gemSlot": "shield"
   },
   "dr6": {
@@ -1954,6 +2071,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/wolf_head",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "dr7": {
@@ -1966,6 +2084,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/hawk_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "dr8": {
@@ -1978,6 +2097,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/antlers",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "dr9": {
@@ -1990,6 +2110,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/falcon_mask",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "dra": {
@@ -2002,6 +2123,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/spirit_mask",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ba6": {
@@ -2014,6 +2136,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/jawbone_cap",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ba7": {
@@ -2026,6 +2149,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/fanged_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ba8": {
@@ -2038,6 +2162,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/horned_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "ba9": {
@@ -2050,6 +2175,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/assault_helmet",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "baa": {
@@ -2062,6 +2188,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/avenger_guard",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "pa6": {
@@ -2074,6 +2201,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/targe",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "pa7": {
@@ -2086,6 +2214,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/rondache",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "pa8": {
@@ -2098,6 +2227,7 @@
     "w": 2,
     "h": 4,
     "img": "shield/heraldic_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "pa9": {
@@ -2110,6 +2240,7 @@
     "w": 2,
     "h": 4,
     "img": "shield/aerin_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "paa": {
@@ -2122,6 +2253,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/crown_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "ne6": {
@@ -2134,6 +2266,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/preserved_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "ne7": {
@@ -2146,6 +2279,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/zombie_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "ne8": {
@@ -2158,6 +2292,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/unraveller_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "ne9": {
@@ -2170,6 +2305,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/gargoyle_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "nea": {
@@ -2182,6 +2318,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/demon_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "drb": {
@@ -2194,6 +2331,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/wolf_head",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "drc": {
@@ -2206,6 +2344,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/hawk_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "drd": {
@@ -2218,6 +2357,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/antlers",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "dre": {
@@ -2230,6 +2370,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/falcon_mask",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "drf": {
@@ -2242,6 +2383,7 @@
     "w": 2,
     "h": 2,
     "img": "pelt/spirit_mask",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "bab": {
@@ -2254,6 +2396,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/jawbone_cap",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "bac": {
@@ -2266,6 +2409,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/fanged_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "bad": {
@@ -2278,6 +2422,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/horned_helm",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "bae": {
@@ -2290,6 +2435,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/assault_helmet",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "baf": {
@@ -2302,6 +2448,7 @@
     "w": 2,
     "h": 2,
     "img": "helmet/avenger_guard",
+    "maxSockets": 3,
     "gemSlot": "helm"
   },
   "pab": {
@@ -2314,6 +2461,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/targe",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "pac": {
@@ -2326,6 +2474,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/rondache",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "pad": {
@@ -2338,6 +2487,7 @@
     "w": 2,
     "h": 4,
     "img": "shield/heraldic_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "pae": {
@@ -2350,6 +2500,7 @@
     "w": 2,
     "h": 4,
     "img": "shield/aerin_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "paf": {
@@ -2362,6 +2513,7 @@
     "w": 2,
     "h": 2,
     "img": "shield/crown_shield",
+    "maxSockets": 4,
     "gemSlot": "shield"
   },
   "neb": {
@@ -2374,6 +2526,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/preserved_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "neg": {
@@ -2386,6 +2539,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/zombie_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "ned": {
@@ -2398,6 +2552,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/unraveller_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "nee": {
@@ -2410,6 +2565,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/gargoyle_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "nef": {
@@ -2422,6 +2578,7 @@
     "w": 2,
     "h": 2,
     "img": "voodoo_head/demon_head",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wa1": {
@@ -2434,6 +2591,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/oldbook",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wa2": {
@@ -2446,6 +2604,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/tome_book",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wa3": {
@@ -2458,6 +2617,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/codex",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wa4": {
@@ -2470,6 +2630,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/compendium",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wa5": {
@@ -2482,6 +2643,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/grimoire",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wa6": {
@@ -2494,6 +2656,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/oldbook",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wa7": {
@@ -2506,6 +2669,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/tome_book",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wa8": {
@@ -2518,6 +2682,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/codex",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wa9": {
@@ -2530,6 +2695,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/compendium",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "waa": {
@@ -2542,6 +2708,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/grimoire",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wab": {
@@ -2554,6 +2721,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/oldbook",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wac": {
@@ -2566,6 +2734,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/tome_book",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wad": {
@@ -2578,6 +2747,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/codex",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "wae": {
@@ -2590,6 +2760,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/compendium",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "waf": {
@@ -2602,6 +2773,7 @@
     "w": 2,
     "h": 2,
     "img": "grimoires/grimoire",
+    "maxSockets": 2,
     "gemSlot": "shield"
   },
   "hax": {
@@ -2615,6 +2787,7 @@
     "h": 3,
     "img": "axe/hand_axe",
     "starter": true,
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "axe": {
@@ -2627,6 +2800,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/axe",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "2ax": {
@@ -2639,6 +2813,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/double_axe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "mpi": {
@@ -2651,6 +2826,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/military_pick",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "wax": {
@@ -2663,6 +2839,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/war_axe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "lax": {
@@ -2675,6 +2852,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/large_axe",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "bax": {
@@ -2687,6 +2865,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/broad_axe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "btx": {
@@ -2699,6 +2878,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/battle_axe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "gax": {
@@ -2711,6 +2891,7 @@
     "w": 2,
     "h": 4,
     "img": "axe/great_axe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "gix": {
@@ -2723,6 +2904,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/giant_axe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "wnd": {
@@ -2736,6 +2918,7 @@
     "h": 2,
     "img": "wand/wand",
     "starter": true,
+    "maxSockets": 1,
     "gemSlot": "weapon"
   },
   "ywn": {
@@ -2748,6 +2931,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/yew_wand",
+    "maxSockets": 1,
     "gemSlot": "weapon"
   },
   "bwn": {
@@ -2760,6 +2944,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/bone_wand",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "gwn": {
@@ -2772,6 +2957,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/grim_wand",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "clb": {
@@ -2785,6 +2971,7 @@
     "h": 3,
     "img": "club/club",
     "starter": true,
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "scp": {
@@ -2797,6 +2984,7 @@
     "w": 1,
     "h": 3,
     "img": "scepter/scepter",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "gsc": {
@@ -2809,6 +2997,7 @@
     "w": 1,
     "h": 3,
     "img": "scepter/grand_scepter",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "wsp": {
@@ -2821,6 +3010,7 @@
     "w": 2,
     "h": 3,
     "img": "scepter/war_scepter",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "spc": {
@@ -2833,6 +3023,7 @@
     "w": 1,
     "h": 3,
     "img": "club/spiked_club",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "mac": {
@@ -2845,6 +3036,7 @@
     "w": 1,
     "h": 3,
     "img": "mace/mace",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "mst": {
@@ -2857,6 +3049,7 @@
     "w": 1,
     "h": 3,
     "img": "mace/morning_star",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "fla": {
@@ -2869,6 +3062,7 @@
     "w": 2,
     "h": 3,
     "img": "mace/flail",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "whm": {
@@ -2881,6 +3075,7 @@
     "w": 2,
     "h": 3,
     "img": "hammer/war_hammer",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "mau": {
@@ -2893,6 +3088,7 @@
     "w": 2,
     "h": 4,
     "img": "hammer/maul",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "gma": {
@@ -2905,6 +3101,7 @@
     "w": 2,
     "h": 3,
     "img": "hammer/great_maul",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "ssd": {
@@ -2918,6 +3115,7 @@
     "h": 3,
     "img": "sword/short_sword",
     "starter": true,
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "scm": {
@@ -2930,6 +3128,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/scimitar",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "sbr": {
@@ -2942,6 +3141,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/saber",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "flc": {
@@ -2954,6 +3154,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/falchion",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "crs": {
@@ -2966,6 +3167,7 @@
     "w": 2,
     "h": 3,
     "img": "sword/crystal_sword",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "bsd": {
@@ -2978,6 +3180,7 @@
     "w": 2,
     "h": 3,
     "img": "sword/broad_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "lsd": {
@@ -2990,6 +3193,7 @@
     "w": 2,
     "h": 3,
     "img": "sword/long_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "wsd": {
@@ -3002,6 +3206,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/war_sword",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "2hs": {
@@ -3014,6 +3219,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/two_handed_sword",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "clm": {
@@ -3026,6 +3232,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/claymore",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "gis": {
@@ -3038,6 +3245,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/giant_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "bsw": {
@@ -3050,6 +3258,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/bastard_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "flb": {
@@ -3062,6 +3271,7 @@
     "w": 2,
     "h": 4,
     "img": "sword/flamberge",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "gsd": {
@@ -3074,6 +3284,7 @@
     "w": 2,
     "h": 4,
     "img": "sword/great_sword",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "dgr": {
@@ -3087,6 +3298,7 @@
     "h": 2,
     "img": "knife/dagger",
     "starter": true,
+    "maxSockets": 1,
     "gemSlot": "weapon"
   },
   "dir": {
@@ -3099,6 +3311,7 @@
     "w": 1,
     "h": 2,
     "img": "knife/dirk",
+    "maxSockets": 1,
     "gemSlot": "weapon"
   },
   "kri": {
@@ -3111,6 +3324,7 @@
     "w": 1,
     "h": 3,
     "img": "knife/kriss",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "bld": {
@@ -3123,6 +3337,7 @@
     "w": 1,
     "h": 3,
     "img": "knife/blade",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "tkf": {
@@ -3244,6 +3459,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/spear",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "tri": {
@@ -3256,6 +3472,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/trident",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "brn": {
@@ -3268,6 +3485,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/brandistock",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "spt": {
@@ -3280,6 +3498,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/spetum",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "pik": {
@@ -3292,6 +3511,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/pike",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "bar": {
@@ -3304,6 +3524,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/bardiche",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "vou": {
@@ -3316,6 +3537,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/voulge",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "scy": {
@@ -3328,6 +3550,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/scythe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "pax": {
@@ -3340,6 +3563,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/poleaxe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "hal": {
@@ -3352,6 +3576,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/halberd",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "wsc": {
@@ -3364,6 +3589,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/war_scythe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "sst": {
@@ -3377,6 +3603,7 @@
     "h": 3,
     "img": "staff/short_staff",
     "starter": true,
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "lst": {
@@ -3389,6 +3616,7 @@
     "w": 1,
     "h": 4,
     "img": "staff/long_staff",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "cst": {
@@ -3401,6 +3629,7 @@
     "w": 1,
     "h": 4,
     "img": "staff/gnarled_staff",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "bst": {
@@ -3413,6 +3642,7 @@
     "w": 1,
     "h": 4,
     "img": "staff/battle_staff",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "wst": {
@@ -3425,6 +3655,7 @@
     "w": 2,
     "h": 4,
     "img": "staff/war_staff",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "sbw": {
@@ -3437,6 +3668,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/short_bow",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "hbw": {
@@ -3449,6 +3681,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/hunters_bow",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "lbw": {
@@ -3461,6 +3694,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/long_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "cbw": {
@@ -3473,6 +3707,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/composite_bow",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "sbb": {
@@ -3485,6 +3720,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/short_battle_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "lbb": {
@@ -3497,6 +3733,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/long_battle_bow",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "swb": {
@@ -3509,6 +3746,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/short_war_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "lwb": {
@@ -3521,6 +3759,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/long_war_bow",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "lxb": {
@@ -3533,6 +3772,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/light_crossbow",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "mxb": {
@@ -3545,6 +3785,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/crossbow",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "hxb": {
@@ -3557,6 +3798,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/heavy_crossbow",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "rxb": {
@@ -3569,6 +3811,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/repeating_crossbow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "gps": {
@@ -3677,6 +3920,7 @@
     "w": 1,
     "h": 3,
     "img": "club/wirts_leg",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "hdm": {
@@ -3701,6 +3945,7 @@
     "w": 2,
     "h": 3,
     "img": "hammer/hellforge_hammer",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "hst": {
@@ -3737,6 +3982,7 @@
     "w": 1,
     "h": 3,
     "img": "axe/hand_axe",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9ax": {
@@ -3749,6 +3995,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/axe",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "92a": {
@@ -3761,6 +4008,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/double_axe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "9mp": {
@@ -3773,6 +4021,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/military_pick",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9wa": {
@@ -3785,6 +4034,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/war_axe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9la": {
@@ -3797,6 +4047,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/large_axe",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "9ba": {
@@ -3809,6 +4060,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/broad_axe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "9bt": {
@@ -3821,6 +4073,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/battle_axe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "9ga": {
@@ -3833,6 +4086,7 @@
     "w": 2,
     "h": 4,
     "img": "axe/great_axe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9gi": {
@@ -3845,6 +4099,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/giant_axe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9wn": {
@@ -3857,6 +4112,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/wand",
+    "maxSockets": 1,
     "gemSlot": "weapon"
   },
   "9yw": {
@@ -3869,6 +4125,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/yew_wand",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9bw": {
@@ -3881,6 +4138,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/bone_wand",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9gw": {
@@ -3893,6 +4151,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/grim_wand",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9cl": {
@@ -3905,6 +4164,7 @@
     "w": 1,
     "h": 3,
     "img": "club/club",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9sc": {
@@ -3917,6 +4177,7 @@
     "w": 1,
     "h": 3,
     "img": "scepter/scepter",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9qs": {
@@ -3929,6 +4190,7 @@
     "w": 1,
     "h": 3,
     "img": "scepter/grand_scepter",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9ws": {
@@ -3941,6 +4203,7 @@
     "w": 2,
     "h": 3,
     "img": "scepter/war_scepter",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "9sp": {
@@ -3953,6 +4216,7 @@
     "w": 1,
     "h": 3,
     "img": "club/spiked_club",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9ma": {
@@ -3965,6 +4229,7 @@
     "w": 1,
     "h": 3,
     "img": "mace/mace",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9mt": {
@@ -3977,6 +4242,7 @@
     "w": 1,
     "h": 3,
     "img": "mace/morning_star",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9fl": {
@@ -3989,6 +4255,7 @@
     "w": 2,
     "h": 3,
     "img": "mace/flail",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "9wh": {
@@ -4001,6 +4268,7 @@
     "w": 2,
     "h": 3,
     "img": "hammer/war_hammer",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "9m9": {
@@ -4013,6 +4281,7 @@
     "w": 2,
     "h": 4,
     "img": "hammer/maul",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9gm": {
@@ -4025,6 +4294,7 @@
     "w": 2,
     "h": 3,
     "img": "hammer/great_maul",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9ss": {
@@ -4037,6 +4307,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/short_sword",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9sm": {
@@ -4049,6 +4320,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/scimitar",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9sb": {
@@ -4061,6 +4333,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/saber",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9fc": {
@@ -4073,6 +4346,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/falchion",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9cr": {
@@ -4085,6 +4359,7 @@
     "w": 2,
     "h": 3,
     "img": "sword/crystal_sword",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9bs": {
@@ -4097,6 +4372,7 @@
     "w": 2,
     "h": 3,
     "img": "sword/broad_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "9ls": {
@@ -4109,6 +4385,7 @@
     "w": 2,
     "h": 3,
     "img": "sword/long_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "9wd": {
@@ -4121,6 +4398,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/war_sword",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "92h": {
@@ -4133,6 +4411,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/two_handed_sword",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9cm": {
@@ -4145,6 +4424,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/claymore",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "9gs": {
@@ -4157,6 +4437,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/giant_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "9b9": {
@@ -4169,6 +4450,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/bastard_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "9fb": {
@@ -4181,6 +4463,7 @@
     "w": 2,
     "h": 4,
     "img": "sword/flamberge",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "9gd": {
@@ -4193,6 +4476,7 @@
     "w": 2,
     "h": 4,
     "img": "sword/great_sword",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9dg": {
@@ -4205,6 +4489,7 @@
     "w": 1,
     "h": 2,
     "img": "knife/dagger",
+    "maxSockets": 1,
     "gemSlot": "weapon"
   },
   "9di": {
@@ -4217,6 +4502,7 @@
     "w": 1,
     "h": 2,
     "img": "knife/dirk",
+    "maxSockets": 1,
     "gemSlot": "weapon"
   },
   "9kr": {
@@ -4229,6 +4515,7 @@
     "w": 1,
     "h": 3,
     "img": "knife/kriss",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9bl": {
@@ -4241,6 +4528,7 @@
     "w": 1,
     "h": 3,
     "img": "knife/blade",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9tk": {
@@ -4361,6 +4649,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/spear",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9tr": {
@@ -4373,6 +4662,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/trident",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "9br": {
@@ -4385,6 +4675,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/brandistock",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "9st": {
@@ -4397,6 +4688,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/spetum",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9p9": {
@@ -4409,6 +4701,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/pike",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9b7": {
@@ -4421,6 +4714,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/bardiche",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9vo": {
@@ -4433,6 +4727,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/voulge",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "9s8": {
@@ -4445,6 +4740,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/scythe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "9pa": {
@@ -4457,6 +4753,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/poleaxe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "9h9": {
@@ -4469,6 +4766,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/halberd",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "9wc": {
@@ -4481,6 +4779,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/war_scythe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "8ss": {
@@ -4493,6 +4792,7 @@
     "w": 1,
     "h": 3,
     "img": "staff/short_staff",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "8ls": {
@@ -4505,6 +4805,7 @@
     "w": 1,
     "h": 4,
     "img": "staff/long_staff",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "8cs": {
@@ -4517,6 +4818,7 @@
     "w": 1,
     "h": 4,
     "img": "staff/gnarled_staff",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "8bs": {
@@ -4529,6 +4831,7 @@
     "w": 1,
     "h": 4,
     "img": "staff/battle_staff",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "8ws": {
@@ -4541,6 +4844,7 @@
     "w": 2,
     "h": 4,
     "img": "staff/war_staff",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "8sb": {
@@ -4553,6 +4857,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/short_bow",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "8hb": {
@@ -4565,6 +4870,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/hunters_bow",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "8lb": {
@@ -4577,6 +4883,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/long_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "8cb": {
@@ -4589,6 +4896,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/composite_bow",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "8s8": {
@@ -4601,6 +4909,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/short_battle_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "8l8": {
@@ -4613,6 +4922,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/long_battle_bow",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "8sw": {
@@ -4625,6 +4935,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/short_war_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "8lw": {
@@ -4637,6 +4948,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/long_war_bow",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "8lx": {
@@ -4649,6 +4961,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/light_crossbow",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "8mx": {
@@ -4661,6 +4974,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/crossbow",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "8hx": {
@@ -4673,6 +4987,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/heavy_crossbow",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "8rx": {
@@ -4685,6 +5000,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/repeating_crossbow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "qf1": {
@@ -4697,6 +5013,7 @@
     "w": 2,
     "h": 3,
     "img": "mace/khalim_flail",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "qf2": {
@@ -4709,6 +5026,7 @@
     "w": 2,
     "h": 3,
     "img": "mace/super_khalim_flail",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "ktr": {
@@ -4722,6 +5040,7 @@
     "h": 3,
     "img": "h2h/katar",
     "starter": true,
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "wrb": {
@@ -4734,6 +5053,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/katar",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "axf": {
@@ -4746,6 +5066,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/hatchet_hands",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "ces": {
@@ -4758,6 +5079,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/hatchet_hands",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "clw": {
@@ -4770,6 +5092,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/claws",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "btl": {
@@ -4782,6 +5105,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/claws",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "skr": {
@@ -4794,6 +5118,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/scissors_katar",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9ar": {
@@ -4806,6 +5131,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/katar",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9wb": {
@@ -4818,6 +5144,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/katar",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9xf": {
@@ -4830,6 +5157,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/hatchet_hands",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9cs": {
@@ -4842,6 +5170,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/hatchet_hands",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "9lw": {
@@ -4854,6 +5183,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/claws",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9tw": {
@@ -4866,6 +5196,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/claws",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "9qr": {
@@ -4878,6 +5209,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/scissors_katar",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7ar": {
@@ -4890,6 +5222,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/katar",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7wb": {
@@ -4902,6 +5235,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/katar",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7xf": {
@@ -4914,6 +5248,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/hatchet_hands",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7cs": {
@@ -4926,6 +5261,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/hatchet_hands",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7lw": {
@@ -4938,6 +5274,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/claws",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7tw": {
@@ -4950,6 +5287,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/claws",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7qr": {
@@ -4962,6 +5300,7 @@
     "w": 1,
     "h": 3,
     "img": "h2h/scissors_katar",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7ha": {
@@ -4974,6 +5313,7 @@
     "w": 1,
     "h": 3,
     "img": "axe/hand_axe",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7ax": {
@@ -4986,6 +5326,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/axe",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "72a": {
@@ -4998,6 +5339,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/double_axe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "7mp": {
@@ -5010,6 +5352,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/military_pick",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7wa": {
@@ -5022,6 +5365,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/war_axe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7la": {
@@ -5034,6 +5378,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/large_axe",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "7ba": {
@@ -5046,6 +5391,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/broad_axe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "7bt": {
@@ -5058,6 +5404,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/battle_axe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "7ga": {
@@ -5070,6 +5417,7 @@
     "w": 2,
     "h": 4,
     "img": "axe/great_axe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7gi": {
@@ -5082,6 +5430,7 @@
     "w": 2,
     "h": 3,
     "img": "axe/giant_axe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7wn": {
@@ -5094,6 +5443,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/wand",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7yw": {
@@ -5106,6 +5456,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/yew_wand",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7bw": {
@@ -5118,6 +5469,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/bone_wand",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7gw": {
@@ -5130,6 +5482,7 @@
     "w": 1,
     "h": 2,
     "img": "wand/grim_wand",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7cl": {
@@ -5142,6 +5495,7 @@
     "w": 1,
     "h": 3,
     "img": "club/club",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7sc": {
@@ -5154,6 +5508,7 @@
     "w": 1,
     "h": 3,
     "img": "scepter/scepter",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7qs": {
@@ -5166,6 +5521,7 @@
     "w": 1,
     "h": 3,
     "img": "scepter/grand_scepter",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7ws": {
@@ -5178,6 +5534,7 @@
     "w": 2,
     "h": 3,
     "img": "scepter/war_scepter",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "7sp": {
@@ -5190,6 +5547,7 @@
     "w": 1,
     "h": 3,
     "img": "club/spiked_club",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7ma": {
@@ -5202,6 +5560,7 @@
     "w": 1,
     "h": 3,
     "img": "mace/mace",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7mt": {
@@ -5214,6 +5573,7 @@
     "w": 1,
     "h": 3,
     "img": "mace/morning_star",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7fl": {
@@ -5226,6 +5586,7 @@
     "w": 2,
     "h": 3,
     "img": "mace/flail",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "7wh": {
@@ -5238,6 +5599,7 @@
     "w": 2,
     "h": 3,
     "img": "hammer/war_hammer",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "7m7": {
@@ -5250,6 +5612,7 @@
     "w": 2,
     "h": 4,
     "img": "hammer/maul",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7gm": {
@@ -5262,6 +5625,7 @@
     "w": 2,
     "h": 3,
     "img": "hammer/great_maul",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7ss": {
@@ -5274,6 +5638,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/short_sword",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7sm": {
@@ -5286,6 +5651,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/scimitar",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7sb": {
@@ -5298,6 +5664,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/saber",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7fc": {
@@ -5310,6 +5677,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/falchion",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "7cr": {
@@ -5322,6 +5690,7 @@
     "w": 2,
     "h": 3,
     "img": "sword/crystal_sword",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7bs": {
@@ -5334,6 +5703,7 @@
     "w": 2,
     "h": 3,
     "img": "sword/broad_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "7ls": {
@@ -5346,6 +5716,7 @@
     "w": 2,
     "h": 3,
     "img": "sword/long_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "7wd": {
@@ -5358,6 +5729,7 @@
     "w": 1,
     "h": 3,
     "img": "sword/war_sword",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "72h": {
@@ -5370,6 +5742,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/two_handed_sword",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7cm": {
@@ -5382,6 +5755,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/claymore",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "7gs": {
@@ -5394,6 +5768,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/giant_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "7b7": {
@@ -5406,6 +5781,7 @@
     "w": 1,
     "h": 4,
     "img": "sword/bastard_sword",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "7fb": {
@@ -5418,6 +5794,7 @@
     "w": 2,
     "h": 4,
     "img": "sword/flamberge",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "7gd": {
@@ -5430,6 +5807,7 @@
     "w": 2,
     "h": 4,
     "img": "sword/great_sword",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7dg": {
@@ -5442,6 +5820,7 @@
     "w": 1,
     "h": 2,
     "img": "knife/dagger",
+    "maxSockets": 1,
     "gemSlot": "weapon"
   },
   "7di": {
@@ -5454,6 +5833,7 @@
     "w": 1,
     "h": 2,
     "img": "knife/dirk",
+    "maxSockets": 1,
     "gemSlot": "weapon"
   },
   "7kr": {
@@ -5466,6 +5846,7 @@
     "w": 1,
     "h": 3,
     "img": "knife/kriss",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7bl": {
@@ -5478,6 +5859,7 @@
     "w": 1,
     "h": 3,
     "img": "knife/blade",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7tk": {
@@ -5598,6 +5980,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/spear",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7tr": {
@@ -5610,6 +5993,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/trident",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "7br": {
@@ -5622,6 +6006,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/brandistock",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "7st": {
@@ -5634,6 +6019,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/spetum",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7p7": {
@@ -5646,6 +6032,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/pike",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7o7": {
@@ -5658,6 +6045,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/bardiche",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "7vo": {
@@ -5670,6 +6058,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/voulge",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "7s8": {
@@ -5682,6 +6071,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/scythe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "7pa": {
@@ -5694,6 +6084,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/poleaxe",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "7h7": {
@@ -5706,6 +6097,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/halberd",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "7wc": {
@@ -5718,6 +6110,7 @@
     "w": 2,
     "h": 4,
     "img": "polearm/war_scythe",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "6ss": {
@@ -5730,6 +6123,7 @@
     "w": 1,
     "h": 3,
     "img": "staff/short_staff",
+    "maxSockets": 2,
     "gemSlot": "weapon"
   },
   "6ls": {
@@ -5742,6 +6136,7 @@
     "w": 1,
     "h": 4,
     "img": "staff/long_staff",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "6cs": {
@@ -5754,6 +6149,7 @@
     "w": 1,
     "h": 4,
     "img": "staff/gnarled_staff",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "6bs": {
@@ -5766,6 +6162,7 @@
     "w": 1,
     "h": 4,
     "img": "staff/battle_staff",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "6ws": {
@@ -5778,6 +6175,7 @@
     "w": 2,
     "h": 4,
     "img": "staff/war_staff",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "6sb": {
@@ -5790,6 +6188,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/short_bow",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "6hb": {
@@ -5802,6 +6201,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/hunters_bow",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "6lb": {
@@ -5814,6 +6214,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/long_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "6cb": {
@@ -5826,6 +6227,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/composite_bow",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "6s7": {
@@ -5838,6 +6240,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/short_battle_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "6l7": {
@@ -5850,6 +6253,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/long_battle_bow",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "6sw": {
@@ -5862,6 +6266,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/short_war_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "6lw": {
@@ -5874,6 +6279,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/long_war_bow",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "6lx": {
@@ -5886,6 +6292,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/light_crossbow",
+    "maxSockets": 3,
     "gemSlot": "weapon"
   },
   "6mx": {
@@ -5898,6 +6305,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/crossbow",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "6hx": {
@@ -5910,6 +6318,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/heavy_crossbow",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "6rx": {
@@ -5922,6 +6331,7 @@
     "w": 2,
     "h": 3,
     "img": "bow/repeating_crossbow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "ob1": {
@@ -5934,6 +6344,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/eagle_orb",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "ob2": {
@@ -5946,6 +6357,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/sacred_globe",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "ob3": {
@@ -5958,6 +6370,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/smoked_sphere",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "ob4": {
@@ -5970,6 +6383,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/clasped_orb",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "ob5": {
@@ -5982,6 +6396,7 @@
     "w": 1,
     "h": 3,
     "img": "orb/dragon_stone",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "am1": {
@@ -5994,6 +6409,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/stag_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "am2": {
@@ -6006,6 +6422,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/reflex_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "am3": {
@@ -6018,6 +6435,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/maiden_spear",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "am4": {
@@ -6030,6 +6448,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/maiden_pike",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "am5": {
@@ -6054,6 +6473,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/eagle_orb",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "ob7": {
@@ -6066,6 +6486,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/sacred_globe",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "ob8": {
@@ -6078,6 +6499,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/smoked_sphere",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "ob9": {
@@ -6090,6 +6512,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/clasped_orb",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "oba": {
@@ -6102,6 +6525,7 @@
     "w": 1,
     "h": 3,
     "img": "orb/dragon_stone",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "am6": {
@@ -6114,6 +6538,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/stag_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "am7": {
@@ -6126,6 +6551,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/reflex_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "am8": {
@@ -6138,6 +6564,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/maiden_spear",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "am9": {
@@ -6150,6 +6577,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/maiden_pike",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "ama": {
@@ -6174,6 +6602,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/eagle_orb",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "obc": {
@@ -6186,6 +6615,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/sacred_globe",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "obd": {
@@ -6198,6 +6628,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/smoked_sphere",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "obe": {
@@ -6210,6 +6641,7 @@
     "w": 1,
     "h": 2,
     "img": "orb/clasped_orb",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "obf": {
@@ -6222,6 +6654,7 @@
     "w": 1,
     "h": 3,
     "img": "orb/dragon_stone",
+    "maxSockets": 4,
     "gemSlot": "weapon"
   },
   "amb": {
@@ -6234,6 +6667,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/stag_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "amc": {
@@ -6246,6 +6680,7 @@
     "w": 2,
     "h": 4,
     "img": "bow/reflex_bow",
+    "maxSockets": 5,
     "gemSlot": "weapon"
   },
   "amd": {
@@ -6258,6 +6693,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/maiden_spear",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "ame": {
@@ -6270,6 +6706,7 @@
     "w": 2,
     "h": 4,
     "img": "spear/maiden_pike",
+    "maxSockets": 6,
     "gemSlot": "weapon"
   },
   "amf": {

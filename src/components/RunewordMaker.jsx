@@ -54,7 +54,7 @@ export default function RunewordMaker({ saveData, lang }) {
   );
 }
 
-// "Spirit  Tal 1/1 + Thul 0/1 + Ort 2/1 + Amn 1/1", the runes short, and where the fitting bases are
+// "Spirit  Tal 1/1 + Thul 0/1 + Ort 2/1 + Amn 1/1", the runes short, and where the fitting bases are (src/lib/runewordMaker.js fitOf)
 function Option({ option: { w, recipe, short, bases }, lang }) {
   const missing = recipe.filter((x) => x.have < x.need).map((x) => `${labelOf(`r:${x.code}`, lang)}${x.need - x.have > 1 ? ` ×${x.need - x.have}` : ""}`);
   return (
@@ -69,14 +69,18 @@ function Option({ option: { w, recipe, short, bases }, lang }) {
         ))}
       </div>
       {short > 0 && <div className="text-sm text-red-400 pl-4">{t("rwMissing", lang, missing.join(t("listSeparator", lang)))}</div>}
-      {!bases.length && <div className="text-sm gothic-text-muted pl-4">{t("rwNoBase", lang)}</div>}
-      {[...groupByKey(bases)].map(([key, records]) =>
-        locationLines(records, lang).map((l, i) => (
-          <div key={`${key}:${i}`} className="text-sm pl-4">
-            {labelOf(key, lang)} <span className="gothic-text-muted">· {l.text}</span>
-            {l.count > 1 && <span className="gothic-text-gold"> ×{l.count}</span>}
-          </div>
-        )),
+      {!bases.ready.length && !bases.larzuk.length && <div className="text-sm gothic-text-muted pl-4">{t("rwNoBase", lang)}</div>}
+      {/* Ready bases first, then those needing Larzuk's socket, then the cube's random one */}
+      {["ready", "larzuk", "cube"].flatMap((kind) =>
+        [...groupByKey(bases[kind])].flatMap(([key, records]) =>
+          locationLines(records, lang).map((l, i) => (
+            <div key={`${kind}:${key}:${i}`} className="text-sm pl-4">
+              {labelOf(key, lang)} <span className="gothic-text-muted">· {l.text}</span>
+              {l.count > 1 && <span className="gothic-text-gold"> ×{l.count}</span>}
+              {kind !== "ready" && <span className={kind === "cube" ? "gothic-text-muted" : "gothic-text-gold"}> · {t(kind === "cube" ? "rwCube" : "rwLarzuk", lang)}</span>}
+            </div>
+          )),
+        ),
       )}
     </li>
   );

@@ -164,12 +164,13 @@ def _hashes(folder):
     return out
 
 
-def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None):
+def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, reason="organize"):
     """Write organized saves into the save folder: files is [{name, bytes, template?}] from the web app's
     organizeFiles; delete: names of emptied characters the player chose to delete, with their other files;
     mules: every mule after organizing, put below the other characters in D2R's list (_order); expect: the saves
     the page organized ({name: sha256}), checked under the lock so a second write or a game save in between
-    can't be overwritten by a plan made from older saves.
+    can't be overwritten by a plan made from older saves; reason: what the backup is labelled, "clean" when only
+    TRASH mules are deleted.
     The game must not be running. The folder's files are backed up first, each file is written next to its
     target and renamed over it, then read back. Returns the backup folder."""
     with _lock:
@@ -181,12 +182,14 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None):
         for name in delete:
             if not SAVE_NAME.fullmatch(name + ".d2s") or any(f["name"] == name + ".d2s" for f in files):
                 raise ValueError(f"not a character to delete: {name}")
+        if reason not in ("organize", "clean"):
+            raise ValueError(f"not a reason: {reason}")
         for name in mules:
             if not SAVE_NAME.fullmatch(name + ".d2s"):
                 raise ValueError(f"not a mule name: {name}")
         if expect is not None and _hashes(folder) != expect:
             raise SavesChanged("the saves changed since the page read them; nothing was written")
-        backup = _backup(folder, backup_root, {"reason": "organize"})
+        backup = _backup(folder, backup_root, {"reason": reason})
         if game_running():  # started while the backup was copied
             raise GameRunning("D2R is running; quit the game first")
         _mark(backup_root, backup)
@@ -234,7 +237,7 @@ def _order(folder, mules):
 BACKUP_NAME = re.compile(r"\d{8}-\d{6}Z?(-\d+)?")
 # What organizing writes (.tmp: one cut short); not settings or loot filters
 SAVE_FILE = re.compile(r".+\.(d2s|d2i|ctl|key|map|ma\d+)(\.tmp)?")
-ABOUT = ".d2r-backup.json"  # in each backup: {"reason": "organize" | "restore", "from"?: name, "folder", "seq"}
+ABOUT = ".d2r-backup.json"  # in each backup: {"reason": "organize" | "clean" | "restore", "from"?: name, "folder", "seq"}
 PENDING = ".in-progress"  # in the backups folder while a write or restore runs: {"backup": name}
 KEEP = 10  # backups kept per save folder, besides the oldest (the saves before the plugin first wrote)
 _lock = threading.Lock()  # one write, restore or delete at a time
@@ -386,7 +389,7 @@ def _rmtree(path):
 
 def list_backups(backup_root, folder=None):
     """The plugin's backups of a save folder, newest first: [{name, characters, reason?, from?, interrupted?}].
-    reason: why it was made ("organize", "restore"); backups from older plugin versions have none, and are listed
+    reason: why it was made ("organize", "clean", "restore"); backups from older plugin versions have none, and are listed
     for any folder. interrupted: the backup of an operation that was cut off."""
     if not os.path.isdir(backup_root):
         return []
@@ -573,7 +576,7 @@ class Handler(SimpleHTTPRequestHandler):
             else:
                 files = [{**f, "bytes": base64.b64decode(f["data"])} for f in body["files"]]
                 folder = self.save_folder()
-                result = {"backup": write_saves(folder, files, self.backup_dir, body.get("delete", []), body.get("mules", []), body.get("expect"))}
+                result = {"backup": write_saves(folder, files, self.backup_dir, body.get("delete", []), body.get("mules", []), body.get("expect"), body.get("reason", "organize"))}
             status = 200
         except GameRunning as e:
             result, status = {"error": str(e), "running": True}, 409

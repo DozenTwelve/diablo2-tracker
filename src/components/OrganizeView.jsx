@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { codeOfNumber, labelOf } from "../lib/gameData";
+import { codeOfNumber, keyOf, labelOf } from "../lib/gameData";
 import { deckBackups, deckSaveFiles, deleteDeckBackup, onDeck, restoreDeck } from "../lib/deck";
 import { roleOf } from "../lib/inventory";
 import { LOCALES, t } from "../lib/i18n";
 import { SKILL } from "../lib/links";
-import { byMuleName, filesOfCharacter, modeOfCharacter, modeOfStash, muleTimes, organizeFiles } from "../lib/organize";
+import { byMuleName, filesOfCharacter, isJunk, modeOfCharacter, modeOfStash, muleTimes, organizeFiles, trashMules } from "../lib/organize";
 import { loadParser, saveFolder, statsOf } from "../lib/parseSaves";
 import { describeStats } from "../lib/stats";
 import { Link } from "../lib/router";
@@ -46,8 +46,8 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
   const [folder, setFolder] = useState(null); // on the web: the folder organized, as picked
   const [wasm, setWasm] = useState(null);
   const [mode, setMode] = useState(null);
-  // confirm: { name, action: "restore" | "delete" }, a backup button pressed once
-  const [state, setState] = useState({}); // { plan, remove, error, busy, backup, downloaded, readError, confirm, restored, restoreError }
+  // confirm: { name, action: "restore" | "delete", at } a backup button pressed once, or { action: "trash", at }
+  const [state, setState] = useState({}); // { plan, remove, error, busy, backup, downloaded, readError, confirm, restored, restoreError, cleaned, cleanError }
   const [backups, setBackups] = useState([]); // the plugin's backups, on the Deck
   const [backupsOpen, setBackupsOpen] = useState(false); // the player opened the backup list
   const [reads, setReads] = useState(0); // bumped to read the files again
@@ -69,7 +69,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
       setFiles(loaded);
       setWasm(parser);
       // Read again after writing or because the saves changed: keep saying where the backup is, and why
-      setState((s) => ({ backup: s.backup, restored: s.restored, error: s.changed ? s.error : undefined }));
+      setState((s) => ({ backup: s.backup, restored: s.restored, cleaned: s.cleaned, error: s.changed ? s.error : undefined, cleanError: s.changed ? s.cleanError : undefined }));
     }, (e) => current && setState({ readError: e.message ?? String(e) }));
     if (onDeck) deckBackups().then(setBackups, () => setBackups([]));
     return () => (current = false);
@@ -95,7 +95,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
         try {
           if (/\.d2s$/i.test(name)) {
             const json = JSON.parse(wasm.parseD2s(bytes));
-            return { name: name.slice(0, -4), mode: modeOfCharacter(json), level: json.character.level };
+            return { name: name.slice(0, -4), ext: "d2s", json, mode: modeOfCharacter(json), level: json.character.level };
           }
           const pages = JSON.parse(wasm.parseD2i(bytes)).flatMap((tab, i) =>
             tab.tab_type === "Normal" ? [{ page: i + 1, items: tab.items.length }] : [],
@@ -267,6 +267,33 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
       deckBackups().then(setBackups, () => {});
     }
   };
+  // Delete this mode's TRASH mules, items and all, through the organize write with nothing to write: the plugin
+  // backs up the folder first (a restore brings them back), and writes only if the saves are still these
+  const cleanTrash = async () => {
+    setState({ ...state, busy: true });
+    const again = () => (setReads(reads + 1), setState({ cleanError: t("trashChanged", lang), changed: true }));
+    try {
+      if (!(await unchanged(await deckSaveFiles()))) return again();
+      const response = await fetch("/api/write", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ files: [], delete: trash.map((m) => m.name), expect: await hashes(files), reason: "clean" }),
+      });
+      const result = await response.json();
+      if (result.running) setState({ cleanError: t("gameRunning", lang) });
+      else if (result.changed) again();
+      else if (!response.ok) setState({ cleanError: t("writeFailed", lang, result.error) });
+      else {
+        setState({ cleaned: { items: trashItems.length, backup: result.backup } });
+        setReads(reads + 1);
+        onWritten();
+      }
+    } catch (e) {
+      setState({ cleanError: t("writeFailed", lang, e.message ?? e) });
+    } finally {
+      deckBackups().then(setBackups, () => {});
+    }
+  };
   const deleteBackup = async (name) => {
     setState({ ...state, busy: true });
     try {
@@ -290,7 +317,11 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
   const remove = state.remove ?? []; // characters ticked for deletion
   const removeFiles = remove.flatMap((name) => filesOfCharacter(name, files.map((f) => f.name)));
   const names = (keys) => keys.map((k) => labelOf(k, lang)).join(t("listSeparator", lang));
-  const trash = report?.moves.filter((m) => m.group === "TRASH" && m.stash) ?? [];
+  const toTrash = report?.moves.filter((m) => m.group === "TRASH" && m.stash) ?? [];
+  // On the Deck only: the web hands back a zip and can't delete files
+  const trash = onDeck ? trashMules(saves.filter((s) => s.json), current) : [];
+  const trashItems = trash.flatMap((m) => m.items.map((item) => ({ item, mule: m.name, code: codeOfNumber(item.code) })));
+  const stats = (item, code) => describeStats(statsOf(item, code), lang).join(t("listSeparator", lang));
   return (
     <>
       <PageTitle label={t("organize", lang)} />
@@ -366,14 +397,14 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
               {report.inbox.dup.length > 0 && <span className="gothic-text-muted">{t("colon", lang) + names(report.inbox.dup)}</span>}
             </p>
             <p>{t("reportTrash", lang, report.inbox.trash.length)}</p>
-            {trash.length > 0 && (
+            {toTrash.length > 0 && (
               <ul className="text-sm pl-4 space-y-1">
-                {trash.map((m, i) => (
+                {toTrash.map((m, i) => (
                   <li key={i}>
                     {labelOf(m.key, lang)}
                     <span style={{ color: "var(--color-accent-blue)" }}>
                       {t("colon", lang)}
-                      {describeStats(statsOf(m.item, codeOfNumber(m.item.code)), lang).join(t("listSeparator", lang))}
+                      {stats(m.item, codeOfNumber(m.item.code))}
                     </span>
                   </li>
                 ))}
@@ -435,11 +466,61 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
             )}
           </section>
         )}
+        {state.cleaned && <p className="gothic-text-gold break-all">{t("trashCleaned", lang, state.cleaned.items, state.cleaned.backup)}</p>}
+        {trash.length > 0 && (
+          <section className="space-y-3">
+            <div className="section-head">
+              <h2>{t("trashClean", lang)}</h2>
+              <span className="gothic-text-muted">{t("trashCount", lang, trashItems.length, trash.length)}</span>
+            </div>
+            <p className="text-sm">{t("trashCleanAbout", lang)}</p>
+            <ul className="text-sm pl-4 space-y-1">
+              {trashItems.map(({ item, mule, code }, i) => {
+                const key = keyOf(item, code);
+                const why = isJunk(item, code) ? stats(item, code) : /^[us]:/.test(key) ? t("trashExtraCopy", lang) : "";
+                return (
+                  <li key={i}>
+                    {labelOf(key, lang)} <span className="gothic-text-muted">{mule}</span>
+                    {why && <span style={{ color: "var(--color-accent-blue)" }}>{t("colon", lang) + why}</span>}
+                  </li>
+                );
+              })}
+            </ul>
+            {trash
+              .filter((m) => m.refused)
+              .map((m) => (
+                <p key={m.name} className="text-sm text-red-400">
+                  {t(`trashRefused_${m.refused}`, lang, m.name)}
+                </p>
+              ))}
+            {state.cleanError && <p className="text-red-400">{state.cleanError}</p>}
+            {trash.some((m) => m.refused) ? null : state.confirm?.action === "trash" ? (
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <span className="text-sm text-red-400">{t("trashWarn", lang, trash.length)}</span>
+                <button
+                  className="gothic-btn gothic-btn-small"
+                  disabled={state.busy}
+                  onKeyDown={(e) => e.repeat && e.preventDefault()}
+                  onClick={() => Date.now() - state.confirm.at > 500 && cleanTrash()} // as a backup's delete button
+                >
+                  {t(state.busy ? "deletingBackup" : "confirmDeleteBackup", lang)}
+                </button>
+                <button className="text-sm gothic-text-muted" disabled={state.busy} onClick={() => setState({ ...state, confirm: null })}>
+                  {t("cancel", lang)}
+                </button>
+              </div>
+            ) : (
+              <button className="gothic-btn gothic-btn-secondary" onClick={() => setState({ ...state, confirm: { action: "trash", at: Date.now() } })}>
+                {t("trashCleanButton", lang, trashItems.length)}
+              </button>
+            )}
+          </section>
+        )}
         {onDeck && backups.length > 0 && (
           // Folded unless something about a backup needs attention
           <details
             className="space-y-3"
-            open={backupsOpen || Boolean(state.restoreError || state.restored || state.confirm || backups.some((b) => b.interrupted))}
+            open={backupsOpen || Boolean(state.restoreError || state.restored || state.confirm?.name || backups.some((b) => b.interrupted))}
             onToggle={(e) => setBackupsOpen(e.currentTarget.open)}
           >
             <summary className="section-head cursor-pointer">
@@ -457,7 +538,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
               {backups.map((b) => (
                 <li key={b.name} className="flex flex-wrap items-center gap-x-4 gap-y-2">
                   <span>{when(b.name)}</span>
-                  {b.reason && <span className="text-sm">{t(b.reason === "restore" ? "backupBeforeRestore" : "backupBeforeOrganize", lang)}</span>}
+                  {b.reason && <span className="text-sm">{t({ restore: "backupBeforeRestore", clean: "backupBeforeClean" }[b.reason] ?? "backupBeforeOrganize", lang)}</span>}
                   {b.interrupted && <span className="text-sm text-red-400">{t("backupInterrupted", lang)}</span>}
                   <span className="text-sm gothic-text-muted">{t("backupCharacters", lang, b.characters)}</span>
                   {state.confirm?.name === b.name ? (

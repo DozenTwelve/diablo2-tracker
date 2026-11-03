@@ -136,8 +136,9 @@ with tempfile.TemporaryDirectory() as tmp:
     # Emptied characters the player chose go, with their other files; never one being written
     assert post({"files": new, "delete": ["UW-A"]})[0] == 500
     assert post({"files": new, "delete": ["../Zanna"]})[0] == 500
+    assert post({"files": new, "delete": ["Zanna"], "reason": "../x"})[0] == 500
     time.sleep(1)
-    status, result = post({"files": new, "delete": ["Zanna"]})
+    status, result = post({"files": new, "delete": ["Zanna"], "reason": "clean"})  # labelled as a TRASH clean
     assert status == 200, result
     assert "Zanna-old.d2s" in os.listdir(saves)  # another character whose name starts the same
     assert not {"Zanna.d2s", "Zanna.key", "Zanna.ma1"} & set(os.listdir(saves)) and {"Zanna.d2s", "Zanna.key", "Zanna.ma1"} <= set(os.listdir(result["backup"]))
@@ -178,7 +179,7 @@ with tempfile.TemporaryDirectory() as tmp:
     listed = json.loads(get("/api/backups"))
     assert [b["name"] for b in listed] == sorted((n for n in os.listdir(backups) if n != "20000101-000000"), reverse=True)
     zanna = os.path.basename(result["backup"])  # made before Zanna was deleted
-    assert next(b for b in listed if b["name"] == zanna)["characters"] == 4  # Zanna, Zanna-old, Mule 二, UW-A
+    assert next(b for b in listed if b["name"] == zanna) == {"name": zanna, "reason": "clean", "characters": 4}  # Zanna, Zanna-old, Mule 二, UW-A
     assert post({"name": "../web"}, path="/api/restore")[0] == 500 and post({"name": "20990101-000000"}, path="/api/restore")[0] == 500
     tracker.game_running = lambda: True
     assert post({"name": zanna}, path="/api/restore")[0] == 409

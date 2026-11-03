@@ -300,6 +300,20 @@ export const mulesOf = (saves, mode, names) =>
 export const filesOfCharacter = (name, fileNames) =>
   fileNames.filter((f) => f.startsWith(`${name}.`) && /^(d2s|ctl|key|map|ma\d+)$/.test(f.slice(name.length + 1)));
 
+// This mode's TRASH mules, for the player to delete after organizing: [{ name, items, refused? }] in name order.
+// refused ("level" | "gold" | "corpse"): not a mule organizing made (its own level, gold, or items it can't see
+// on a corpse or in an Iron Golem), so it is never deleted with the junk.
+export const trashMules = (saves, mode) =>
+  saves
+    .filter((s) => s.ext === "d2s" && new RegExp(`^${modePrefix(mode)}TRASH-[A-Z]+$`, "i").test(s.name) && modeOfCharacter(s.json) === mode)
+    .sort((a, b) => byMuleName(a.name, b.name))
+    .map(({ name, json }) => ({
+      name,
+      items: [...json.items, ...(json.merc_items?.items ?? [])],
+      refused:
+        json.character.level > 1 ? "level" : goldOf(json) ? "gold" : json.corpses?.some((c) => c.items.length) || json.iron_golem?.golem_item ? "corpse" : undefined,
+    }));
+
 // saves: [{ name, ext: "d2s" | "d2i", json }]; options: { mode, mules: names, inbox: shared stash page numbers }
 // -> { saves: [{ name, ext, json, template? }], report }. Only changed saves are returned; new mules carry
 // `template`, the save they were cloned from. Mules whose names the new layout uses are rewritten in place.

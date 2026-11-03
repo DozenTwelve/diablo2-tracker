@@ -13,7 +13,7 @@ const vite = await createServer({ server: { middlewareMode: true, hmr: false }, 
 try {
   const wasm = await vite.ssrLoadModule("/wasm/pkg/d2_parser.js");
   wasm.initSync({ module: readFileSync(new URL("../wasm/pkg/d2_parser_bg.wasm", import.meta.url)) });
-  const { byMuleName, copiesNeeded, museumLayout, muleTimes, organizeFiles, placeCopies } = await vite.ssrLoadModule("/src/lib/organize.js");
+  const { byMuleName, copiesNeeded, museumLayout, muleTimes, organizeFiles, placeCopies, trashMules } = await vite.ssrLoadModule("/src/lib/organize.js");
   const { scoreOfItem } = await vite.ssrLoadModule("/src/lib/parseSaves.js");
 
   const parse = (name, bytes) => JSON.parse(name.endsWith(".d2s") ? wasm.parseD2s(bytes) : wasm.parseD2i(bytes));
@@ -188,6 +188,21 @@ try {
     const mule = first.report.newMules.find((m) => m.name.endsWith("-A")).name;
     const files = edit(organized, `${mule}.d2s`, (j) => j.items.push({ ...structuredClone(starter), position: { ...starter.position, mode: "Stored", body_location: "None", store_page: "Inventory", inv_x: 9, inv_y: 3 } }));
     assert.equal(run(files).report.dropped.length, 0);
+  });
+
+  check("cleaning TRASH: this mode's TRASH mules only, never one with gold, and organizing works without them", () => {
+    const saves = (files) => files.filter((f) => f.name.endsWith(".d2s")).map((f) => ({ name: f.name.slice(0, -4), ext: "d2s", json: json(files, f.name) }));
+    const trash = trashMules(saves(organized), "SoftCore:Modern");
+    assert(trash.length && trash.every((m) => /^TRASH-[A-Z]+$/.test(m.name) && !m.refused), "unrefused TRASH mules in the organized saves");
+    assert.deepEqual(trashMules(saves(organized), "HardCore:Modern"), []);
+    const rich = trashMules(saves(edit(organized, `${trash[0].name}.d2s`, (j) => j.stats.push({ id: 14, layer: 0, value: 1 }))), "SoftCore:Modern");
+    assert.equal(rich[0].refused, "gold");
+    // As the plugin deletes them; then a TRASH item found again goes to a new TRASH-A cloned from the template
+    const gone = organized.filter((f) => !trash.some((m) => f.name.startsWith(`${m.name}.`)));
+    assert.deepEqual(run(gone).report.moves.filter((m) => m.group === "TRASH"), []);
+    const junk = run(organized).report.moves.find((m) => m.group === "TRASH").item;
+    const r = run(edit(gone, a, (j) => j.items.push(structuredClone(junk))));
+    assert(r.files.some((f) => f.name === "TRASH-A.d2s" && f.template), "a new TRASH-A from the template");
   });
 
   check("a mistyped mule name or a missing inbox page stops the run", () => {

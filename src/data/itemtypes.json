@@ -1,0 +1,315 @@
+{
+  "shie": [
+    "shld"
+  ],
+  "tors": [
+    "armo"
+  ],
+  "gold": [
+    "misc"
+  ],
+  "bowq": [
+    "misl",
+    "seco"
+  ],
+  "xboq": [
+    "misl",
+    "seco"
+  ],
+  "play": [
+    "misc"
+  ],
+  "herb": [
+    "misc"
+  ],
+  "poti": [
+    "misc"
+  ],
+  "ring": [
+    "misc"
+  ],
+  "elix": [
+    "misc"
+  ],
+  "amul": [
+    "misc"
+  ],
+  "char": [
+    "misc"
+  ],
+  "boot": [
+    "armo"
+  ],
+  "glov": [
+    "armo"
+  ],
+  "book": [
+    "misc"
+  ],
+  "belt": [
+    "armo"
+  ],
+  "gem": [
+    "sock"
+  ],
+  "torc": [
+    "misc"
+  ],
+  "scro": [
+    "misc"
+  ],
+  "scep": [
+    "rod"
+  ],
+  "wand": [
+    "rod"
+  ],
+  "staf": [
+    "rod"
+  ],
+  "bow": [
+    "miss"
+  ],
+  "axe": [
+    "mele"
+  ],
+  "club": [
+    "blun"
+  ],
+  "swor": [
+    "blde"
+  ],
+  "hamm": [
+    "blun"
+  ],
+  "knif": [
+    "blde"
+  ],
+  "spea": [
+    "sppl"
+  ],
+  "pole": [
+    "sppl"
+  ],
+  "xbow": [
+    "miss"
+  ],
+  "mace": [
+    "blun"
+  ],
+  "helm": [
+    "armo"
+  ],
+  "tpot": [
+    "thro"
+  ],
+  "body": [
+    "misc"
+  ],
+  "key": [
+    "misc"
+  ],
+  "tkni": [
+    "comb",
+    "knif"
+  ],
+  "taxe": [
+    "comb",
+    "axe"
+  ],
+  "jave": [
+    "comb",
+    "spea"
+  ],
+  "mele": [
+    "weap"
+  ],
+  "miss": [
+    "weap"
+  ],
+  "thro": [
+    "weap"
+  ],
+  "comb": [
+    "mele",
+    "thro"
+  ],
+  "shld": [
+    "armo",
+    "seco"
+  ],
+  "sock": [
+    "misc"
+  ],
+  "rod": [
+    "blun"
+  ],
+  "misl": [
+    "misc"
+  ],
+  "blun": [
+    "mele"
+  ],
+  "jewl": [
+    "sock"
+  ],
+  "amaz": [
+    "clas"
+  ],
+  "barb": [
+    "clas"
+  ],
+  "necr": [
+    "clas"
+  ],
+  "pala": [
+    "clas"
+  ],
+  "sorc": [
+    "clas"
+  ],
+  "assn": [
+    "clas"
+  ],
+  "drui": [
+    "clas"
+  ],
+  "warl": [
+    "clas"
+  ],
+  "h2h": [
+    "mele",
+    "assn"
+  ],
+  "orb": [
+    "weap",
+    "sorc"
+  ],
+  "head": [
+    "shld",
+    "necr"
+  ],
+  "ashd": [
+    "shld",
+    "pala"
+  ],
+  "phlm": [
+    "helm",
+    "barb"
+  ],
+  "pelt": [
+    "helm",
+    "drui"
+  ],
+  "cloa": [
+    "tors",
+    "assn"
+  ],
+  "rune": [
+    "sock"
+  ],
+  "circ": [
+    "helm"
+  ],
+  "hpot": [
+    "poti"
+  ],
+  "mpot": [
+    "poti"
+  ],
+  "rpot": [
+    "hpot",
+    "mpot"
+  ],
+  "spot": [
+    "poti"
+  ],
+  "apot": [
+    "poti"
+  ],
+  "wpot": [
+    "poti"
+  ],
+  "scha": [
+    "char"
+  ],
+  "mcha": [
+    "char"
+  ],
+  "lcha": [
+    "char"
+  ],
+  "abow": [
+    "bow",
+    "amaz"
+  ],
+  "aspe": [
+    "spea",
+    "amaz"
+  ],
+  "ajav": [
+    "jave",
+    "amaz"
+  ],
+  "h2h2": [
+    "h2h"
+  ],
+  "mboq": [
+    "bowq"
+  ],
+  "mxbq": [
+    "xboq"
+  ],
+  "gem0": [
+    "gem"
+  ],
+  "gem1": [
+    "gem"
+  ],
+  "gem2": [
+    "gem"
+  ],
+  "gem3": [
+    "gem"
+  ],
+  "gem4": [
+    "gem"
+  ],
+  "gema": [
+    "gem"
+  ],
+  "gemd": [
+    "gem"
+  ],
+  "geme": [
+    "gem"
+  ],
+  "gemr": [
+    "gem"
+  ],
+  "gems": [
+    "gem"
+  ],
+  "gemt": [
+    "gem"
+  ],
+  "gemz": [
+    "gem"
+  ],
+  "blde": [
+    "mele"
+  ],
+  "sppl": [
+    "mele"
+  ],
+  "grim": [
+    "shld",
+    "warl"
+  ],
+  "cjwl": [
+    "jewl"
+  ],
+  "csch": [
+    "char"
+  ]
+}

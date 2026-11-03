@@ -8,6 +8,7 @@ import { parseSaveFiles } from "./lib/parseSaves";
 import SaveLoader from "./components/SaveLoader";
 import SearchView from "./components/SearchView";
 import CollectionView from "./components/CollectionView";
+import RunewordMaker from "./components/RunewordMaker";
 import CharacterView from "./components/CharacterView";
 import OrganizeView from "./components/OrganizeView";
 import Welcome from "./components/Welcome";
@@ -179,7 +180,9 @@ export default function App() {
                   );
                 })}
               </nav>
-              <CollectionView key={page} label={t(page, lang)} groups={collectionGroups(page, lang)} owned={owned} lang={lang} />
+              <CollectionView key={page} label={t(page, lang)} groups={collectionGroups(page, lang)} owned={owned} lang={lang}>
+                {page === "runewords" && saveData && <RunewordMaker saveData={saveData} lang={lang} />}
+              </CollectionView>
             </>
           )}
         </ErrorBoundary>

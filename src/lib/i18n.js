@@ -545,6 +545,21 @@ const UI = {
   Tempered: ["淬炼", "淬鍊", "Tempered", "담금질"],
   Set: ["套装", "套裝", "Set", "세트"],
   Unique: ["暗金", "暗金", "Unique", "고유"],
+  // Runeword maker (src/components/RunewordMaker.jsx)
+  rwMaker: ["能做的符文之语", "能做的符文之語", "Runewords you can make", "만들 수 있는 룬어"],
+  rwCanMake: ["能做", "能做", "Can make", "만들 수 있음"],
+  rwNeedBase: ["只缺底材", "只缺底材", "Base missing", "베이스만 없음"],
+  rwShort1: ["差 1 个", "差 1 個", "1 rune short", "룬 1개 부족"],
+  rwShort2: ["差 2 个", "差 2 個", "2 runes short", "룬 2개 부족"],
+  rwMakerNote: [
+    "只算没镶嵌的符文和同一游戏模式的物品；底材要普通或精良、孔数刚好、孔全空（无形也行）。不算赫拉迪克方块升级符文。每个符文之语分开算：同一个符文或底材可能列在好几个下面。",
+    "只算沒鑲嵌的符文和同一遊戲模式的物品；底材要普通或精良、孔數剛好、孔全空（無形也行）。不算赫拉迪克方塊升級符文。每個符文之語分開算：同一個符文或底材可能列在好幾個下面。",
+    "Counts loose runes and items of the same game mode only; a base must be normal or superior with exactly the right number of empty sockets (ethereal is fine). No Horadric Cube rune upgrades. Each runeword is checked on its own: one rune or base may be listed under several.",
+    "장착되지 않은 룬과 같은 게임 모드의 아이템만 셉니다. 베이스는 일반 또는 고급, 홈 개수가 정확히 맞고 모두 비어 있어야 합니다(무형도 가능). 호라드림의 함 룬 업그레이드는 셈하지 않습니다. 룬어마다 따로 계산하므로 같은 룬이나 베이스가 여러 룬어에 나올 수 있습니다.",
+  ],
+  rwMissing: [(list) => `缺：${list}`, (list) => `缺：${list}`, (list) => `Missing: ${list}`, (list) => `부족: ${list}`],
+  rwNoBase: ["没有合适的底材", "沒有合適的底材", "No fitting base", "맞는 베이스 없음"],
+  rwNone: ["没有", "沒有", "None", "없음"],
   colon: ["：", "：", ": ", ": "],
   listSeparator: ["、", "、", ", ", ", "],
 };

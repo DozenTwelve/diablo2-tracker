@@ -32,8 +32,8 @@ function Icon({ entryKey, records, lang }) {
 // One collection tab: groups of entry keys, each an icon tile, owned or dimmed.
 // Hovering shows an owned copy's stats and where it is; with several copies, the catalog ranges and their
 // owners in one line, and clicking lists every copy (Copies).
-// groups: [{ title, keys: [key], notes?: [[color, line]] }] (notes: set bonuses)
-export default function CollectionView({ label, groups, owned, lang }) {
+// groups: [{ title, keys: [key], notes?: [[color, line]] }] (notes: set bonuses); children: shown above the tiles
+export default function CollectionView({ label, groups, owned, lang, children }) {
   const [missingOnly, setMissingOnly] = useState(false);
   const [tip, setTip] = useTip();
   const [opened, setOpened] = useState(null); // key whose copies are listed
@@ -63,6 +63,7 @@ export default function CollectionView({ label, groups, owned, lang }) {
           <span>{t("missingOnly", lang)}</span>
         </label>
       </PageTitle>
+      {children}
       <div className="lg:grid lg:gap-10 items-start" style={{ gridTemplateColumns: groups.length > 1 ? "13rem minmax(0, 1fr)" : "minmax(0, 1fr)" }}>
         {groups.length > 1 && (
           <nav className="toc hidden lg:block sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">

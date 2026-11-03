@@ -159,12 +159,16 @@ const gemSlotOf = (type) => {
 };
 
 // id is the runes.txt row; a save's runeword_id maps to it as (runeword_id & 0xfff) - 27.
-// slots: which kinds of base it can be made in, for its runes' bonuses
+// slots: which kinds of base it can be made in, for its runes' bonuses.
+// types / exclude: the item types a base must be (or not be) to take it, matched with itemtypes.json
 const runewords = [];
 table("runes").forEach((r, id) => {
   const recipe = [1, 2, 3, 4, 5, 6].map((i) => r[`Rune${i}`]).filter(Boolean);
-  const slots = [...new Set(numbered(6, (i) => r[`itype${i}`]).filter(Boolean).map(gemSlotOf))];
-  if (r.complete === "1") runewords.push({ id, ...names(r.Name), runes: recipe, slots, props: propsOf(r, RUNEWORD_PROPS) });
+  const types = numbered(6, (i) => r[`itype${i}`]).filter(Boolean);
+  const exclude = numbered(3, (i) => r[`etype${i}`]).filter(Boolean);
+  const slots = [...new Set(types.map(gemSlotOf))];
+  if (r.complete === "1")
+    runewords.push({ id, ...names(r.Name), runes: recipe, slots, types, exclude: exclude.length ? exclude : undefined, props: propsOf(r, RUNEWORD_PROPS) });
 });
 
 // Socketed rune and gem bonuses by slot (gems.txt)
@@ -203,6 +207,10 @@ for (const t of ["armor", "weapons", "misc"]) {
         img: baseImg[r.code], variants: variantsOf(baseImg[r.code]),
         stack: r.AdvancedStashStackable === "1" || undefined, // goes in the stackable tab
         starter: starterCodes.has(r.code) || undefined,
+        maxSockets: (t !== "misc" && Number(r.gemsockets)) || undefined, // its type may allow fewer (itemtypes.json)
+        // Weapon damage, two-handed where it has that (bows and crossbows only have one-handed), for ranking copies
+        minDamage: (t === "weapons" && (Number(r["2handmindam"]) || Number(r.mindam))) || undefined,
+        maxDamage: (t === "weapons" && (Number(r["2handmaxdam"]) || Number(r.maxdam))) || undefined,
         gemSlot: t === "misc" ? undefined : gemSlotOf(r.type),
       };
   }
@@ -269,6 +277,16 @@ write("sets", [...sets.values()]);
 write("runewords", runewords);
 write("runes", runes);
 write("items", items);
+// Item type -> parent types (itemtypes.txt Equiv1/Equiv2), to tell which runewords a base's type takes, and the most
+// sockets an item of the type can get by item level: [max up to ilvl threshold 1, threshold 1, up to threshold 2,
+// threshold 2, above], for Larzuk's socket and the cube's
+const itemTypes = {};
+for (const r of table("itemtypes")) {
+  const sockets = ["MaxSockets1", "MaxSocketsLevelThreshold1", "MaxSockets2", "MaxSocketsLevelThreshold2", "MaxSockets3"].map((c) => Number(r[c]) || 0);
+  const entry = { equiv: equiv.get(r.Code)?.length ? equiv.get(r.Code) : undefined, sockets: sockets[0] ? sockets : undefined };
+  if (r.Code && (entry.equiv || entry.sockets)) itemTypes[r.Code] = entry;
+}
+write("itemtypes", itemTypes);
 // Property code -> what it sets: [[func, stat id, val]] (properties.txt; func semantics in src/lib/props.js)
 const statIds = new Map(table("itemstatcost").map((r) => [r.Stat, Number(r["*ID"])]));
 const properties = {};

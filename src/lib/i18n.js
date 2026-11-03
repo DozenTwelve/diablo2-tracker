@@ -598,6 +598,25 @@ const UI = {
   Tempered: ["淬炼", "淬鍊", "Tempered", "담금질"],
   Set: ["套装", "套裝", "Set", "세트"],
   Unique: ["暗金", "暗金", "Unique", "고유"],
+  // Runeword maker (src/components/RunewordMaker.jsx)
+  rwMaker: ["能做的符文之语", "能做的符文之語", "Runewords you can make", "만들 수 있는 룬어"],
+  rwCanMake: ["能做", "能做", "Can make", "만들 수 있음"],
+  rwNeedBase: ["只缺底材", "只缺底材", "Base missing", "베이스만 없음"],
+  rwShort1: ["差 1 个", "差 1 個", "1 rune short", "룬 1개 부족"],
+  rwShort2: ["差 2 个", "差 2 個", "2 runes short", "룬 2개 부족"],
+  rwMakerNote: [
+    "只算没镶嵌的符文和同一游戏模式的物品；底材要普通或精良、孔数刚好、孔全空（无形也行），或没孔而拉苏克打孔刚好打出这么多孔。方块打孔孔数随机，只列出来参考。不算赫拉迪克方块升级符文。每个符文之语分开算：同一个符文或底材可能列在好几个下面。",
+    "只算沒鑲嵌的符文和同一遊戲模式的物品；底材要普通或精良、孔數剛好、孔全空（無形也行），或沒孔而拉蘇克打孔剛好打出這麼多孔。方塊打孔孔數隨機，只列出來參考。不算赫拉迪克方塊升級符文。每個符文之語分開算：同一個符文或底材可能列在好幾個下面。",
+    "Counts loose runes and items of the same game mode only; a base must be normal or superior with exactly the right number of empty sockets (ethereal is fine), or have no sockets and get exactly that many from Larzuk. Cube socketing gives a random count, listed for reference only. No Horadric Cube rune upgrades. Each runeword is checked on its own: one rune or base may be listed under several.",
+    "장착되지 않은 룬과 같은 게임 모드의 아이템만 셉니다. 베이스는 일반 또는 고급이고 홈 개수가 정확히 맞으며 모두 비어 있거나(무형도 가능), 홈이 없고 라주크가 정확히 그만큼 뚫어 주는 것이어야 합니다. 호라드림의 함으로 뚫는 홈은 개수가 무작위라 참고로만 보여 줍니다. 호라드림의 함 룬 업그레이드는 셈하지 않습니다. 룬어마다 따로 계산하므로 같은 룬이나 베이스가 여러 룬어에 나올 수 있습니다.",
+  ],
+  rwMissing: [(list) => `缺：${list}`, (list) => `缺：${list}`, (list) => `Missing: ${list}`, (list) => `부족: ${list}`],
+  rwLarzuk: ["需拉苏克打孔（第五幕任务，每个难度一次）", "需拉蘇克打孔（第五幕任務，每個難度一次）", "needs Larzuk's socket (Act 5 quest, once per difficulty)", "라주크 홈 뚫기 필요 (5막 퀘스트, 난이도마다 한 번)"],
+  rwCube: ["方块打孔（随机）", "方塊打孔（隨機）", "cube socketing (random)", "호라드림의 함 홈 뚫기 (무작위)"],
+  rwNoBase: ["没有确定能用的底材", "沒有確定能用的底材", "No sure base", "확실한 베이스 없음"],
+  rwNone: ["没有", "沒有", "None", "없음"],
+  damageRange: [(min, max) => `伤害 ${min}-${max}`, (min, max) => `傷害 ${min}-${max}`, (min, max) => `Damage ${min}-${max}`, (min, max) => `피해 ${min}-${max}`],
+  bestCopy: ["最好", "最好", "Best", "최고"], // the top copy in Copies.jsx, for runewords ranked by their own stats
   colon: ["：", "：", ": ", ": "],
   listSeparator: ["、", "、", ", ", ", "],
 };

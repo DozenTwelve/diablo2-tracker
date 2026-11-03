@@ -122,6 +122,29 @@ export function copyScore(record) {
   return rollScore(record, entry?.variants?.[record.variant] ?? entry?.props ?? []);
 }
 
+// A weapon copy's physical damage as [min, max]: each side's base (x1.5 when ethereal) raised by its enhanced
+// damage % (stats 18 min, 17 max: the runeword's and a superior base's together), plus flat adds (stats 21, 22: Sol's
+// +9 min...). null for anything without base damage.
+const statOf = (record, id, layer = 0) => record.stats?.find(([i, l]) => i === id && l === layer)?.[2] ?? 0;
+export function damageOf(record) {
+  const base = items[record.code];
+  if (!base?.minDamage) return null;
+  const side = (dmg, ed, flat) => Math.floor((Math.floor(record.ethereal ? dmg * 1.5 : dmg) * (100 + statOf(record, ed))) / 100) + statOf(record, flat);
+  return [side(base.minDamage, 18, 21), side(base.maxDamage, 17, 22)];
+}
+
+// Runewords whose copies the player ranks by a few values before the roll score, highest first.
+// Insight: its Meditation aura level, then its average damage
+const averageDamage = (r) => (damageOf(r) ?? [0, 0]).reduce((a, b) => a + b) / 2;
+const BEST_BY = { "w:61": [(r) => statOf(r, 151, 120), averageDamage] };
+export const ranksBest = (key) => key in BEST_BY;
+
+// Sort order for copies of one entry, best first: by BEST_BY's values, then the roll score (none: last)
+export function compareCopies(a, b) {
+  for (const value of BEST_BY[a.key] ?? []) if (value(b) !== value(a)) return value(b) - value(a);
+  return (copyScore(b) ?? 101) - (copyScore(a) ?? 101);
+}
+
 // What a socketed rune or gem adds to the item it is in (gems.txt, by the item's slot), as stats;
 // null for anything else (a jewel brings its own stats)
 export const socketStats = (parentCode, childCode) => {

@@ -1,4 +1,5 @@
 // Game modes of saves, for organizing (src/lib/organize.js) and reading (src/lib/parseSaves.js).
+import { t } from "./i18n";
 
 // Game mode of a character or shared stash file: "SoftCore:Modern" (Reign of the Warlock), "HardCore:Legacy"
 // (Lord of Destruction), "SoftCore:Classic" (no expansion: no shared stash, can't hold expansion items)...
@@ -12,4 +13,10 @@ export const modeOfCharacter = (json) => {
 export const modeOfStash = (name) => {
   const m = /^(modern)?sharedstash(softcore|hardcore)(v2)?(\.d2i)?$/i.exec(name);
   return m && `${/^hard/i.test(m[2]) ? "HardCore" : "SoftCore"}:${m[1] ? "Modern" : "Legacy"}`;
+};
+
+// "普通", "專家（資料片）"...: a mode for the player to pick
+export const modeLabel = (mode, lang) => {
+  const [core, version] = mode.split(":");
+  return t(core === "HardCore" ? "hardcore" : "softcore", lang) + ({ Legacy: t("legacyMode", lang), Classic: t("classicMode", lang) }[version] ?? "");
 };

@@ -1,0 +1,700 @@
+{
+  "shie": {
+    "equiv": [
+      "shld"
+    ],
+    "sockets": [
+      3,
+      25,
+      3,
+      40,
+      4
+    ]
+  },
+  "tors": {
+    "equiv": [
+      "armo"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      6
+    ]
+  },
+  "gold": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "bowq": {
+    "equiv": [
+      "misl",
+      "seco"
+    ]
+  },
+  "xboq": {
+    "equiv": [
+      "misl",
+      "seco"
+    ]
+  },
+  "play": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "herb": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "poti": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "ring": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "elix": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "amul": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "char": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "boot": {
+    "equiv": [
+      "armo"
+    ]
+  },
+  "glov": {
+    "equiv": [
+      "armo"
+    ]
+  },
+  "book": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "belt": {
+    "equiv": [
+      "armo"
+    ]
+  },
+  "gem": {
+    "equiv": [
+      "sock"
+    ]
+  },
+  "torc": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "scro": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "scep": {
+    "equiv": [
+      "rod"
+    ],
+    "sockets": [
+      3,
+      25,
+      5,
+      40,
+      6
+    ]
+  },
+  "wand": {
+    "equiv": [
+      "rod"
+    ],
+    "sockets": [
+      2,
+      25,
+      2,
+      40,
+      2
+    ]
+  },
+  "staf": {
+    "equiv": [
+      "rod"
+    ],
+    "sockets": [
+      5,
+      25,
+      6,
+      40,
+      6
+    ]
+  },
+  "bow": {
+    "equiv": [
+      "miss"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      6
+    ]
+  },
+  "axe": {
+    "equiv": [
+      "mele"
+    ],
+    "sockets": [
+      4,
+      25,
+      5,
+      40,
+      6
+    ]
+  },
+  "club": {
+    "equiv": [
+      "blun"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      6
+    ]
+  },
+  "swor": {
+    "equiv": [
+      "blde"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      6
+    ]
+  },
+  "hamm": {
+    "equiv": [
+      "blun"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      6
+    ]
+  },
+  "knif": {
+    "equiv": [
+      "blde"
+    ],
+    "sockets": [
+      2,
+      25,
+      3,
+      40,
+      3
+    ]
+  },
+  "spea": {
+    "equiv": [
+      "sppl"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      6
+    ]
+  },
+  "pole": {
+    "equiv": [
+      "sppl"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      6
+    ]
+  },
+  "xbow": {
+    "equiv": [
+      "miss"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      6
+    ]
+  },
+  "mace": {
+    "equiv": [
+      "blun"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      6
+    ]
+  },
+  "helm": {
+    "equiv": [
+      "armo"
+    ],
+    "sockets": [
+      2,
+      25,
+      2,
+      40,
+      3
+    ]
+  },
+  "tpot": {
+    "equiv": [
+      "thro"
+    ]
+  },
+  "body": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "key": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "tkni": {
+    "equiv": [
+      "comb",
+      "knif"
+    ]
+  },
+  "taxe": {
+    "equiv": [
+      "comb",
+      "axe"
+    ]
+  },
+  "jave": {
+    "equiv": [
+      "comb",
+      "spea"
+    ]
+  },
+  "mele": {
+    "equiv": [
+      "weap"
+    ]
+  },
+  "miss": {
+    "equiv": [
+      "weap"
+    ]
+  },
+  "thro": {
+    "equiv": [
+      "weap"
+    ]
+  },
+  "comb": {
+    "equiv": [
+      "mele",
+      "thro"
+    ]
+  },
+  "shld": {
+    "equiv": [
+      "armo",
+      "seco"
+    ]
+  },
+  "sock": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "rod": {
+    "equiv": [
+      "blun"
+    ]
+  },
+  "misl": {
+    "equiv": [
+      "misc"
+    ]
+  },
+  "blun": {
+    "equiv": [
+      "mele"
+    ]
+  },
+  "jewl": {
+    "equiv": [
+      "sock"
+    ]
+  },
+  "amaz": {
+    "equiv": [
+      "clas"
+    ]
+  },
+  "barb": {
+    "equiv": [
+      "clas"
+    ]
+  },
+  "necr": {
+    "equiv": [
+      "clas"
+    ]
+  },
+  "pala": {
+    "equiv": [
+      "clas"
+    ]
+  },
+  "sorc": {
+    "equiv": [
+      "clas"
+    ]
+  },
+  "assn": {
+    "equiv": [
+      "clas"
+    ]
+  },
+  "drui": {
+    "equiv": [
+      "clas"
+    ]
+  },
+  "warl": {
+    "equiv": [
+      "clas"
+    ]
+  },
+  "h2h": {
+    "equiv": [
+      "mele",
+      "assn"
+    ],
+    "sockets": [
+      2,
+      25,
+      3,
+      40,
+      3
+    ]
+  },
+  "orb": {
+    "equiv": [
+      "weap",
+      "sorc"
+    ],
+    "sockets": [
+      2,
+      25,
+      3,
+      40,
+      3
+    ]
+  },
+  "head": {
+    "equiv": [
+      "shld",
+      "necr"
+    ],
+    "sockets": [
+      2,
+      25,
+      3,
+      40,
+      3
+    ]
+  },
+  "ashd": {
+    "equiv": [
+      "shld",
+      "pala"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      4
+    ]
+  },
+  "phlm": {
+    "equiv": [
+      "helm",
+      "barb"
+    ],
+    "sockets": [
+      2,
+      25,
+      3,
+      40,
+      3
+    ]
+  },
+  "pelt": {
+    "equiv": [
+      "helm",
+      "drui"
+    ],
+    "sockets": [
+      2,
+      25,
+      3,
+      40,
+      3
+    ]
+  },
+  "cloa": {
+    "equiv": [
+      "tors",
+      "assn"
+    ]
+  },
+  "rune": {
+    "equiv": [
+      "sock"
+    ]
+  },
+  "circ": {
+    "equiv": [
+      "helm"
+    ],
+    "sockets": [
+      1,
+      25,
+      2,
+      40,
+      3
+    ]
+  },
+  "hpot": {
+    "equiv": [
+      "poti"
+    ]
+  },
+  "mpot": {
+    "equiv": [
+      "poti"
+    ]
+  },
+  "rpot": {
+    "equiv": [
+      "hpot",
+      "mpot"
+    ]
+  },
+  "spot": {
+    "equiv": [
+      "poti"
+    ]
+  },
+  "apot": {
+    "equiv": [
+      "poti"
+    ]
+  },
+  "wpot": {
+    "equiv": [
+      "poti"
+    ]
+  },
+  "scha": {
+    "equiv": [
+      "char"
+    ]
+  },
+  "mcha": {
+    "equiv": [
+      "char"
+    ]
+  },
+  "lcha": {
+    "equiv": [
+      "char"
+    ]
+  },
+  "abow": {
+    "equiv": [
+      "bow",
+      "amaz"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      5
+    ]
+  },
+  "aspe": {
+    "equiv": [
+      "spea",
+      "amaz"
+    ],
+    "sockets": [
+      3,
+      25,
+      4,
+      40,
+      6
+    ]
+  },
+  "ajav": {
+    "equiv": [
+      "jave",
+      "amaz"
+    ]
+  },
+  "h2h2": {
+    "equiv": [
+      "h2h"
+    ],
+    "sockets": [
+      2,
+      25,
+      3,
+      40,
+      3
+    ]
+  },
+  "mboq": {
+    "equiv": [
+      "bowq"
+    ]
+  },
+  "mxbq": {
+    "equiv": [
+      "xboq"
+    ]
+  },
+  "gem0": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "gem1": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "gem2": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "gem3": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "gem4": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "gema": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "gemd": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "geme": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "gemr": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "gems": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "gemt": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "gemz": {
+    "equiv": [
+      "gem"
+    ]
+  },
+  "blde": {
+    "equiv": [
+      "mele"
+    ]
+  },
+  "sppl": {
+    "equiv": [
+      "mele"
+    ]
+  },
+  "grim": {
+    "equiv": [
+      "shld",
+      "warl"
+    ],
+    "sockets": [
+      2,
+      25,
+      3,
+      40,
+      3
+    ]
+  },
+  "cjwl": {
+    "equiv": [
+      "jewl"
+    ]
+  },
+  "csch": {
+    "equiv": [
+      "char"
+    ]
+  }
+}

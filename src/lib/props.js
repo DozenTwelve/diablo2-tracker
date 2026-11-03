@@ -122,6 +122,18 @@ export function copyScore(record) {
   return rollScore(record, entry?.variants?.[record.variant] ?? entry?.props ?? []);
 }
 
+// Runewords whose copies the player ranks by a few stats before the roll score, highest first: [stat id, layer].
+// Insight: its Meditation aura level, then enhanced damage
+const BEST_BY = { "w:61": [[151, 120], [17, 0]] };
+export const ranksBest = (key) => key in BEST_BY;
+const statOf = (record, [id, layer]) => record.stats?.find(([i, l]) => i === id && l === layer)?.[2] ?? 0;
+
+// Sort order for copies of one entry, best first: by BEST_BY's stats, then the roll score (none: last)
+export function compareCopies(a, b) {
+  for (const stat of BEST_BY[a.key] ?? []) if (statOf(b, stat) !== statOf(a, stat)) return statOf(b, stat) - statOf(a, stat);
+  return (copyScore(b) ?? 101) - (copyScore(a) ?? 101);
+}
+
 // What a socketed rune or gem adds to the item it is in (gems.txt, by the item's slot), as stats;
 // null for anything else (a jewel brings its own stats)
 export const socketStats = (parentCode, childCode) => {

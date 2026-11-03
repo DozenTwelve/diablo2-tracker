@@ -562,6 +562,7 @@ const UI = {
   rwCube: ["方块打孔（随机）", "方塊打孔（隨機）", "cube socketing (random)", "호라드림의 함 홈 뚫기 (무작위)"],
   rwNoBase: ["没有确定能用的底材", "沒有確定能用的底材", "No sure base", "확실한 베이스 없음"],
   rwNone: ["没有", "沒有", "None", "없음"],
+  bestCopy: ["最好", "最好", "Best", "최고"], // the top copy in Copies.jsx, for runewords ranked by their own stats
   colon: ["：", "：", ": ", ": "],
   listSeparator: ["、", "、", ", ", ", "],
 };

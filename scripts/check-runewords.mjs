@@ -11,6 +11,7 @@ try {
   const { GROUPS, fitOf, maxSocketsOf, runewordOptions } = await vite.ssrLoadModule("/src/lib/runewordMaker.js");
   const { runewords, labelOf } = await vite.ssrLoadModule("/src/lib/gameData.js");
   const { ownersOf } = await vite.ssrLoadModule("/src/lib/inventory.js");
+  const { compareCopies } = await vite.ssrLoadModule("/src/lib/props.js");
   const rw = (en) => runewords.find((w) => w.en === en);
   const fits = (w, r) => fitOf(w, r) === "ready";
   const base = (code, more) => ({ key: `b:${code}:Normal`, code, quality: "Normal", ilvl: 85, sockets: 4, filled: 0, place: "stash", owner: "M", count: 1, ...more });
@@ -60,6 +61,14 @@ try {
     const names = readdirSync(dir, { withFileTypes: true }).filter((d) => d.isFile()).map((d) => d.name);
     const data = await parseSaveFiles(names.map((name) => new File([readFileSync(join(dir, name))], name)));
     const modeOf = new Map(ownersOf(data).map((o) => [o.name, o.mode]));
+    // Copies of Insight best first: Meditation level, then enhanced damage, then the roll score (Copies.jsx)
+    const stat = (r, id) => r.stats.find(([i]) => i === id)?.[2];
+    const insight = data.items.filter((r) => r.key === "w:61").sort(compareCopies);
+    console.log("Insight copies:", insight.map((r) => `${r.owner}/${r.place} ${stat(r, 151)}/${stat(r, 17)}`).join(", "));
+    for (let i = 1; i < insight.length; i++) {
+      const [a, b] = [insight[i - 1], insight[i]];
+      assert.ok(stat(a, 151) > stat(b, 151) || (stat(a, 151) === stat(b, 151) && stat(a, 17) >= stat(b, 17)), "Insight copies out of order");
+    }
     for (const mode of [...new Set(modeOf.values())].filter(Boolean).sort()) {
       const options = runewordOptions(data.items.filter((r) => modeOf.get(r.owner) === mode));
       console.log(mode);

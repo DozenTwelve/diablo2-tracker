@@ -434,6 +434,7 @@ const UI = {
   restoreFailed: [(e) => `还原失败：${e}`, (e) => `還原失敗：${e}`, (e) => `Restoring failed: ${e}`, (e) => `복원 실패: ${e}`],
   // Cleaning TRASH (OrganizeView, on the Deck)
   trashClean: ["清理 TRASH", "清理 TRASH", "Clean TRASH", "TRASH 비우기"],
+  backupBeforeClean: ["清理前", "清理前", "Before cleaning TRASH", "TRASH 비우기 전"],
   trashCount: [
     (n, m) => `${m} 个 TRASH 骡子，${n} 件`,
     (n, m) => `${m} 個 TRASH 騾子，${n} 件`,

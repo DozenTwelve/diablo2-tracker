@@ -277,7 +277,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
       const response = await fetch("/api/write", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ files: [], delete: trash.map((m) => m.name), expect: await hashes(files) }),
+        body: JSON.stringify({ files: [], delete: trash.map((m) => m.name), expect: await hashes(files), reason: "clean" }),
       });
       const result = await response.json();
       if (result.running) setState({ cleanError: t("gameRunning", lang) });
@@ -538,7 +538,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
               {backups.map((b) => (
                 <li key={b.name} className="flex flex-wrap items-center gap-x-4 gap-y-2">
                   <span>{when(b.name)}</span>
-                  {b.reason && <span className="text-sm">{t(b.reason === "restore" ? "backupBeforeRestore" : "backupBeforeOrganize", lang)}</span>}
+                  {b.reason && <span className="text-sm">{t({ restore: "backupBeforeRestore", clean: "backupBeforeClean" }[b.reason] ?? "backupBeforeOrganize", lang)}</span>}
                   {b.interrupted && <span className="text-sm text-red-400">{t("backupInterrupted", lang)}</span>}
                   <span className="text-sm gothic-text-muted">{t("backupCharacters", lang, b.characters)}</span>
                   {state.confirm?.name === b.name ? (

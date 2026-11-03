@@ -301,11 +301,12 @@ export const filesOfCharacter = (name, fileNames) =>
   fileNames.filter((f) => f.startsWith(`${name}.`) && /^(d2s|ctl|key|map|ma\d+)$/.test(f.slice(name.length + 1)));
 
 // This mode's TRASH mules, for the player to delete after organizing: [{ name, items, refused? }] in name order.
+// Never a dead hardcore hero, as in mulesOf: organizing never filled it, so what it holds isn't junk it was given.
 // refused ("level" | "gold" | "corpse"): not a mule organizing made (its own level, gold, or items it can't see
 // on a corpse or in an Iron Golem), so it is never deleted with the junk.
 export const trashMules = (saves, mode) =>
   saves
-    .filter((s) => s.ext === "d2s" && new RegExp(`^${modePrefix(mode)}TRASH-[A-Z]+$`, "i").test(s.name) && modeOfCharacter(s.json) === mode)
+    .filter((s) => s.ext === "d2s" && new RegExp(`^${modePrefix(mode)}TRASH-[A-Z]+$`, "i").test(s.name) && modeOfCharacter(s.json) === mode && !deadHardcore(s.json))
     .sort((a, b) => byMuleName(a.name, b.name))
     .map(({ name, json }) => ({
       name,

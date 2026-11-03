@@ -136,9 +136,21 @@ with tempfile.TemporaryDirectory() as tmp:
     # Emptied characters the player chose go, with their other files; never one being written
     assert post({"files": new, "delete": ["UW-A"]})[0] == 500
     assert post({"files": new, "delete": ["../Zanna"]})[0] == 500
-    assert post({"files": new, "delete": ["Zanna"], "reason": "../x"})[0] == 500
+    # A clean deletes TRASH mules and writes nothing; anything else is refused before the backup
+    before = sorted(os.listdir(saves)), len(os.listdir(backups))
+    assert post({"files": new, "delete": ["Zanna"], "reason": "../x"})[0] == 400
+    assert post({"files": [], "delete": ["Zanna"], "reason": "clean"})[0] == 400
+    assert post({"files": new, "delete": [], "reason": "clean"})[0] == 400
+    assert post({"files": [], "delete": ["TRASH-A", "TRASH-1"], "reason": "clean"})[0] == 400
+    assert (sorted(os.listdir(saves)), len(os.listdir(backups))) == before
+    open(os.path.join(saves, "htrash-b.d2s"), "wb").write(b"junk")
+    open(os.path.join(saves, "htrash-b.key"), "wb").write(b"junk")
     time.sleep(1)
-    status, result = post({"files": new, "delete": ["Zanna"], "reason": "clean"})  # labelled as a TRASH clean
+    assert post({"files": [], "delete": ["htrash-b"], "reason": "clean"})[0] == 200
+    assert not [f for f in os.listdir(saves) if f.startswith("htrash-b.")]
+    assert tracker.list_backups(backups, saves)[0]["reason"] == "clean"  # labelled as a TRASH clean
+    time.sleep(1)
+    status, result = post({"files": new, "delete": ["Zanna"]})
     assert status == 200, result
     assert "Zanna-old.d2s" in os.listdir(saves)  # another character whose name starts the same
     assert not {"Zanna.d2s", "Zanna.key", "Zanna.ma1"} & set(os.listdir(saves)) and {"Zanna.d2s", "Zanna.key", "Zanna.ma1"} <= set(os.listdir(result["backup"]))
@@ -179,7 +191,7 @@ with tempfile.TemporaryDirectory() as tmp:
     listed = json.loads(get("/api/backups"))
     assert [b["name"] for b in listed] == sorted((n for n in os.listdir(backups) if n != "20000101-000000"), reverse=True)
     zanna = os.path.basename(result["backup"])  # made before Zanna was deleted
-    assert next(b for b in listed if b["name"] == zanna) == {"name": zanna, "reason": "clean", "characters": 4}  # Zanna, Zanna-old, Mule 二, UW-A
+    assert next(b for b in listed if b["name"] == zanna) == {"name": zanna, "reason": "organize", "characters": 4}  # Zanna, Zanna-old, Mule 二, UW-A
     assert post({"name": "../web"}, path="/api/restore")[0] == 500 and post({"name": "20990101-000000"}, path="/api/restore")[0] == 500
     tracker.game_running = lambda: True
     assert post({"name": zanna}, path="/api/restore")[0] == 409

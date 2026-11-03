@@ -14,6 +14,15 @@ export function maxSocketsOf(code, ilvl) {
   return Math.min(items[code]?.maxSockets ?? 0, ilvl <= threshold1 ? upTo1 : ilvl <= threshold2 ? upTo2 : above);
 }
 
+// The cube's socket recipes (cubemain.txt): two runes and a perfect gem, used up, on a normal base without sockets
+export const CUBE_SOCKETS = [
+  { type: "weap", runes: ["r08", "r11"], gem: "gpv" }, // Ral + Amn + Perfect Amethyst
+  { type: "tors", runes: ["r07", "r10"], gem: "gpy" }, // Tal + Thul + Perfect Topaz
+  { type: "helm", runes: ["r08", "r10"], gem: "gpb" }, // Ral + Thul + Perfect Sapphire
+  { type: "shld", runes: ["r07", "r11"], gem: "gpr" }, // Tal + Amn + Perfect Ruby
+];
+export const cubeRecipeOf = (code) => CUBE_SOCKETS.find((c) => isA(items[code]?.type, c.type));
+
 // How a base can take the runeword: "ready" (exactly as many sockets as runes, all empty, so not a runeword yet),
 // "larzuk" (no sockets, and Larzuk's quest gives exactly as many), "cube" (no sockets, normal quality, and the cube's
 // socket recipes can roll that many), or null. Only plain bases (normal or superior, ethereal or not) of a type the
@@ -25,27 +34,44 @@ export function fitOf(w, r) {
   if (r.sockets === n && r.filled === 0) return "ready";
   if (r.sockets !== 0 || r.ilvl == null) return null;
   const max = maxSocketsOf(r.code, r.ilvl);
-  return max === n ? "larzuk" : max > n && r.quality === "Normal" ? "cube" : null;
+  return max === n ? "larzuk" : max > n && r.quality === "Normal" && cubeRecipeOf(r.code) ? "cube" : null;
 }
 
-// records: one mode's items (parseSaves). Per runeword: its recipe as [{ code, need, have }] (each rune once),
-// how many runes are short, and the bases that fit by kind (fitOf). Only loose runes count, not socketed ones.
-export function runewordOptions(records) {
-  const runes = new Map();
-  for (const r of records) if (r.key.startsWith("r:") && r.place !== "socketed") runes.set(r.code, (runes.get(r.code) ?? 0) + r.count);
+// Names of a mode's characters who can still get Larzuk's socket in some difficulty (parseSaves quests); a dead
+// hero can't. No mode (saves read before owners had modes): every character.
+export const larzukOf = (owners, mode) =>
+  owners.filter((o) => (!mode || o.mode === mode) && !o.dead && o.quests?.socket.includes("available")).map((o) => o.name);
+
+const countsOf = (codes) => {
+  const out = new Map();
+  for (const code of codes) out.set(code, (out.get(code) ?? 0) + 1);
+  return out;
+};
+
+// records: one mode's items (parseSaves); larzuk: names of that mode's characters who can still get Larzuk's
+// socket. Per runeword: its recipe as [{ code, need, have }] (each rune once), how many runes are short, and the
+// bases that fit by kind (fitOf); a cube base only when the loose runes and gems also cover its socket recipe.
+// Only loose runes and gems count, not socketed ones.
+export function runewordOptions(records, larzuk = []) {
+  const loose = new Map(); // code -> count; only rune and gem codes are looked up
+  for (const r of records) if (r.place !== "socketed") loose.set(r.code, (loose.get(r.code) ?? 0) + r.count);
+  const covered = (codes) => [...countsOf(codes)].every(([code, n]) => (loose.get(code) ?? 0) >= n);
   return runewords.map((w) => {
-    const need = new Map();
-    for (const code of w.runes) need.set(code, (need.get(code) ?? 0) + 1);
-    const recipe = [...need].map(([code, n]) => ({ code, need: n, have: runes.get(code) ?? 0 }));
+    const recipe = [...countsOf(w.runes)].map(([code, n]) => ({ code, need: n, have: loose.get(code) ?? 0 }));
     const short = recipe.reduce((n, x) => n + Math.max(0, x.need - x.have), 0);
     const bases = { ready: [], larzuk: [], cube: [] };
-    for (const r of records) bases[fitOf(w, r)]?.push(r);
-    return { w, recipe, short, bases };
+    for (const r of records) {
+      const kind = fitOf(w, r);
+      const cube = kind === "cube" && cubeRecipeOf(r.code);
+      if (!cube || covered([...w.runes, ...cube.runes, cube.gem])) bases[kind]?.push(r);
+    }
+    return { w, recipe, short, bases, larzuk };
   });
 }
 
-// A base it surely goes in, now or after Larzuk's socket; the cube's random sockets don't count as one
-const sureBase = (o) => o.bases.ready.length + o.bases.larzuk.length > 0;
+// A base it surely goes in, now or after Larzuk's socket while someone can still get it; the cube's random
+// sockets don't count as one
+const sureBase = (o) => o.bases.ready.length + (o.larzuk.length ? o.bases.larzuk.length : 0) > 0;
 
 // The filter groups: can make now, every rune but no sure base, short 1 rune, short 2
 export const GROUPS = {

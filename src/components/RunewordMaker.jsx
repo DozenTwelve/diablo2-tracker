@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { groupByKey, locationLines, ownersOf } from "../lib/inventory";
 import { imageOf, labelOf, runewordKey } from "../lib/gameData";
 import { modeLabel } from "../lib/modes";
-import { GROUPS, runewordOptions } from "../lib/runewordMaker";
+import { GROUPS, cubeRecipeOf, larzukOf, runewordOptions } from "../lib/runewordMaker";
 import { t } from "../lib/i18n";
 
 // What runewords the loose runes and empty bases of one game mode make, or nearly make (src/lib/runewordMaker.js).
@@ -14,9 +14,10 @@ export default function RunewordMaker({ saveData, lang }) {
   const [group, setGroup] = useState("rwCanMake");
   const mode = modes.includes(picked) ? picked : modes.includes("SoftCore:Modern") ? "SoftCore:Modern" : modes[0];
   const options = useMemo(() => {
-    const modeOf = new Map(ownersOf(saveData).map((o) => [o.name, o.mode]));
+    const owners = ownersOf(saveData);
+    const modeOf = new Map(owners.map((o) => [o.name, o.mode]));
     // Saves read before owners had modes: all items together
-    return runewordOptions(mode ? saveData.items.filter((r) => modeOf.get(r.owner) === mode) : saveData.items);
+    return runewordOptions(mode ? saveData.items.filter((r) => modeOf.get(r.owner) === mode) : saveData.items, larzukOf(owners, mode));
   }, [saveData, mode]);
   const shown = options.filter(GROUPS[group]);
 
@@ -55,7 +56,14 @@ export default function RunewordMaker({ saveData, lang }) {
 }
 
 // "Spirit  Tal 1/1 + Thul 0/1 + Ort 2/1 + Amn 1/1", the runes short, and where the fitting bases are (src/lib/runewordMaker.js fitOf)
-function Option({ option: { w, recipe, short, bases }, lang }) {
+function Option({ option: { w, recipe, short, bases, larzuk }, lang }) {
+  const sep = t("listSeparator", lang);
+  // "Ral + Amn + 完美紫寶石": what the cube's socket recipe for this base uses up
+  const cubeText = (code) => {
+    const c = cubeRecipeOf(code);
+    return [...c.runes.map((r) => labelOf(`r:${r}`, lang)), labelOf(`b:${c.gem}:Normal`, lang)].join(" + ");
+  };
+  const label = (kind, code) => (kind === "cube" ? t("rwCube", lang, cubeText(code)) : larzuk.length ? t("rwLarzuk", lang, larzuk.join(sep)) : t("rwLarzukUsed", lang));
   const missing = recipe.filter((x) => x.have < x.need).map((x) => `${labelOf(`r:${x.code}`, lang)}${x.need - x.have > 1 ? ` ×${x.need - x.have}` : ""}`);
   return (
     <li>
@@ -68,8 +76,8 @@ function Option({ option: { w, recipe, short, bases }, lang }) {
           </span>
         ))}
       </div>
-      {short > 0 && <div className="text-sm text-red-400 pl-4">{t("rwMissing", lang, missing.join(t("listSeparator", lang)))}</div>}
-      {!bases.ready.length && !bases.larzuk.length && <div className="text-sm gothic-text-muted pl-4">{t("rwNoBase", lang)}</div>}
+      {short > 0 && <div className="text-sm text-red-400 pl-4">{t("rwMissing", lang, missing.join(sep))}</div>}
+      {!bases.ready.length && !(larzuk.length && bases.larzuk.length) && <div className="text-sm gothic-text-muted pl-4">{t("rwNoBase", lang)}</div>}
       {/* Ready bases first, then those needing Larzuk's socket, then the cube's random one */}
       {["ready", "larzuk", "cube"].flatMap((kind) =>
         [...groupByKey(bases[kind])].flatMap(([key, records]) =>
@@ -77,7 +85,7 @@ function Option({ option: { w, recipe, short, bases }, lang }) {
             <div key={`${kind}:${key}:${i}`} className="text-sm pl-4">
               {labelOf(key, lang)} <span className="gothic-text-muted">· {l.text}</span>
               {l.count > 1 && <span className="gothic-text-gold"> ×{l.count}</span>}
-              {kind !== "ready" && <span className={kind === "cube" ? "gothic-text-muted" : "gothic-text-gold"}> · {t(kind === "cube" ? "rwCube" : "rwLarzuk", lang)}</span>}
+              {kind !== "ready" && <span className={kind === "larzuk" && larzuk.length ? "gothic-text-gold" : "gothic-text-muted"}> · {label(kind, key.split(":")[1])}</span>}
             </div>
           )),
         ),

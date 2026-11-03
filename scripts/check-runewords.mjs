@@ -8,7 +8,7 @@ import { createServer } from "vite";
 const dir = process.argv[2];
 const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
 try {
-  const { GROUPS, fitOf, maxSocketsOf, runewordOptions } = await vite.ssrLoadModule("/src/lib/runewordMaker.js");
+  const { GROUPS, cubeRecipeOf, fitOf, larzukOf, maxSocketsOf, runewordOptions } = await vite.ssrLoadModule("/src/lib/runewordMaker.js");
   const { runewords, labelOf } = await vite.ssrLoadModule("/src/lib/gameData.js");
   const { ownersOf } = await vite.ssrLoadModule("/src/lib/inventory.js");
   const { compareCopies, damageOf } = await vite.ssrLoadModule("/src/lib/props.js");
@@ -52,6 +52,27 @@ try {
   assert.equal(option("Infinity", [...infinity, rune("r30")]).short, 0);
   assert.equal(option("Infinity", [rune("r30", { count: 2, place: "advanced" }), ...infinity.slice(1)]).short, 0);
   assert.deepEqual(option("Infinity", infinity).recipe.find((x) => x.code === "r30"), { code: "r30", need: 2, have: 1 });
+  // The cube's weapon recipe uses up Ral + Amn + Perfect Amethyst: a cube Crystal Sword for Spirit (Tal Thul Ort Amn)
+  // needs a second Amn too, and the gem; it never makes a sure base
+  const cubeSword = base("crs", { sockets: 0 });
+  const recipeRunes = [rune("r08"), rune("r11"), rune("gpv", { key: "b:gpv:Normal" })];
+  assert.equal(option("Spirit", [...tal, cubeSword]).bases.cube.length, 0, "no recipe runes");
+  assert.equal(option("Spirit", [...tal, recipeRunes[0], recipeRunes[2], cubeSword]).bases.cube.length, 0, "the only Amn is Spirit's");
+  assert.equal(option("Spirit", [...tal, ...recipeRunes.slice(0, 2), cubeSword]).bases.cube.length, 0, "no gem");
+  const cubed = option("Spirit", [...tal, ...recipeRunes, cubeSword]);
+  assert.equal(cubed.bases.cube.length, 1);
+  assert.ok(GROUPS.rwNeedBase(cubed));
+  // By type and its parents: a circlet or druid pelt is a helm, a paladin shield a shield
+  assert.deepEqual(["crs", "uar", "ci0", "dr1", "pa1"].map((c) => cubeRecipeOf(c).gem), ["gpv", "gpy", "gpb", "gpb", "gpr"]);
+  // Larzuk's socket: a sure base only while some character of the mode can still get it
+  const lore = (larzuk) => runewordOptions([rune("r09"), rune("r12"), base("uap", { sockets: 0 })], larzuk).find((o) => o.w === rw("Lore"));
+  assert.ok(GROUPS.rwCanMake(lore(["yzr"])) && GROUPS.rwNeedBase(lore([])));
+  const hero = (name, socket, more) => ({ name, mode: "SoftCore:Modern", quests: { respec: [null, null, null], socket }, ...more });
+  const owners = [
+    hero("a", ["used", "available", null]), hero("b", ["used", "used", "used"]), hero("c", [null, null, null]),
+    hero("d", ["available", null, null], { dead: true }), hero("e", ["available", null, null], { mode: "HardCore:Modern" }), { name: "stash" },
+  ];
+  assert.deepEqual(larzukOf(owners, "SoftCore:Modern"), ["a"]);
   console.log("hand-made cases ok");
 
   if (dir) {
@@ -73,8 +94,9 @@ try {
         "ModernSharedStashSoftCoreV2/shared1 7pa 14/114-480", "Zanna/merc 7pa 12/124-523",
       ]);
     for (const mode of [...new Set(modeOf.values())].filter(Boolean).sort()) {
-      const options = runewordOptions(data.items.filter((r) => modeOf.get(r.owner) === mode));
-      console.log(mode);
+      const larzuk = larzukOf(ownersOf(data), mode);
+      const options = runewordOptions(data.items.filter((r) => modeOf.get(r.owner) === mode), larzuk);
+      console.log(mode, "Larzuk's socket still open for:", larzuk.join(", ") || "nobody");
       for (const [group, test] of Object.entries(GROUPS)) {
         const lines = options.filter(test).map((o) => {
           const missing = o.recipe.filter((x) => x.have < x.need).map((x) => `${x.code}×${x.need - x.have}`);

@@ -5,7 +5,7 @@
 // here: roles are the defaults (roleOf: level 1 characters are mules).
 import { callable, toaster } from "@decky/api";
 import { parseSaveFiles } from "../../src/lib/parseSaves.js";
-import { pickedUp, pickupToasts } from "../../src/lib/pickups.js";
+import { pickupToasts, takeChange } from "../../src/lib/pickups.js";
 import { t } from "../../src/lib/i18n.js";
 import init from "../../wasm/pkg/d2_parser.js";
 import wasmBase64 from "../../wasm/pkg/d2_parser_bg.wasm";
@@ -18,6 +18,7 @@ let timer = null;
 let files = null; // name -> { mtime, data?: base64 not parsed yet, parsed?: saveData of that file }; null before the first look
 let pending = null; // a change seen but maybe not finished: { changed: Map(name -> { mtime, data }), gone: Set }
 let wasmReady = null;
+const tries = new Map(); // name -> { mtime, n }: changed saves that did not read yet (takeChange)
 let last = null; // { files, ms, wasm? }: the last check that parsed something, for the panel
 const listeners = new Set();
 
@@ -28,6 +29,7 @@ export function startWatching() {
   if (timer) return;
   files = null; // a fresh, silent first look: what changed while not watching is not a pickup
   pending = null;
+  tries.clear();
   timer = setInterval(tick, 2000);
   tick();
 }
@@ -50,22 +52,17 @@ function loadWasm() {
 }
 
 let parsedNow = 0;
-async function parsedOf(name, file) {
-  if (!file.parsed) {
-    file.parsed = await parseSaveFiles([new File([bytesOf(file.data)], name)]);
-    file.data = undefined;
-    parsedNow++;
-  }
-  return file.parsed;
+async function parse(name, data) {
+  parsedNow++;
+  return parseSaveFiles([new File([bytesOf(data)], name)]);
 }
 
-async function allSaves(map) {
-  const parts = await Promise.all([...map].map(([name, f]) => parsedOf(name, f)));
-  return {
-    items: parts.flatMap((p) => p.items),
-    owners: parts.flatMap((p) => p.owners),
-    errors: parts.flatMap((p) => [...p.errors, ...p.damaged]),
-  };
+async function parsedOf(name, file) {
+  if (!file.parsed) {
+    file.parsed = await parse(name, file.data);
+    file.data = undefined;
+  }
+  return file.parsed;
 }
 
 let running = false;
@@ -112,17 +109,13 @@ async function settle() {
     await loadWasm();
     wasmMs = Math.round(performance.now() - start);
   }
-  const before = await allSaves(files);
-  const next = new Map(files);
-  for (const name of change.gone) next.delete(name);
-  for (const [name, f] of change.changed) next.set(name, { mtime: f.mtime, data: f.data });
-  const after = await allSaves(next);
-  files = next;
+  const before = new Map(await Promise.all([...files].map(async ([name, f]) => [name, await parsedOf(name, f)])));
+  const changed = new Map(await Promise.all([...change.changed].map(async ([name, f]) => [name, { mtime: f.mtime, data: await parse(name, f.data) }])));
+  const { taken, picks, saves } = takeChange(before, changed, change.gone, tries);
+  for (const name of change.gone) files.delete(name);
+  for (const name of taken) files.set(name, { mtime: changed.get(name).mtime, parsed: changed.get(name).data });
   last = { files: parsedNow, ms: Math.round(performance.now() - start), wasm: wasmMs };
   listeners.forEach((fn) => fn(last));
-  // ponytail: a save that doesn't read is taken as it is, silently; when it reads again later its items alert
-  if (before.errors.length || after.errors.length) return;
-  const picks = pickedUp(before, after);
   if (picks.length > MANY) return toaster.toast({ title: "D2R", body: t("pickupMany", lang, picks.length) });
-  for (const { title, body } of pickupToasts(picks, after, lang)) toaster.toast({ title, body });
+  for (const { title, body } of pickupToasts(picks, saves, lang)) toaster.toast({ title, body });
 }

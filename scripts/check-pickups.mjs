@@ -16,7 +16,7 @@ try {
   wasm.initSync({ module: readFileSync(new URL("../wasm/pkg/d2_parser_bg.wasm", import.meta.url)) });
   const wasmMs = performance.now() - start;
   const { parseSaveFiles } = await vite.ssrLoadModule("/src/lib/parseSaves.js");
-  const { pickedUp, pickupToasts } = await vite.ssrLoadModule("/src/lib/pickups.js");
+  const { MAX_TRIES, pickedUp, pickupToasts, takeChange } = await vite.ssrLoadModule("/src/lib/pickups.js");
   const { labelOf } = await vite.ssrLoadModule("/src/lib/gameData.js");
   const check = (what, fn) => (fn(), console.log(`ok  ${what}`));
 
@@ -82,6 +82,47 @@ try {
     console.log(`    ${more.title} / ${more.body}`);
     assert.match(more.body, /^You have \d+ already$/);
   });
+
+  {
+    // Per save, as the plugin keeps them: one character without its first unique or set item (picked up after)
+    const perFile = new Map(await Promise.all(files.map(async (f) => [f.name, await parseSaveFiles([f])])));
+    const holder = files.find((f) => f.name.endsWith(".d2s") && perFile.get(f.name).items.some((r) => /^[us]:/.test(r.key) && r.place !== "socketed"));
+    const j = JSON.parse(wasm.parseD2s(new Uint8Array(await holder.arrayBuffer())));
+    j.items.splice(j.items.findIndex((it) => it.quality === "Unique" || it.quality === "Set"), 1);
+    const without = await parseSaveFiles([new File([wasm.writeD2s(JSON.stringify(j))], holder.name)]);
+    const other = files.find((f) => f.name.endsWith(".d2s") && f !== holder);
+    const cut = await parseSaveFiles([new File([(await other.arrayBuffer()).slice(0, 200)], other.name)]); // cut short
+    assert(cut.errors.length || cut.damaged.length, "a cut save should not read well");
+    const before = new Map([...perFile, [holder.name, without], [other.name, cut]]);
+    const good = perFile.get(holder.name);
+
+    check("an old save that doesn't read (and doesn't change) stops no alert", () => {
+      const { taken, picks } = takeChange(before, new Map([[holder.name, { mtime: 2, data: good }]]), [], new Map());
+      assert.deepEqual(taken, [holder.name]);
+      assert.equal(picks.length, 1);
+      assert.equal(picks[0].r.owner, holder.name.replace(/\.d2s$/, ""));
+    });
+
+    check("a changed save that doesn't read keeps its old version, then is taken silently", () => {
+      const tries = new Map();
+      const change = new Map([[holder.name, { mtime: 2, data: cut }]]);
+      for (let i = 1; i < MAX_TRIES; i++) assert.deepEqual(takeChange(before, change, [], tries).taken, []);
+      const last = takeChange(before, change, [], tries);
+      assert.deepEqual([last.taken, last.picks], [[holder.name], []]);
+      assert.equal(tries.size, 0);
+      // a new mtime counts again from one
+      takeChange(before, change, [], tries);
+      assert.deepEqual(takeChange(before, new Map([[holder.name, { mtime: 3, data: cut }]]), [], tries).taken, []);
+      // a half-written read, then the good one: the pickup alerts once
+      assert.equal(takeChange(before, new Map([[holder.name, { mtime: 4, data: good }]]), [], new Map()).picks.length, 1);
+    });
+
+    check("the next good read of a save taken while it didn't read is silent", () => {
+      const broken = new Map([...before, [holder.name, cut]]);
+      const { taken, picks } = takeChange(broken, new Map([[holder.name, { mtime: 5, data: good }]]), [], new Map());
+      assert.deepEqual([taken, picks], [[holder.name], []]);
+    });
+  }
 
   console.log(`wasm compile ${wasmMs.toFixed(1)} ms; parse all ${files.length} files ${fullMs.toFixed(1)} ms; one file (${one.name}) ${oneMs.toFixed(1)} ms`);
 } finally {

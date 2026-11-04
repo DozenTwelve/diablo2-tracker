@@ -30,9 +30,12 @@ export function inboxItems(saveData, inboxes) {
 //   { have, need, merc }; extra: organizing puts it in TRASH { have, need, merc }; junk / keep: a magic charm or
 //   jewel that is likely junk / worth keeping; newRune: a rune type not owned yet; other: anything else.
 // roles: the Characters page's main/mule choice (roleOf), as the Organize page passes it.
-export function findsOf(saveData, inboxes, roles = {}) {
+export const findsOf = (saveData, inboxes, roles = {}) => verdictsOf(saveData, inboxItems(saveData, inboxes), roles);
+
+// The same for any records of saveData (the inbox pages' items, or what was just picked up): each is taken as if
+// organizing took it along with the mode's mules, like an inbox item
+export function verdictsOf(saveData, finds, roles = {}) {
   const owners = ownersOf(saveData);
-  const finds = inboxItems(saveData, inboxes);
   const verdicts = new Map();
   for (const mode of new Set(finds.map((r) => owners.find((o) => o.name === r.owner)?.mode))) {
     // What organizing this mode takes: its living mules and its inbox pages, not items inside other items

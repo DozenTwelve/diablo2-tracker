@@ -48,6 +48,14 @@ const UI = {
   find_extra: ["多余，整理时进 TRASH", "多餘，整理時進 TRASH", "Extra, goes to TRASH when organizing", "남는 것, 정리 시 TRASH로"],
   find_junk: ["可能是垃圾", "可能是垃圾", "Likely junk", "버릴 만한 것"],
   find_other: ["其他", "其他", "Other", "기타"],
+  // Pickup alerts on the Steam Deck (src/lib/pickups.js)
+  pickupHaveRunes: [(n) => `已经有 ${n} 个`, (n) => `已經有 ${n} 個`, (n) => `You have ${n} already`, (n) => `이미 ${n}개 있음`],
+  pickupMany: [
+    (n) => `存档里多了 ${n} 件暗金、套装或符文：打开收藏看看`,
+    (n) => `存檔裡多了 ${n} 件暗金、套裝或符文：打開收藏看看`,
+    (n) => `${n} more uniques, set items or runes in the saves: open the collection to see them`,
+    (n) => `저장 파일에 고유·세트·룬이 ${n}개 늘었습니다: 수집을 열어 보세요`,
+  ],
   findWhy_new: [() => "你还没有这件：整理时放进图鉴", () => "你還沒有這件：整理時放進圖鑑", () => "You don't have one yet: organizing puts it in the museum", () => "아직 없는 아이템: 정리하면 도감에 들어갑니다"],
   findWhy_museum: [
     () => "别的角色已经有一件，但图鉴还空着：整理时这件放进图鉴",

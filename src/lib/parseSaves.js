@@ -1,8 +1,9 @@
 // Parse D2R save files in the browser with the d2s WASM wrapper (wasm/).
 // Output: owners (characters and shared stashes) and a flat list of owned items:
-// { key, code, quality, ilvl, ethereal, sockets, filled, stats, rolls?, variant?, owner, place, x, y, slot, gfx, count }
+// { key, code, quality, ilvl, ethereal, sockets, filled, stats, rolls?, variant?, owner, place, x, y, slot, gfx, count, seed }
 // (x/y: grid position in stash/inventory/cube; slot: body location when equipped, e.g. "Head";
-// gfx: which look a ring, amulet, charm or jewel has; filled: sockets holding something),
+// gfx: which look a ring, amulet, charm or jewel has; filled: sockets holding something; seed: the item's own random
+// seed, which stays with it when it moves between saves, 0 for runes and other simple items),
 // stats as [statId, layer, value] (see src/lib/stats.js).
 import { codeOfNumber, keyOf, variantOf } from "./gameData";
 import { modeOfCharacter, modeOfStash } from "./modes";
@@ -84,6 +85,7 @@ function collect(item, owner, place, out) {
     slot: item.position.mode === "Equipped" ? item.position.body_location : undefined,
     gfx: item.variable_gfx_id ?? undefined,
     count,
+    seed: item.seed,
   });
   // Runes inside a runeword are part of it, not loose runes
   if (item.runeword_id == null) item.sockets.forEach((s) => s && collect(s, owner, "socketed", out));

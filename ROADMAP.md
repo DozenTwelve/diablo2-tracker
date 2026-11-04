@@ -78,3 +78,12 @@ dashboard); the Netlify site is deleted. Done.
   which saved pieces are on it and where the others went (another main, a mule), so shared items are easy to find.
   Items are told apart by their seed. Picked entirely by hand, no recommendations. Moving pieces back with one
   click would be the first write to mains' saves: ask the user before building it.
+
+## 8. Pickup alerts on the Deck (2026-11-04)
+
+- The plugin watches the save folder (a stat every 2 s, `save_changes` in `decky/main.py`, read only). When a save
+  changes and settles, it parses only the changed files and toasts each new unique, set item or rune over the game:
+  new to the collection or not, and what organizing would do with it (`src/lib/pickups.js`, the New finds verdict).
+  Items are told apart by their seed, runes by count per mode, so moving or equipping never alerts. Default roles
+  only (the web page's main/mule choices are out of reach). Not yet timed on a real Deck: the panel shows the last
+  check's time for that.

@@ -9,6 +9,9 @@ menu in Game Mode, with the saves read straight from the Deck.
 - `src/index.tsx`: the quick access panel. "Open collection" opens the tracker in Steam's browser. "Get item icons"
   pulls the inventory icons out of the player's own game files with [casc-cli](https://github.com/ironsp4rk/casc-cli)
   (MIT) and turns them into PNGs in Decky's data folder; the plugin ships no game art.
+- `src/watch.js`: pickup alerts. Every 2 s the panel asks `save_changes` which saves changed; once they settle it
+  parses them with the web app's code (the parser's WebAssembly is in the bundle) and toasts each new unique, set
+  item or rune. The panel's toggle turns it off.
 - The app's "Organize" page sorts the mules and the ticked inbox pages of the shared stash and shows what would
   happen, like on the web; in the plugin, "Organize now" posts the checked saves to the backend instead of
   offering a zip. The backend refuses while

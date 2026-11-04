@@ -1,0 +1,128 @@
+// Pickup alerts: while D2R runs, the game saves a few seconds after an item is picked up. Every 2 s ask the backend
+// which saves changed (a stat of each, nothing parsed); once a change has settled, parse the changed saves with the
+// web app's code and toast each new unique, set item or rune (src/lib/pickups.js).
+// The web page's main/mule choices and inbox pages live in its own localStorage (another origin), out of reach
+// here: roles are the defaults (roleOf: level 1 characters are mules).
+import { callable, toaster } from "@decky/api";
+import { parseSaveFiles } from "../../src/lib/parseSaves.js";
+import { pickedUp, pickupToasts } from "../../src/lib/pickups.js";
+import { t } from "../../src/lib/i18n.js";
+import init from "../../wasm/pkg/d2_parser.js";
+import wasmBase64 from "../../wasm/pkg/d2_parser_bg.wasm";
+
+const saveChanges = callable("save_changes");
+const lang = /^zh-(cn|sg|hans)/i.test(navigator.language) ? "zh" : navigator.language.startsWith("zh") ? "zh_tw" : navigator.language.startsWith("ko") ? "ko" : "en";
+const MANY = 5; // more pickups than this in one change: one toast that says how many
+
+let timer = null;
+let files = null; // name -> { mtime, data?: base64 not parsed yet, parsed?: saveData of that file }; null before the first look
+let pending = null; // a change seen but maybe not finished: { changed: Map(name -> { mtime, data }), gone: Set }
+let wasmReady = null;
+let last = null; // { files, ms, wasm? }: the last check that parsed something, for the panel
+const listeners = new Set();
+
+export const lastCheck = () => last;
+export const onCheck = (fn) => (listeners.add(fn), () => listeners.delete(fn));
+
+export function startWatching() {
+  if (timer) return;
+  files = null; // a fresh, silent first look: what changed while not watching is not a pickup
+  pending = null;
+  timer = setInterval(tick, 2000);
+  tick();
+}
+
+export function stopWatching() {
+  clearInterval(timer);
+  timer = null;
+}
+
+function bytesOf(b64) {
+  const s = atob(b64);
+  const bytes = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) bytes[i] = s.charCodeAt(i); // Uint8Array.from with a callback: 20× slower
+  return bytes;
+}
+
+function loadWasm() {
+  wasmReady ??= init({ module_or_path: bytesOf(wasmBase64) });
+  return wasmReady;
+}
+
+let parsedNow = 0;
+async function parsedOf(name, file) {
+  if (!file.parsed) {
+    file.parsed = await parseSaveFiles([new File([bytesOf(file.data)], name)]);
+    file.data = undefined;
+    parsedNow++;
+  }
+  return file.parsed;
+}
+
+async function allSaves(map) {
+  const parts = await Promise.all([...map].map(([name, f]) => parsedOf(name, f)));
+  return {
+    items: parts.flatMap((p) => p.items),
+    owners: parts.flatMap((p) => p.owners),
+    errors: parts.flatMap((p) => [...p.errors, ...p.damaged]),
+  };
+}
+
+let running = false;
+async function tick() {
+  if (running) return; // a slow parse: skip a tick rather than overlap
+  running = true;
+  try {
+    const known = Object.fromEntries([...(files ?? [])].map(([name, f]) => [name, f.mtime]));
+    for (const [name, f] of pending?.changed ?? []) known[name] = f.mtime;
+    for (const name of pending?.gone ?? []) delete known[name];
+    const { changed, gone, busy } = await saveChanges(known);
+    if (!timer) return;
+    if (!files || busy) {
+      // The first look, or the collection page is open (organizing or restoring there): take the saves as they are
+      files ??= new Map();
+      for (const name of [...(pending?.gone ?? []), ...gone]) files.delete(name);
+      for (const [name, f] of pending?.changed ?? []) files.set(name, { mtime: f.mtime, data: f.data });
+      for (const f of changed) files.set(f.name, { mtime: f.mtime, data: f.data });
+      pending = null;
+      return;
+    }
+    if (changed.length || gone.length) {
+      // The game may write the character and then the stash: wait for a look that finds nothing new
+      pending ??= { changed: new Map(), gone: new Set() };
+      for (const f of changed) pending.changed.set(f.name, f), pending.gone.delete(f.name);
+      for (const name of gone) pending.gone.add(name), pending.changed.delete(name);
+      return;
+    }
+    if (pending) await settle();
+  } catch (e) {
+    console.error("D2R pickup alerts", e);
+  } finally {
+    running = false;
+  }
+}
+
+async function settle() {
+  const change = pending;
+  pending = null;
+  const start = performance.now();
+  parsedNow = 0;
+  let wasmMs;
+  if (!wasmReady) {
+    await loadWasm();
+    wasmMs = Math.round(performance.now() - start);
+  }
+  const before = await allSaves(files);
+  const next = new Map(files);
+  for (const name of change.gone) next.delete(name);
+  for (const [name, f] of change.changed) next.set(name, { mtime: f.mtime, data: f.data });
+  const after = await allSaves(next);
+  files = next;
+  last = { files: parsedNow, ms: Math.round(performance.now() - start), wasm: wasmMs };
+  listeners.forEach((fn) => fn(last));
+  // ponytail: a save that doesn't read is taken as it is, silently; when it reads again later its items alert
+  if (before.errors.length || after.errors.length) return;
+  const picks = pickedUp(before, after);
+  if (picks.length > MANY) return toaster.toast({ title: "D2R", body: t("pickupMany", lang, picks.length) });
+  for (const { title, body } of pickupToasts(picks, after, lang)) toaster.toast({ title, body });
+}

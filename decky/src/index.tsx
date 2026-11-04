@@ -1,8 +1,9 @@
 // Quick access panel: open the tracker in Steam's browser (the server runs until the page is left, by its close
 // button, B or the Steam button, or "Stop"), and pull the item icons out of the game files once.
-import { ButtonItem, Navigation, PanelSection, PanelSectionRow, staticClasses } from "@decky/ui";
+import { ButtonItem, Navigation, PanelSection, PanelSectionRow, ToggleField, staticClasses } from "@decky/ui";
 import { addEventListener, callable, definePlugin, removeEventListener, toaster } from "@decky/api";
 import { useEffect, useState } from "react";
+import { lastCheck, onCheck, startWatching, stopWatching, type Check } from "./watch";
 
 type Status = { saves: number; game: boolean; icons: boolean; running: boolean; extracting: boolean };
 const status = callable<[], Status>("status");
@@ -23,14 +24,32 @@ const TEXT = {
   done: (n: number) => (zh ? `已提取 ${n} 個圖標` : `${n} icons ready`),
   failed: zh ? "提取圖標失敗" : "Getting icons failed",
   openFailed: zh ? "打不開收藏" : "Can't open the collection",
+  alerts: zh ? "撿到物品時提醒" : "Alert on pickups",
+  alertsAbout: zh ? "撿到暗金、套裝或符文時，說是不是新收藏" : "Says whether a unique, set item or rune you pick up is new",
+  checked: (c: Check) =>
+    (zh ? `上次檢查：解析 ${c.files} 個檔案 ${c.ms} ms` : `Last check: parsed ${c.files} files in ${c.ms} ms`) +
+    (c.wasm != null ? (zh ? `（含載入解析器 ${c.wasm} ms）` : ` (${c.wasm} ms loading the parser)`) : ""),
+};
+
+// On unless turned off; kept in the Steam UI's own storage
+const ALERTS = "d2r-tracker-pickup-alerts";
+const alertsOn = () => {
+  try {
+    return localStorage.getItem(ALERTS) !== "off";
+  } catch {
+    return true;
+  }
 };
 const toast = (body: string) => toaster.toast({ title: "D2R", body });
 
 function Content() {
   const [info, setInfo] = useState<Status | null>(null);
   const [busy, setBusy] = useState(false);
+  const [alerts, setAlerts] = useState(alertsOn);
+  const [check, setCheck] = useState(lastCheck);
   useEffect(() => {
     status().then(setInfo, (e) => toast(String(e)));
+    return onCheck(setCheck);
   }, []);
 
   const extract = async () => {
@@ -93,6 +112,22 @@ function Content() {
           <div>{TEXT.noGame}</div>
         )}
       </PanelSectionRow>
+      <PanelSectionRow>
+        <ToggleField
+          label={TEXT.alerts}
+          description={check ? TEXT.checked(check) : TEXT.alertsAbout}
+          checked={alerts}
+          onChange={(on) => {
+            setAlerts(on);
+            try {
+              localStorage.setItem(ALERTS, on ? "on" : "off");
+            } catch {
+              // not kept: on again after a restart
+            }
+            on ? startWatching() : stopWatching();
+          }}
+        />
+      </PanelSectionRow>
     </PanelSection>
   );
 }
@@ -120,6 +155,7 @@ const leave = () => {
 
 export default definePlugin(() => {
   addEventListener("closed", leave);
+  if (alertsOn()) startWatching(); // here, not in the panel: it is closed nearly all the time
   return {
     name: "D2R Collection Tracker",
     titleView: <div className={staticClasses.Title}>D2R Collection Tracker</div>,
@@ -129,6 +165,9 @@ export default definePlugin(() => {
         <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Zm0 4 4 1.5V11c0 2.9-1.7 5.6-4 6.9-2.3-1.3-4-4-4-6.9V7.5L12 6Z" />
       </svg>
     ),
-    onDismount: () => removeEventListener("closed", leave),
+    onDismount: () => {
+      removeEventListener("closed", leave);
+      stopWatching();
+    },
   };
 });

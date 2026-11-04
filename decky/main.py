@@ -1,5 +1,6 @@
 # Decky entry point: serves the tracker on 127.0.0.1 from "Open collection" until it is closed (see py_modules/tracker.py).
 import asyncio
+import base64
 import os
 import shutil
 
@@ -81,6 +82,26 @@ class Plugin:
             "running": self.server is not None,
             "extracting": self.extracting,
         }
+
+    async def save_changes(self, known):
+        """Read only, for the panel's pickup alerts: the saves whose time differs from known ({name: mtime}), with
+        their bytes, and the names in known that are gone. busy: the collection page is open (it may organize or
+        restore), so a change is not the game's."""
+        folder = tracker.save_dir(HOME, BACKUPS)
+        names = tracker.list_saves(folder)
+        changed = []
+        for name in names:
+            path = os.path.join(folder, name)
+            try:
+                mtime = os.path.getmtime(path)
+                if known.get(name) == mtime:
+                    continue
+                with open(path, "rb") as f:
+                    data = f.read()
+            except OSError:  # deleted since it was listed
+                continue
+            changed.append({"name": name, "mtime": mtime, "data": base64.b64encode(data).decode()})
+        return {"changed": changed, "gone": [n for n in known if n not in names], "busy": self.server is not None}
 
     async def extract_icons(self):
         data = tracker.game_data_dir(HOME)

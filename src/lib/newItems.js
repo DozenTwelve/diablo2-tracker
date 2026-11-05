@@ -29,7 +29,8 @@ export function inboxItems(saveData, inboxes) {
 //   upgrade: organizing swaps it into the museum { score, museum }; needed: a duplicate organizing keeps in DUP
 //   { have, need, merc, charm: a charm or jewel kept past need, as every copy is }; extra: organizing puts it in TRASH
 //   { have, need, merc }; junk / keep: a magic charm or jewel that is likely junk (to the LOWCHARM / LOWJEWEL mules) /
-//   worth keeping; newRune: a rune type not owned yet; other: anything else.
+//   worth keeping; newRune: a rune type not owned yet; legacy: a unique or set item with no museum slot, every copy
+//   kept in DUP; other: anything else.
 // roles: the Characters page's main/mule choice (roleOf), as the Organize page passes it.
 export const findsOf = (saveData, inboxes, roles = {}) => verdictsOf(saveData, inboxItems(saveData, inboxes), roles);
 
@@ -66,7 +67,7 @@ export function verdictsOf(saveData, finds, roles = {}) {
       const need = copiesNeeded(r.key);
       const group = where.get(c);
       let verdict;
-      if (!slots.has(r.key)) verdict = { kind: elsewhere ? "other" : "new" }; // legacy items have no museum slot
+      if (!slots.has(r.key)) verdict = { kind: "legacy" }; // no museum slot: placeCopies keeps every copy in DUP
       else if (group === "MUSEUM") {
         const now = copies.find((o) => o.key === r.key && o.home);
         verdict = !elsewhere ? { kind: "new" } : now ? { kind: "upgrade", score: c.score, museum: now.score } : { kind: "museum" };
@@ -90,4 +91,4 @@ function otherVerdict(record, all) {
   return { kind: "other" };
 }
 
-export const KINDS = ["new", "museum", "upgrade", "newRune", "needed", "keep", "extra", "junk", "other"];
+export const KINDS = ["new", "museum", "upgrade", "newRune", "needed", "legacy", "keep", "extra", "junk", "other"];

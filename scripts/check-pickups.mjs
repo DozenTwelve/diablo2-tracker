@@ -117,6 +117,26 @@ try {
       assert.equal(takeChange(before, new Map([[holder.name, { mtime: 4, data: good }]]), [], new Map()).picks.length, 1);
     });
 
+    check("an item moved between two saves, one caught half written: no alert", () => {
+      // holder's unique goes to other; the first look reads holder (without it) but not other
+      const moved = good.items.find((r) => /^[us]:/.test(r.key) && !without.items.some((w) => w.code === r.code && w.seed === r.seed));
+      const there = perFile.get(other.name);
+      const otherWith = { ...there, items: [...there.items, { ...moved, owner: there.owners[0].name }] };
+      const target = new Map([[holder.name, { mtime: 2, data: without }], [other.name, { mtime: 2, data: otherWith }]]);
+      const saves = new Map(perFile);
+      const tries = new Map();
+      // as decky/src/watch.js: taken saves get their new version, the rest is reported changed again
+      const look = (change) => {
+        const result = takeChange(saves, change, [], tries);
+        for (const name of result.taken) saves.set(name, change.get(name).data), target.delete(name);
+        return result;
+      };
+      const first = look(new Map([...target, [other.name, { mtime: 2, data: cut }]]));
+      assert.deepEqual([first.taken, first.picks, first.wait], [[], [], true]);
+      const next = look(new Map(target));
+      assert.deepEqual([next.taken.length, next.picks], [2, []]);
+    });
+
     check("the next good read of a save taken while it didn't read is silent", () => {
       const broken = new Map([...before, [holder.name, cut]]);
       const { taken, picks } = takeChange(broken, new Map([[holder.name, { mtime: 5, data: good }]]), [], new Map());

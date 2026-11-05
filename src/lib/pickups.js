@@ -54,24 +54,29 @@ const merged = (saves) => ({ items: [...saves.values()].flatMap((d) => d.items),
 
 // One settled change of the save folder. before: Map(name -> saveData of that one save) as taken so far;
 // changed: Map(name -> { mtime, data: saveData }); gone: names; tries: Map(name -> { mtime, n }), failed reads, kept
-// by the caller and updated here. A changed save that doesn't read (caught half written) is left out, its old
-// version kept, until it failed MAX_TRIES times at the same mtime: then it is taken, silently, and so is its next
-// good read (its items were missing in between). A save that doesn't read and doesn't change is the same before
-// and after: it stops nothing. Returns { taken: changed names to take, picks (pickedUp), saves: all after, merged }
+// by the caller and updated here. All or nothing: while a changed save doesn't read (caught half written), none of
+// the change is taken, every old version stays (an item moved from the stash to that character would otherwise be
+// a pickup once it reads), until it failed MAX_TRIES times at the same mtime: then it is taken, silently, and so
+// is its next good read (its items were missing in between). A save that doesn't read and doesn't change is the
+// same before and after: it stops nothing. Returns { taken: changed names to take, wait: true when none of the
+// change (gone included) is taken yet, picks (pickedUp), saves: all after, merged }
 export function takeChange(before, changed, gone, tries) {
-  const quiet = new Map(before); // after, but with saves that don't read now or didn't before as they were
-  for (const name of gone) quiet.delete(name);
-  const taken = [];
+  let wait = false;
   for (const [name, { mtime, data }] of changed) {
-    if (!readsWell(data)) {
+    if (readsWell(data)) tries.delete(name);
+    else {
       const n = tries.get(name)?.mtime === mtime ? tries.get(name).n + 1 : 1;
       tries.set(name, { mtime, n });
-      if (n < MAX_TRIES) continue; // the old version stays: the next look sees the change again and tries again
+      if (n < MAX_TRIES) wait = true; // the next look sees the whole change again and tries again
     }
+  }
+  if (wait) return { taken: [], wait, picks: [], saves: merged(before) };
+  const quiet = new Map(before); // after, but with saves that don't read now or didn't before as they were
+  for (const name of gone) quiet.delete(name);
+  for (const [name, { data }] of changed) {
     tries.delete(name);
-    taken.push(name);
     if (readsWell(data) && (!before.has(name) || readsWell(before.get(name)))) quiet.set(name, data);
   }
   const saves = merged(quiet);
-  return { taken, picks: pickedUp(merged(before), saves), saves };
+  return { taken: [...changed.keys()], wait, picks: pickedUp(merged(before), saves), saves };
 }

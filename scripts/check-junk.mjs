@@ -16,6 +16,13 @@ try {
   assert.equal(isJunk(item("Rare", life(1)), "cm1"), false, "only magic items");
   assert.equal(isJunk(item("Magic", [79, 20]), "jew"), true, "jewel, gold find only");
   assert.equal(isJunk(item("Magic", [79, 20]), "rin"), false, "not rings");
+  // "+N min damage" is stored as 21, 23 and 159, "+N max damage" as 22, 24 and 160
+  const min = (n) => [[21, n], [23, n], [159, n]];
+  const max = (n) => [[22, n], [24, n], [160, n]];
+  assert.equal(isJunk(item("Magic", ...min(1)), "jew"), true, "jewel, +1 min damage");
+  assert.equal(isJunk(item("Magic", ...max(9)), "jew"), true, "jewel, +9 max damage");
+  assert.equal(isJunk(item("Magic", ...max(15)), "jew"), false, "jewel, +15 max damage");
+  assert.equal(isJunk(item("Magic", life(20), [54, 1], [55, 5], [56, 50]), "cm3"), true, "grand charm, low life and cold damage");
   console.log("junk rules ok");
 } finally {
   await vite.close();

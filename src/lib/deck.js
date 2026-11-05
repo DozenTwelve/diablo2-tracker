@@ -18,6 +18,8 @@ export const closeDeck = () => post("/api/close", {});
 export const deckBackups = async () => (await get("/api/backups")).json();
 export const restoreDeck = (name) => post("/api/restore", { name });
 export const deleteDeckBackup = (name) => post("/api/delete-backup", { name });
+// Go on without restoring the interrupted backup: writing is allowed again and that backup is kept for good
+export const dismissDeckInterrupted = (name) => post("/api/dismiss", { name });
 
 export async function deckSaveFiles() {
   const names = await (await get("/api/saves")).json();

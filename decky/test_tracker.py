@@ -95,6 +95,8 @@ with tempfile.TemporaryDirectory() as tmp:
         assert e.code == 403
 
     def post(body, origin=base, kind="application/json", path="/api/write"):
+        if path == "/api/write":  # the hashes of the saves there now, as the page sends them
+            body = {"expect": tracker._hashes(saves), **body}
         request = urllib.request.Request(base + path, json.dumps(body).encode(), {"Origin": origin, "Content-Type": kind})
         try:
             response = urllib.request.urlopen(request)
@@ -108,6 +110,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert post({"files": new}, origin="http://evil.example")[0] == 403
     assert post({"files": new}, kind="text/plain")[0] == 403
     assert post({"files": [{"name": "../x.d2s", "data": ""}]})[0] == 500
+    assert post({"files": new, "expect": None})[0] == 400  # without the hashes the page read: refused
     tracker.game_running = lambda: True
     assert post({"files": new})[0] == 409
     tracker.game_running = lambda: False
@@ -166,7 +169,7 @@ with tempfile.TemporaryDirectory() as tmp:
 
     # A backup cut short (an unreadable file here; a full disk on the Deck) is neither kept nor listed
     listed = json.loads(get("/api/backups"))
-    locked = os.path.join(saves, "Locked.d2s")
+    locked = os.path.join(saves, "Locked.key")  # not a save: the hashes read only those
     open(locked, "wb").write(b"x")
     os.chmod(locked, 0)
     assert post({"files": new})[0] == 500
@@ -228,7 +231,7 @@ with tempfile.TemporaryDirectory() as tmp:
     # Backups say why they were made, going back and forth doesn't pile them up, the newest KEEP stay besides the oldest
     folder, root = os.path.join(tmp, "f"), os.path.join(tmp, "b")
     os.makedirs(folder)
-    put = lambda data: tracker.write_saves(folder, [{"name": "A.d2s", "bytes": data}], root)
+    put = lambda data: tracker.write_saves(folder, [{"name": "A.d2s", "bytes": data}], root, expect=tracker._hashes(folder))
     names = lambda: [b["name"] for b in tracker.list_backups(root, folder)]
     read = lambda path: open(path, "rb").read()
     put(b"1")  # backs up the empty folder: the oldest, kept for good
@@ -259,7 +262,7 @@ with tempfile.TemporaryDirectory() as tmp:
     # Mules go below the other characters in D2R's list (by save time), in the order given
     open(os.path.join(folder, "Main.d2s"), "wb").write(b"main")
     os.utime(os.path.join(folder, "Main.d2s"), (5000, 5000))
-    tracker.write_saves(folder, [{"name": "B-A.d2s", "bytes": b"mule"}], root, mules=["A", "B-A"])  # in the page's order
+    tracker.write_saves(folder, [{"name": "B-A.d2s", "bytes": b"mule"}], root, mules=["A", "B-A"], expect=tracker._hashes(folder))  # in the page's order
     when = lambda n: os.path.getmtime(os.path.join(folder, n))
     assert when("A.d2s") < 5000 and when("B-A.d2s") < when("A.d2s") and when("Main.d2s") == 5000
 
@@ -292,7 +295,7 @@ with tempfile.TemporaryDirectory() as tmp:
     other = os.path.join(tmp, "other")
     os.makedirs(other)
     open(os.path.join(other, "B.d2s"), "wb").write(b"b")
-    tracker.write_saves(other, [{"name": "B.d2s", "bytes": b"b2"}], root)
+    tracker.write_saves(other, [{"name": "B.d2s", "bytes": b"b2"}], root, expect=tracker._hashes(other))
     theirs = tracker.list_backups(root, other)[0]["name"]
     assert theirs not in names()
     try:
@@ -311,8 +314,55 @@ with tempfile.TemporaryDirectory() as tmp:
     tracker._write, tracker._put_back = write, put_back
     flagged = [b for b in tracker.list_backups(root, folder) if b.get("interrupted")]
     assert len(flagged) == 1
-    put(b"whole")
+    # No write until it is restored or dismissed: one would take its flag, and _prune would delete it later
+    try:
+        put(b"again")
+        raise AssertionError("wrote over an interrupted write")
+    except tracker.Interrupted as e:
+        assert e.backup == flagged[0]["name"]
+    try:
+        tracker.dismiss_interrupted(root, names()[1])  # a stale page: not the interrupted one
+        raise AssertionError("dismissed another backup")
+    except ValueError:
+        pass
+    tracker.dismiss_interrupted(root, flagged[0]["name"])
+    # Kept for good, past KEEP (renamed newest when the saves are those again, flag and all)
+    kept = lambda data: [n for n in names() if tracker._info(root, n).get("interrupted") and read(os.path.join(root, n, "A.d2s")) == data]
+    before = read(os.path.join(root, flagged[0]["name"], "A.d2s"))
+    for i in range(tracker.KEEP + 2):
+        put(f"after {i}".encode())
+    assert kept(before)
     assert not [b for b in tracker.list_backups(root, folder) if b.get("interrupted")]
+    # Restoring the interrupted one clears it as before; restoring another keeps it for good
+    for restored in (True, False):
+        tracker._write = tracker._put_back = lambda *args: (_ for _ in ()).throw(OSError("power cut"))
+        try:
+            put(b"half " + bytes([restored]))
+        except IOError:
+            pass
+        tracker._write, tracker._put_back = write, put_back
+        cut = next(b["name"] for b in tracker.list_backups(root, folder) if b.get("interrupted"))
+        before = read(os.path.join(root, cut, "A.d2s"))
+        tracker.restore_backup(folder, root, cut if restored else names()[2])
+        assert tracker._pending(root) is None
+        put(b"whole " + bytes([restored]))
+        if not restored:
+            for i in range(tracker.KEEP + 2):
+                put(f"later {i}".encode())
+            assert kept(before)
+
+    # A write cut off between two files leaves items twice, never nowhere: new files first, the shared stash last
+    order = tempfile.mkdtemp(dir=tmp)
+    for name in ("Old.d2s", "SharedStash.d2i"):
+        open(os.path.join(order, name), "wb").write(b"before")
+    renamed = []
+    replace = tracker.os.replace
+    tracker.os.replace = lambda a, b: (renamed.append(os.path.basename(b)), replace(a, b))
+    files = [{"name": n, "bytes": b"after"} for n in ("SharedStash.d2i", "Old.d2s", "New.d2s")]
+    tracker.write_saves(order, files, root, expect=tracker._hashes(order))
+    tracker.os.replace = replace
+    saved = [n for n in renamed if n.endswith((".d2s", ".d2i"))]
+    assert saved == ["New.d2s", "Old.d2s", "SharedStash.d2i"], saved
 
 if len(sys.argv) > 1:
     with tempfile.TemporaryDirectory() as out:

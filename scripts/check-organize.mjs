@@ -43,6 +43,14 @@ try {
     assert.deepEqual(again.map((f) => f.name), []);
   });
 
+  check("handed back in write order: new mules first, emptied saves after those holding items, the shared stash last", () => {
+    const names = new Set(base.map((f) => f.name));
+    const rank = (f) => (!names.has(f.name) ? 0 : f.name.endsWith(".d2i") ? 3 : parse(f.name, f.bytes).items.length ? 1 : 2);
+    const ranks = first.files.map(rank);
+    assert(ranks.includes(0) && ranks.includes(3), "needs new mules and the shared stash among the files written");
+    assert.deepEqual(ranks, [...ranks].sort((x, y) => x - y));
+  });
+
   check("the museum holds the best copy; the others go to DUP", () => {
     const museum = new Map(first.report.moves.filter((m) => m.group === "MUSEUM").map((m) => [m.key, m.item]));
     const eth = (item) => item.flags.includes("ETHEREAL");

@@ -11,7 +11,9 @@ import init from "../../wasm/pkg/d2_parser.js";
 import wasmBase64 from "../../wasm/pkg/d2_parser_bg.wasm";
 
 const saveChanges = callable("save_changes");
-export const lang = /^zh-(cn|sg|hans)/i.test(navigator.language) ? "zh" : navigator.language.startsWith("zh") ? "zh_tw" : navigator.language.startsWith("ko") ? "ko" : "en";
+const lang = /^zh-(cn|sg|hans)/i.test(navigator.language) ? "zh" : navigator.language.startsWith("zh") ? "zh_tw" : navigator.language.startsWith("ko") ? "ko" : "en";
+// The panel's strings (decky/src/index.tsx) in the same language
+export const text = (key, ...args) => t(key, lang, ...args);
 const MANY = 5; // more pickups than this in one change: one toast that says how many
 
 let timer = null;

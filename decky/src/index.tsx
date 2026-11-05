@@ -3,7 +3,7 @@
 import { ButtonItem, Navigation, PanelSection, PanelSectionRow, ToggleField, staticClasses } from "@decky/ui";
 import { addEventListener, callable, definePlugin, removeEventListener, toaster } from "@decky/api";
 import { useEffect, useState } from "react";
-import { lastCheck, onCheck, startWatching, stopWatching, type Check } from "./watch";
+import { lastCheck, onCheck, startWatching, stopWatching, text, type Check } from "./watch";
 
 type Status = { saves: number; game: boolean; icons: boolean; running: boolean; extracting: boolean };
 const status = callable<[], Status>("status");
@@ -11,24 +11,21 @@ const start = callable<[], string>("start");
 const stop = callable<[], void>("stop");
 const extractIcons = callable<[], { count?: number; error?: string }>("extract_icons");
 
-const zh = navigator.language.startsWith("zh");
 const TEXT = {
-  open: zh ? "打開收藏" : "Open collection",
-  stop: zh ? "停止服務（收藏頁不再能打開）" : "Stop the server (the collection page goes away)",
-  saves: (n: number) => (zh ? `找到 ${n} 個存檔` : `${n} saves found`),
-  noSaves: zh ? "找不到存檔，先在這台 Deck 上玩一次 D2R 單機角色" : "No saves found; play an offline D2R character on this Deck first",
-  extract: zh ? "從遊戲檔案提取物品圖標" : "Get item icons from the game files",
-  again: zh ? "重新提取物品圖標（遊戲更新後）" : "Get item icons again (after a game update)",
-  extracting: zh ? "提取中，約一分鐘…" : "Getting icons, about a minute…",
-  noGame: zh ? "找不到 D2R 遊戲檔案，無法提取圖標" : "D2R game files not found, can't get icons",
-  done: (n: number) => (zh ? `已提取 ${n} 個圖標` : `${n} icons ready`),
-  failed: zh ? "提取圖標失敗" : "Getting icons failed",
-  openFailed: zh ? "打不開收藏" : "Can't open the collection",
-  alerts: zh ? "撿到物品時提醒" : "Alert on pickups",
-  alertsAbout: zh ? "撿到暗金、套裝或符文時，說是不是新收藏" : "Says whether a unique, set item or rune you pick up is new",
-  checked: (c: Check) =>
-    (zh ? `上次檢查：解析 ${c.files} 個檔案 ${c.ms} ms` : `Last check: parsed ${c.files} files in ${c.ms} ms`) +
-    (c.wasm != null ? (zh ? `（含載入解析器 ${c.wasm} ms）` : ` (${c.wasm} ms loading the parser)`) : ""),
+  open: text("deckOpen"),
+  stop: text("deckStop"),
+  saves: (n: number) => text("deckSaves", n),
+  noSaves: text("deckNoSaves"),
+  extract: text("deckExtract"),
+  again: text("deckAgain"),
+  extracting: text("deckExtracting"),
+  noGame: text("deckNoGame"),
+  done: (n: number) => text("deckIcons", n),
+  failed: text("deckIconsFailed"),
+  openFailed: text("deckOpenFailed"),
+  alerts: text("deckAlerts"),
+  alertsAbout: text("deckAlertsAbout"),
+  checked: (c: Check) => text("deckChecked", c.files, c.ms) + (c.wasm != null ? text("deckCheckedWasm", c.wasm) : ""),
 };
 
 // On unless turned off; kept in the Steam UI's own storage
@@ -61,13 +58,13 @@ function Content() {
       toast(`${TEXT.failed}: ${e}`);
     } finally {
       setBusy(false);
-      setInfo(await status());
+      status().then(setInfo, (e) => toast(String(e)));
     }
   };
   // Reopened while icons are being extracted (by an earlier panel): look again until it is done
   useEffect(() => {
     if (!info?.extracting || busy) return;
-    const timer = setInterval(() => status().then(setInfo), 3000);
+    const timer = setInterval(() => status().then(setInfo, () => {}), 3000); // a missed look: the next one comes in 3 s
     return () => clearInterval(timer);
   }, [info?.extracting, busy]);
   const extracting = busy || info?.extracting;
@@ -98,7 +95,7 @@ function Content() {
       </PanelSectionRow>
       {info.running && (
         <PanelSectionRow>
-          <ButtonItem layout="below" onClick={async () => (await stop(), setInfo(await status()))}>
+          <ButtonItem layout="below" onClick={() => stop().then(status).then(setInfo, (e) => toast(String(e)))}>
             {TEXT.stop}
           </ButtonItem>
         </PanelSectionRow>
@@ -143,7 +140,7 @@ function stopWhenLeft() {
   let away = 0;
   const timer = setInterval(() => {
     if (inBrowser()) (seen = true), (away = 0);
-    else if (seen) ++away >= 60 && (clearInterval(timer), stop());
+    else if (seen) ++away >= 60 && (clearInterval(timer), stop().catch(() => {})); // failed: the server stops when the page goes anyway
     else if (++waited > 30) clearInterval(timer); // the browser never showed up: nothing to watch
   }, 1000);
 }

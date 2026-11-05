@@ -4,6 +4,7 @@ import { imageOf, labelOf, runewordKey } from "../lib/gameData";
 import { modeLabel } from "../lib/modes";
 import { GROUPS, cubeRecipeOf, larzukOf, runewordOptions } from "../lib/runewordMaker";
 import { t } from "../lib/i18n";
+import Segmented from "./Segmented";
 
 // What runewords the loose runes and empty bases of one game mode make, or nearly make (src/lib/runewordMaker.js).
 // The mode as the Organize page picks it: Reign of the Warlock softcore when there, else the first.
@@ -28,21 +29,14 @@ export default function RunewordMaker({ saveData, lang }) {
       </div>
       <div className="flex flex-wrap items-center gap-4 mb-3">
         {modes.length > 1 && (
-          <div className="segmented" role="group" aria-label={t("gameMode", lang)}>
-            {modes.map((m) => (
-              <button key={m} className={m === mode ? "active" : ""} aria-pressed={m === mode} onClick={() => setPicked(m)}>
-                {modeLabel(m, lang)}
-              </button>
-            ))}
-          </div>
+          <Segmented label={t("gameMode", lang)} options={modes.map((m) => [m, modeLabel(m, lang)])} value={mode} onChange={setPicked} />
         )}
-        <div className="segmented" role="group" aria-label={t("rwMaker", lang)}>
-          {Object.entries(GROUPS).map(([g, test]) => (
-            <button key={g} className={g === group ? "active" : ""} aria-pressed={g === group} onClick={() => setGroup(g)}>
-              {t(g, lang)} {options.filter(test).length}
-            </button>
-          ))}
-        </div>
+        <Segmented
+          label={t("rwMaker", lang)}
+          options={Object.entries(GROUPS).map(([g, test]) => [g, `${t(g, lang)} ${options.filter(test).length}`])}
+          value={group}
+          onChange={setGroup}
+        />
       </div>
       <p className="text-sm gothic-text-muted mb-4 max-w-prose">{t("rwMakerNote", lang)}</p>
       {!shown.length && <p className="text-sm gothic-text-muted">{t("rwNone", lang)}</p>}

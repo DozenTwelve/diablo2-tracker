@@ -17,6 +17,8 @@ export const closeDeck = () => post("/api/close", {});
 // backs up the folder as it is first
 export const deckBackups = async () => (await get("/api/backups")).json();
 export const restoreDeck = (name) => post("/api/restore", { name });
+// Organized saves to write, characters to delete (write_saves in decky/py_modules/tracker.py)
+export const writeDeck = (body) => post("/api/write", body);
 export const deleteDeckBackup = (name) => post("/api/delete-backup", { name });
 // Go on without restoring the interrupted backup: writing is allowed again and that backup is kept for good
 export const dismissDeckInterrupted = (name) => post("/api/dismiss", { name });

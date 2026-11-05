@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { codeOfNumber, keyOf, labelOf } from "../lib/gameData";
-import { deckBackups, deckSaveFiles, deleteDeckBackup, dismissDeckInterrupted, onDeck, restoreDeck } from "../lib/deck";
+import { deckBackups, deckSaveFiles, deleteDeckBackup, dismissDeckInterrupted, onDeck, restoreDeck, writeDeck } from "../lib/deck";
 import { roleOf } from "../lib/inventory";
 import { LOCALES, t } from "../lib/i18n";
 import { SKILL } from "../lib/links";
@@ -12,6 +12,7 @@ import { useStoredState } from "../lib/useStoredState";
 import { zip } from "../lib/zip";
 import OrganizeDemo from "./OrganizeDemo";
 import PageTitle from "./PageTitle";
+import Segmented from "./Segmented";
 
 const modeLabel = (mode, lang) => {
   const [core, version] = mode.split(":");
@@ -23,6 +24,21 @@ const toBase64 = (bytes) => {
   return btoa(s);
 };
 const isSave = (name) => /\.d2[si]$/i.test(name);
+// The second button of a two-step confirm, with its warning and a cancel button. Not the second click of a double
+// click on the button that was in this place (500 ms), nor a held key repeating
+function ConfirmButton({ warn, at, busy, onConfirm, onCancel, lang, children }) {
+  return (
+    <>
+      {warn && <span className="text-sm text-red-400">{warn}</span>}
+      <button className="gothic-btn gothic-btn-small" disabled={busy} onKeyDown={(e) => e.repeat && e.preventDefault()} onClick={() => Date.now() - at > 500 && onConfirm()}>
+        {children}
+      </button>
+      <button className="text-sm gothic-text-muted" disabled={busy} onClick={onCancel}>
+        {t("cancel", lang)}
+      </button>
+    </>
+  );
+}
 const COMPANIONS = ["ctl", "key", "ma0", "map"]; // a character's other files, copied from the template for new mules
 
 const sameBytes = (a, b) => a?.length === b.length && a.every((x, i) => x === b[i]);
@@ -208,41 +224,40 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
       setState({ error: t("notWritten", lang, e.message ?? e) });
     }
   };
+  // The plugin's answer to a write or restore: { running }, { interrupted }, { changed }, { error } or done
+  const answer = async (response, { running, changed, failed, done }) => {
+    const result = await response.json();
+    if (result.running) setState(running);
+    else if (result.interrupted) setState({ interrupted: result.interrupted });
+    else if (result.changed) changed();
+    else if (!response.ok) setState(failed(result.error));
+    else {
+      setState(done(result));
+      setReads(reads + 1);
+      onWritten();
+    }
+  };
   const write = async () => {
     setState({ ...state, busy: true });
+    const changed = () => (setReads(reads + 1), setState((s) => ({ backup: s.backup, error: t("savesChanged", lang), changed: true })));
     try {
       // The game may have saved since the page read the files (played in between): writing would undo that
-      if (!(await unchanged(await deckSaveFiles()))) {
-        setReads(reads + 1);
-        setState((s) => ({ backup: s.backup, error: t("savesChanged", lang), changed: true }));
-        return;
-      }
+      if (!(await unchanged(await deckSaveFiles()))) return changed();
       // Characters to delete are not written first; the plugin deletes them after the backup
       const done = organizeFiles(files, wasm, options);
       const out = done.files.filter((f) => !remove.some((name) => f.name === `${name}.d2s`));
-      const response = await fetch("/api/write", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          files: out.map((f) => ({ name: f.name, template: f.template, data: toBase64(f.bytes) })),
-          delete: remove,
-          mules: done.report.muleNames.filter((n) => !remove.includes(n)).sort(byMuleName), // put below the others in D2R's list
-          expect: await hashes(files),
-        }),
+      const response = await writeDeck({
+        files: out.map((f) => ({ name: f.name, template: f.template, data: toBase64(f.bytes) })),
+        delete: remove,
+        mules: done.report.muleNames.filter((n) => !remove.includes(n)).sort(byMuleName), // put below the others in D2R's list
+        expect: await hashes(files),
       });
-      const result = await response.json();
-      if (result.running) setState({ ...state, error: t("gameRunning", lang) });
-      else if (result.interrupted) setState({ interrupted: result.interrupted });
-      else if (result.changed) {
-        setReads(reads + 1);
-        setState((s) => ({ backup: s.backup, error: t("savesChanged", lang), changed: true }));
-      }
-      else if (!response.ok) setState({ error: t("writeFailed", lang, result.error) });
-      else {
-        setState({ backup: result.backup });
-        setReads(reads + 1);
-        onWritten();
-      }
+      await answer(response, {
+        running: { ...state, error: t("gameRunning", lang) },
+        changed,
+        failed: (error) => ({ error: t("writeFailed", lang, error) }),
+        done: (result) => ({ backup: result.backup }),
+      });
     } catch (e) {
       setState({ error: t("writeFailed", lang, e.message ?? e) });
     } finally {
@@ -253,15 +268,11 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
   const restore = async (name) => {
     setState({ ...state, busy: true });
     try {
-      const response = await restoreDeck(name);
-      const result = await response.json();
-      if (result.running) setState({ restoreError: t("gameRunning", lang) });
-      else if (!response.ok) setState({ restoreError: t("restoreFailed", lang, result.error) });
-      else {
-        setState({ restored: { name, backup: result.backup } }); // backup null: the saves were that backup already
-        setReads(reads + 1);
-        onWritten();
-      }
+      await answer(await restoreDeck(name), {
+        running: { restoreError: t("gameRunning", lang) },
+        failed: (error) => ({ restoreError: t("restoreFailed", lang, error) }),
+        done: (result) => ({ restored: { name, backup: result.backup } }), // backup null: the saves were that backup already
+      });
     } catch (e) {
       setState({ restoreError: t("restoreFailed", lang, e.message ?? e) });
     } finally {
@@ -275,21 +286,13 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
     const again = () => (setReads(reads + 1), setState({ cleanError: t("trashChanged", lang), changed: true }));
     try {
       if (!(await unchanged(await deckSaveFiles()))) return again();
-      const response = await fetch("/api/write", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ files: [], delete: trash.map((m) => m.name), expect: await hashes(files), reason: "clean" }),
+      const response = await writeDeck({ files: [], delete: trash.map((m) => m.name), expect: await hashes(files), reason: "clean" });
+      await answer(response, {
+        running: { cleanError: t("gameRunning", lang) },
+        changed: again,
+        failed: (error) => ({ cleanError: t("writeFailed", lang, error) }),
+        done: (result) => ({ cleaned: { items: trashItems.length, backup: result.backup } }),
       });
-      const result = await response.json();
-      if (result.running) setState({ cleanError: t("gameRunning", lang) });
-      else if (result.interrupted) setState({ interrupted: result.interrupted });
-      else if (result.changed) again();
-      else if (!response.ok) setState({ cleanError: t("writeFailed", lang, result.error) });
-      else {
-        setState({ cleaned: { items: trashItems.length, backup: result.backup } });
-        setReads(reads + 1);
-        onWritten();
-      }
     } catch (e) {
       setState({ cleanError: t("writeFailed", lang, e.message ?? e) });
     } finally {
@@ -360,13 +363,12 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
             </p>
           ))}
         {modes.length > 1 && (
-          <div className="segmented" role="group" aria-label={t("gameMode", lang)}>
-            {modes.map((m) => (
-              <button key={m} className={m === current ? "active" : ""} aria-pressed={m === current} onClick={() => (setMode(m), setState({}))}>
-                {modeLabel(m, lang)}
-              </button>
-            ))}
-          </div>
+          <Segmented
+            label={t("gameMode", lang)}
+            options={modes.map((m) => [m, modeLabel(m, lang)])}
+            value={current}
+            onChange={(m) => (setMode(m), setState({}))}
+          />
         )}
         <section>
           <div className="section-head">
@@ -519,18 +521,16 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
             {state.cleanError && <p className="text-red-400">{state.cleanError}</p>}
             {trash.some((m) => m.refused) ? null : state.confirm?.action === "trash" ? (
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <span className="text-sm text-red-400">{t("trashWarn", lang, trash.length)}</span>
-                <button
-                  className="gothic-btn gothic-btn-small"
-                  disabled={state.busy}
-                  onKeyDown={(e) => e.repeat && e.preventDefault()}
-                  onClick={() => Date.now() - state.confirm.at > 500 && cleanTrash()} // as a backup's delete button
+                <ConfirmButton
+                  warn={t("trashWarn", lang, trash.length)}
+                  at={state.confirm.at}
+                  busy={state.busy}
+                  onConfirm={cleanTrash}
+                  onCancel={() => setState({ ...state, confirm: null })}
+                  lang={lang}
                 >
                   {t(state.busy ? "deletingBackup" : "confirmDeleteBackup", lang)}
-                </button>
-                <button className="text-sm gothic-text-muted" disabled={state.busy} onClick={() => setState({ ...state, confirm: null })}>
-                  {t("cancel", lang)}
-                </button>
+                </ConfirmButton>
               </div>
             ) : (
               <button className="gothic-btn gothic-btn-secondary" onClick={() => setState({ ...state, confirm: { action: "trash", at: Date.now() } })}>
@@ -565,23 +565,18 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
                   {b.interrupted && <span className="text-sm text-red-400">{t("backupInterrupted", lang)}</span>}
                   <span className="text-sm gothic-text-muted">{t("backupCharacters", lang, b.characters)}</span>
                   {state.confirm?.name === b.name ? (
-                    <>
-                      {state.confirm.action === "delete" && <span className="text-sm text-red-400">{t("deleteBackupWarn", lang)}</span>}
-                      <button
-                        className="gothic-btn gothic-btn-small"
-                        disabled={state.busy}
-                        onKeyDown={(e) => e.repeat && e.preventDefault()} // nor a held key repeating
-                        // Not the second click of a double click on the button that was in this place
-                        onClick={() => Date.now() - state.confirm.at > 500 && (state.confirm.action === "delete" ? deleteBackup(b.name) : restore(b.name))}
-                      >
-                        {state.confirm.action === "delete"
-                          ? t(state.busy ? "deletingBackup" : "confirmDeleteBackup", lang)
-                          : t(state.busy ? "restoring" : "confirmRestore", lang)}
-                      </button>
-                      <button className="text-sm gothic-text-muted" disabled={state.busy} onClick={() => setState({ ...state, confirm: null })}>
-                        {t("cancel", lang)}
-                      </button>
-                    </>
+                    <ConfirmButton
+                      warn={state.confirm.action === "delete" && t("deleteBackupWarn", lang)}
+                      at={state.confirm.at}
+                      busy={state.busy}
+                      onConfirm={() => (state.confirm.action === "delete" ? deleteBackup(b.name) : restore(b.name))}
+                      onCancel={() => setState({ ...state, confirm: null })}
+                      lang={lang}
+                    >
+                      {state.confirm.action === "delete"
+                        ? t(state.busy ? "deletingBackup" : "confirmDeleteBackup", lang)
+                        : t(state.busy ? "restoring" : "confirmRestore", lang)}
+                    </ConfirmButton>
                   ) : (
                     <>
                       <button

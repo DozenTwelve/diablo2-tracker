@@ -697,6 +697,26 @@ const UI = {
   rwNone: ["没有", "沒有", "None", "없음"],
   damageRange: [(min, max) => `伤害 ${min}-${max}`, (min, max) => `傷害 ${min}-${max}`, (min, max) => `Damage ${min}-${max}`, (min, max) => `피해 ${min}-${max}`],
   bestCopy: ["最好", "最好", "Best", "최고"], // the top copy in Copies.jsx, for runewords ranked by their own stats
+  // Loadouts (src/components/Loadouts.jsx, on the Deck)
+  loadouts: ["配装", "配裝", "Loadouts", "장비 구성"],
+  loadoutsAbout: [
+    "在游戏里把身上的装备（含切换武器）、佣兵的装备和背包里的护符摆好，退出游戏后在这里存成一套配装，取个名字（如 MF、打王）。每套配装会显示每件东西现在在哪。",
+    "在遊戲裡把身上的裝備（含切換武器）、傭兵的裝備和背包裡的咒符擺好，退出遊戲後在這裡存成一套配裝，取個名字（如 MF、打王）。每套配裝會顯示每件東西現在在哪。",
+    "Set up in game what the character wears (weapon swap too), what its mercenary wears and the charms in its inventory, quit, and save it here as a named loadout (MF, Boss...). Each loadout shows where every piece is now.",
+    "게임에서 캐릭터 장비(무기 교체 포함), 용병 장비, 소지품의 부적을 갖춘 뒤 게임을 종료하고, 여기서 이름을 붙여(MF, 보스 등) 장비 구성으로 저장하세요. 구성마다 각 아이템이 지금 어디 있는지 보여 줍니다.",
+  ],
+  loadoutName: ["配装名称（如 MF、打王）", "配裝名稱（如 MF、打王）", "Loadout name (MF, Boss...)", "구성 이름 (MF, 보스 등)"],
+  saveLoadout: ["存成配装", "存成配裝", "Save loadout", "구성 저장"],
+  loadoutsNone: ["这个角色还没有配装。", "這個角色還沒有配裝。", "No loadouts for this character yet.", "이 캐릭터의 장비 구성이 아직 없습니다."],
+  loadoutsFailed: [(e) => `配装读取或保存失败：${e}`, (e) => `配裝讀取或儲存失敗：${e}`, (e) => `Reading or saving loadouts failed: ${e}`, (e) => `장비 구성 읽기 또는 저장 실패: ${e}`],
+  rename: ["改名", "改名", "Rename", "이름 바꾸기"],
+  save: ["保存", "儲存", "Save", "저장"],
+  deleteLoadoutWarn: ["删除这套配装？物品本身不受影响。", "刪除這套配裝？物品本身不受影響。", "Delete this loadout? The items themselves stay as they are.", "이 구성을 삭제할까요? 아이템 자체는 그대로입니다."],
+  where_on: ["在身上", "在身上", "On the character", "착용 중"],
+  where_self: [(p) => `在这个角色的${p}`, (p) => `在這個角色的${p}`, (p) => `On this character: ${p}`, (p) => `이 캐릭터의 ${p}`],
+  where_main: [(o, p) => `${o} 身上（${p}）`, (o, p) => `${o} 身上（${p}）`, (o, p) => `On ${o} (${p})`, (o, p) => `${o}에게 있음 (${p})`],
+  where_mule: [(o, p) => `${o}（${p}）`, (o, p) => `${o}（${p}）`, (o, p) => `${o} (${p})`, (o, p) => `${o} (${p})`],
+  where_missing: ["找不到", "找不到", "Missing", "찾을 수 없음"],
   colon: ["：", "：", ": ", ": "],
   listSeparator: ["、", "、", ", ", ", "],
 };

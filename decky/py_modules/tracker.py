@@ -546,17 +546,42 @@ def _write(folder, files):
                 raise IOError(f"{f['name']} did not read back the same")
 
 
+LOADOUTS_MAX = 1 << 20  # bytes: hundreds of loadouts; a page sending more is broken
+_loadouts_lock = threading.Lock()
+
+
+def read_loadouts(path):
+    """The player's saved loadouts ({"loadouts": [...]}, kept by the page as it likes), none before the first save.
+    A file that doesn't read raises: answering none would let the page's next save overwrite it."""
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {"loadouts": []}
+
+
+def write_loadouts(path, doc):
+    """Replace the loadouts file with doc, whole: written next to it and renamed over it. Never touches the saves."""
+    if not isinstance(doc, dict) or not isinstance(doc.get("loadouts"), list) or not all(isinstance(l, dict) for l in doc["loadouts"]):
+        raise BadRequest("not a loadouts document")
+    if len(json.dumps(doc)) > LOADOUTS_MAX:
+        raise BadRequest("too many loadouts")
+    with _loadouts_lock:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        _json_to(path, doc)
+
+
 class Handler(SimpleHTTPRequestHandler):
     """GET /api/saves: save file names; /api/saves/<name>: one save; /items/<x>.webp: an icon (PNG);
     anything else: the web app, index.html for unknown paths (the app routes on the client).
-    /api/backups: the plugin's backups (list_backups).
+    /api/backups: the plugin's backups (list_backups); /api/loadouts: the saved loadouts (read_loadouts).
     POST /api/write: organized saves to write and characters to delete (write_saves); /api/restore: a backup to put
     back (restore_backup); /api/delete-backup: a backup to delete (delete_backup); /api/dismiss: go on without
-    restoring the interrupted backup (dismiss_interrupted); /api/close: the app's close
-    button (on_close).
+    restoring the interrupted backup (dismiss_interrupted); /api/loadouts: the loadouts document to keep
+    (write_loadouts); /api/close: the app's close button (on_close).
     POSTs only from the app itself."""
 
-    web_dir = save_folder = icon_dir = backup_dir = on_close = None  # set by serve()
+    web_dir = save_folder = icon_dir = backup_dir = loadouts_file = on_close = None  # set by serve()
 
     def log_message(self, *args):
         pass
@@ -592,6 +617,11 @@ class Handler(SimpleHTTPRequestHandler):
             return self.send_bytes(json.dumps(list_saves(self.save_folder())).encode(), "application/json")
         if path == "/api/backups":
             return self.send_bytes(json.dumps(list_backups(self.backup_dir, self.save_folder())).encode(), "application/json")
+        if path == "/api/loadouts":
+            try:
+                return self.send_bytes(json.dumps(read_loadouts(self.loadouts_file)).encode(), "application/json")
+            except (OSError, ValueError):
+                return self.send_error(500)
         if path.startswith("/api/saves/"):
             folder = self.save_folder()
             name = unquote(path[len("/api/saves/") :])
@@ -615,7 +645,7 @@ class Handler(SimpleHTTPRequestHandler):
         # Only the app's own page: browsers send Origin on every POST, and another site can't send JSON here
         # without a CORS preflight, which this server never answers
         origin = f"http://127.0.0.1:{self.server.server_address[1]}"
-        if not self.local() or self.path not in ("/api/write", "/api/restore", "/api/delete-backup", "/api/dismiss", "/api/close") or self.headers.get("Origin") != origin or self.headers.get("Content-Type") != "application/json":
+        if not self.local() or self.path not in ("/api/write", "/api/restore", "/api/delete-backup", "/api/dismiss", "/api/loadouts", "/api/close") or self.headers.get("Origin") != origin or self.headers.get("Content-Type") != "application/json":
             return self.send_error(403)
         if self.path == "/api/close":
             self.send_response(204)
@@ -623,7 +653,10 @@ class Handler(SimpleHTTPRequestHandler):
             return self.on_close()
         try:
             body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
-            if self.path == "/api/restore":
+            if self.path == "/api/loadouts":
+                write_loadouts(self.loadouts_file, body)
+                result = {}
+            elif self.path == "/api/restore":
                 result = {"backup": restore_backup(self.save_folder(), self.backup_dir, body["name"])}
             elif self.path == "/api/delete-backup":
                 delete_backup(self.backup_dir, body["name"], self.save_folder())
@@ -664,10 +697,10 @@ class Server(ThreadingHTTPServer):
     request_queue_size = 128
 
 
-def serve(web_dir, save_folder, icon_dir, backup_dir, on_close=lambda: None, port=PORT):
-    """Start the server in a thread; save_folder is a function, so a new save folder is picked up.
-    on_close runs in a request thread when the app's close button is pressed."""
-    bound = {"web_dir": web_dir, "save_folder": staticmethod(save_folder), "icon_dir": icon_dir, "backup_dir": backup_dir, "on_close": staticmethod(on_close)}
+def serve(web_dir, save_folder, icon_dir, backup_dir, loadouts_file, on_close=lambda: None, port=PORT):
+    """Start the server in a thread; save_folder is a function, so a new save folder is picked up. loadouts_file: where
+    the saved loadouts are kept. on_close runs in a request thread when the app's close button is pressed."""
+    bound = {"web_dir": web_dir, "save_folder": staticmethod(save_folder), "icon_dir": icon_dir, "backup_dir": backup_dir, "loadouts_file": loadouts_file, "on_close": staticmethod(on_close)}
     handler = type("BoundHandler", (Handler,), bound)
     server = Server(("127.0.0.1", port), handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()

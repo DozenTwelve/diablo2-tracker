@@ -27,3 +27,8 @@ export async function deckSaveFiles() {
   const names = await (await get("/api/saves")).json();
   return Promise.all(names.map(async (name) => new File([await (await get(`/api/saves/${encodeURIComponent(name)}`)).blob()], name)));
 }
+
+// Saved loadouts, kept by the plugin (read_loadouts / write_loadouts in decky/py_modules/tracker.py): { loadouts: [...] },
+// stored whole (src/lib/loadouts.js)
+export const deckLoadouts = async () => (await get("/api/loadouts")).json();
+export const saveDeckLoadouts = (doc) => post("/api/loadouts", doc);

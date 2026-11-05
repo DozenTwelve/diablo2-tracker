@@ -12,6 +12,8 @@ import StackTab from "./StackTab";
 import PageTitle from "./PageTitle";
 import BuildGear from "./BuildGear";
 import { buildsOf, useBuild } from "../lib/builds";
+import { onDeck } from "../lib/deck";
+import Loadouts from "./Loadouts";
 
 // Places drawn as grids, with their size in cells, in this order (then shared stash pages); the rest are lists
 const GRIDS = { inventory: [10, 4], stash: [10, 10], cube: [3, 4] };
@@ -325,6 +327,7 @@ function CharacterPage({ saveData, name, lang }) {
           </Block>
         )}
       </div>
+      {main && onDeck && <Loadouts owner={owner} saveData={saveData} lang={lang} />}
       {stacked.length > 0 && (
         <Block title={placeLabel("advanced", lang)} count={totalCount(stacked)}>
           <StackTab byKey={groupByKey(stacked)} lang={lang} />

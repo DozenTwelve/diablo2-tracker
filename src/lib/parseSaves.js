@@ -109,7 +109,7 @@ export function saveFolder(files) {
 export async function parseSaveFiles(files) {
   const { parseD2s, parseD2i, writeD2s, writeD2i } = await loadParser();
   const items = [];
-  const owners = []; // { name, mode, cls?, level?, quests?, dead? }; shared stashes have no class, but pages (empty ones too)
+  const owners = []; // { name, mode, cls?, level?, quests?, dead?, merc? }; shared stashes have no class, but pages (empty ones too)
   const errors = [];
   const damaged = []; // file names that parse but don't write back the same: cut short or damaged
   // A folder pick includes its subfolders: only the picked folder's own saves, or every backup kept in it
@@ -156,7 +156,9 @@ export async function parseSaveFiles(files) {
           // An Iron Golem made from an item keeps it
           if (save.iron_golem?.golem_item) collect(save.iron_golem.golem_item, owner, "golem", items);
         }
-        owners.push({ name: owner, mode: modeOfCharacter(save), cls: save.character.class, level: save.character.level, quests: questsOf(save.quests), dead });
+        // merc: a mercenary is hired (a loadout covers what it wears)
+        const merc = Boolean(save.character.merc?.seed);
+        owners.push({ name: owner, mode: modeOfCharacter(save), cls: save.character.class, level: save.character.level, quests: questsOf(save.quests), dead, merc });
       }
     } catch (e) {
       errors.push(`${file.name}: ${e.message ?? e}`);

@@ -23,7 +23,7 @@ const toBase64 = (bytes) => {
 const isSave = (name) => /\.d2[si]$/i.test(name);
 // The second button of a two-step confirm, with its warning and a cancel button. Not the second click of a double
 // click on the button that was in this place (500 ms), nor a held key repeating
-function ConfirmButton({ warn, at, busy, onConfirm, onCancel, lang, children }) {
+export function ConfirmButton({ warn, at, busy, onConfirm, onCancel, lang, children }) {
   return (
     <>
       {warn && <span className="text-sm text-red-400">{warn}</span>}

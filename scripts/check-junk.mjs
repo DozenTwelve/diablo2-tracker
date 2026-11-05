@@ -1,10 +1,9 @@
 // Check the likely-junk rules in src/lib/organize.js on made-up items.
 import assert from "node:assert/strict";
-import { createServer } from "vite";
+import { withApp } from "./load.mjs";
 
-const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
-try {
-  const { isJunk } = await vite.ssrLoadModule("/src/lib/organize.js");
+await withApp(async ({ load }) => {
+  const { isJunk } = await load("/src/lib/organize.js");
   // stats as in the save JSON; life (7) is stored shifted by 8
   const item = (quality, ...stats) => ({ quality, stats: stats.map(([id, value]) => ({ id, layer: 0, value })) });
   const life = (n) => [7, n << 8];
@@ -24,6 +23,4 @@ try {
   assert.equal(isJunk(item("Magic", ...max(15)), "jew"), false, "jewel, +15 max damage");
   assert.equal(isJunk(item("Magic", life(20), [54, 1], [55, 5], [56, 50]), "cm3"), true, "grand charm, low life and cold damage");
   console.log("junk rules ok");
-} finally {
-  await vite.close();
-}
+});

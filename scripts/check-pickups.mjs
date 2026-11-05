@@ -4,20 +4,19 @@
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { createServer } from "vite";
+import { initParser, withApp } from "./load.mjs";
 
 const dir = process.argv[2];
 if (!dir) throw new Error("usage: node scripts/check-pickups.mjs <save dir>");
 
-const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
-try {
-  const wasm = await vite.ssrLoadModule("/wasm/pkg/d2_parser.js");
+await withApp(async ({ load }) => {
+  const wasm = await load("/wasm/pkg/d2_parser.js");
   let start = performance.now();
-  wasm.initSync({ module: readFileSync(new URL("../wasm/pkg/d2_parser_bg.wasm", import.meta.url)) });
+  initParser(wasm);
   const wasmMs = performance.now() - start;
-  const { parseSaveFiles } = await vite.ssrLoadModule("/src/lib/parseSaves.js");
-  const { MAX_TRIES, pickedUp, pickupToasts, takeChange } = await vite.ssrLoadModule("/src/lib/pickups.js");
-  const { labelOf } = await vite.ssrLoadModule("/src/lib/gameData.js");
+  const { parseSaveFiles } = await load("/src/lib/parseSaves.js");
+  const { MAX_TRIES, pickedUp, pickupToasts, takeChange } = await load("/src/lib/pickups.js");
+  const { labelOf } = await load("/src/lib/gameData.js");
   const check = (what, fn) => (fn(), console.log(`ok  ${what}`));
 
   const names = readdirSync(dir).filter((f) => /\.d2[si]$/.test(f));
@@ -145,6 +144,4 @@ try {
   }
 
   console.log(`wasm compile ${wasmMs.toFixed(1)} ms; parse all ${files.length} files ${fullMs.toFixed(1)} ms; one file (${one.name}) ${oneMs.toFixed(1)} ms`);
-} finally {
-  await vite.close();
-}
+});

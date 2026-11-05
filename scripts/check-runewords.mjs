@@ -3,15 +3,14 @@
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { createServer } from "vite";
+import { withApp } from "./load.mjs";
 
 const dir = process.argv[2];
-const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
-try {
-  const { GROUPS, cubeRecipeOf, fitOf, larzukOf, maxSocketsOf, runewordOptions } = await vite.ssrLoadModule("/src/lib/runewordMaker.js");
-  const { runewords, labelOf } = await vite.ssrLoadModule("/src/lib/gameData.js");
-  const { ownersOf } = await vite.ssrLoadModule("/src/lib/inventory.js");
-  const { compareCopies, damageOf } = await vite.ssrLoadModule("/src/lib/props.js");
+await withApp(async ({ load, parser }) => {
+  const { GROUPS, cubeRecipeOf, fitOf, larzukOf, maxSocketsOf, runewordOptions } = await load("/src/lib/runewordMaker.js");
+  const { runewords, labelOf } = await load("/src/lib/gameData.js");
+  const { ownersOf } = await load("/src/lib/inventory.js");
+  const { compareCopies, damageOf } = await load("/src/lib/props.js");
   const rw = (en) => runewords.find((w) => w.en === en);
   const fits = (w, r) => fitOf(w, r) === "ready";
   const base = (code, more) => ({ key: `b:${code}:Normal`, code, quality: "Normal", ilvl: 85, sockets: 4, filled: 0, place: "stash", owner: "M", count: 1, ...more });
@@ -76,9 +75,8 @@ try {
   console.log("hand-made cases ok");
 
   if (dir) {
-    const wasm = await vite.ssrLoadModule("/wasm/pkg/d2_parser.js");
-    wasm.initSync({ module: readFileSync(new URL("../wasm/pkg/d2_parser_bg.wasm", import.meta.url)) });
-    const { parseSaveFiles } = await vite.ssrLoadModule("/src/lib/parseSaves.js");
+    await parser(); // the shared instance parseSaves uses
+    const { parseSaveFiles } = await load("/src/lib/parseSaves.js");
     const names = readdirSync(dir, { withFileTypes: true }).filter((d) => d.isFile()).map((d) => d.name);
     const data = await parseSaveFiles(names.map((name) => new File([readFileSync(join(dir, name))], name)));
     const modeOf = new Map(ownersOf(data).map((o) => [o.name, o.mode]));
@@ -110,6 +108,4 @@ try {
       }
     }
   }
-} finally {
-  await vite.close();
-}
+});

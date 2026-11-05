@@ -9,7 +9,7 @@ mkdir -p $OUT/bin
 npm run build
 (cd .. && VITE_DECK=1 npx vite build --outDir decky/$OUT/web --emptyOutDir)
 # No Blizzard art in the zip: the plugin makes the icons from the player's own game files
-rm -rf $OUT/web/items $OUT/web/_headers $OUT/web/_redirects
+rm -rf $OUT/web/items $OUT/web/_headers
 cp -R plugin.json package.json main.py py_modules dist $OUT/
 rm -rf $OUT/py_modules/__pycache__
 

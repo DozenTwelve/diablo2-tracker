@@ -8,6 +8,7 @@
 import { codeOfNumber, keyOf, variantOf } from "./gameData";
 import { modeOfCharacter, modeOfStash } from "./modes";
 import { copyScore, socketStats } from "./props";
+import { sumStats } from "./stats";
 
 // The promise is kept, so a second caller waits for the same init; a failed one is tried again
 let parser;
@@ -28,31 +29,20 @@ function placeOf(item) {
   return store_page === "Null" ? mode.toLowerCase() : store_page.toLowerCase();
 }
 
-// Stats added up as in game; one set by several sources that comes to 0 (Malice's -1 light radius and an El's +1)
-// shows nothing in game and is left out
-const summed = (list) => {
-  const sums = new Map();
-  const added = new Set();
-  for (const { id, layer, value } of list) {
-    const key = `${id}:${layer}`;
-    if (sums.has(key)) added.add(key);
-    sums.set(key, (sums.get(key) ?? 0) + value);
-  }
-  return [...sums].filter(([key, value]) => value || !added.has(key)).map(([key, value]) => [...key.split(":").map(Number), value]);
-};
+const tuples = (stats) => stats.map(({ id, layer, value }) => [id, layer, value]);
 
 // Item, runeword and socket stats together (runes and gems by gems.txt, jewels their own), summed as in game
 export function statsOf(item, code) {
   const sockets = item.sockets
     .filter(Boolean)
-    .flatMap((s) => (socketStats(code, codeOfNumber(s.code)) ?? s.stats.map((x) => [x.id, x.layer, x.value])).map(([id, layer, value]) => ({ id, layer, value })));
-  return summed([...item.stats, ...(item.runeword_stats ?? []), ...sockets]);
+    .flatMap((s) => socketStats(code, codeOfNumber(s.code)) ?? tuples(s.stats));
+  return sumStats([...tuples(item.stats), ...tuples(item.runeword_stats ?? []), ...sockets]);
 }
 
 // What the item rolled itself, for the roll score: without its runes, gems or jewels, and for a runeword without
 // its base's own (superior) bonuses. Only when that differs from statsOf.
 export const rollsOf = (item) =>
-  item.runeword_id != null ? summed(item.runeword_stats ?? []) : item.sockets.some(Boolean) ? summed(item.stats) : undefined;
+  item.runeword_id != null ? sumStats(tuples(item.runeword_stats ?? [])) : item.sockets.some(Boolean) ? sumStats(tuples(item.stats)) : undefined;
 
 // Which version of an item a copy is, where one item comes in several: Rainbow Facet's (its uniqueitems id), a
 // class skills item's (Hellfire Torch: the class). undefined for the rest.

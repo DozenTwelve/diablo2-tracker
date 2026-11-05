@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { imageOf, labelOf } from "../lib/gameData";
 import { groupByKey, itemsByPlace, ownerLabel, ownersOf, placeLabel, roleOf, totalCount } from "../lib/inventory";
-import { modePrefix, museumLayout } from "../lib/organize";
+import { modePrefix, muleGroupOf, museumSlots } from "../lib/organize";
 import { copyScore } from "../lib/props";
 import { nameOf, t } from "../lib/i18n";
 import { Link, navigate } from "../lib/router";
@@ -21,9 +21,10 @@ const gridRank = (place) => Object.keys(GRIDS).indexOf(place) + 1 || 10 + Number
 // Equipment drawn as the in-game character screen; a mercenary only has these slots
 const DOLLS = { equipped: undefined, merc: ["Head", "Torso", "RightArm", "LeftArm"] };
 
-const MUSEUM = /^H?[LC]?(UW|UA|UJ|SET)-/; // mule names of every mode (modePrefix)
+// Mule names of every mode (modePrefix)
+const isMuseum = (name) => ["UW", "UA", "UJ", "SET"].includes(muleGroupOf(name)?.group);
 const groupOf = (o, roles) =>
-  !o.cls ? "sharedStash" : roleOf(o, roles) === "main" ? "mainCharacters" : MUSEUM.test(o.name) ? "museumMules" : /^H?[LC]?TRASH-/.test(o.name) ? "trashMules" : "otherMules";
+  !o.cls ? "sharedStash" : roleOf(o, roles) === "main" ? "mainCharacters" : isMuseum(o.name) ? "museumMules" : muleGroupOf(o.name)?.group === "TRASH" ? "trashMules" : "otherMules";
 const GROUPS = ["mainCharacters", "museumMules", "otherMules", "trashMules", "sharedStash"];
 
 // Every character and stash in list order: by group, then by name
@@ -40,12 +41,6 @@ function openRewards(quests, lang) {
   });
 }
 
-// Fixed slots of the museum layout per mule name prefix, one per game mode (see src/lib/organize.js)
-const museums = new Map();
-function museumSlots(prefix) {
-  if (!museums.has(prefix)) museums.set(prefix, museumLayout(prefix).slots);
-  return museums.get(prefix);
-}
 const PREFIXES = ["SoftCore", "HardCore"].flatMap((core) => ["Modern", "Legacy", "Classic"].map((v) => modePrefix(`${core}:${v}`)));
 
 // Map record -> { score, museum }: a copy's roll score and the score of the copy in its museum slot (none: the
@@ -242,11 +237,11 @@ function CharacterPage({ saveData, name, lang }) {
   if (!owner) return <p className="gothic-text-muted">{t("noCharacter", lang)}</p>;
 
   const records = saveData.items.filter((r) => r.owner === name);
-  const museumMule = MUSEUM.test(name);
+  const museumMule = isMuseum(name);
   const ghosts = museumMule ? ghostsOf(name, owner.mode, saveData.items) : {};
   const fill = museumMule ? museumFill(saveData.items).get(name) : null;
   // In a DUP mule each extra copy is scored against the copy in its museum slot: better ▲ or worse ▼
-  const notes = /^H?[LC]?DUP-/.test(name) ? dupNotes(records, owner.mode, saveData.items) : undefined;
+  const notes = muleGroupOf(name)?.group === "DUP" ? dupNotes(records, owner.mode, saveData.items) : undefined;
   const places = itemsByPlace(saveData.items, name, lang);
   // Museum mules show their empty stash/inventory even when nothing is in it yet
   for (const place of Object.keys(ghosts)) if (!places.some((p) => p.place === place)) places.push({ place, lines: [] });

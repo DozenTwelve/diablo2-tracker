@@ -1,4 +1,4 @@
-// The /faq page: questions and answers as [Simplified, Traditional, English, Korean] like the UI strings,
+// The /about page's FAQ: questions and answers as [Simplified, Traditional, English, Korean] like the UI strings,
 // with an optional link after the answer. In the Steam Deck plugin, deck replaces the answer, or false hides the question.
 import { PLUGIN, REPO, SAVES_DOC, SKILL } from "./links";
 

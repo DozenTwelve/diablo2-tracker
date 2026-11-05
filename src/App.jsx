@@ -15,6 +15,7 @@ import Welcome from "./components/Welcome";
 import AboutView from "./components/AboutView";
 import NewItemsView from "./components/NewItemsView";
 import ErrorBoundary from "./components/ErrorBoundary";
+import Segmented from "./components/Segmented";
 import { SET_GREEN } from "./components/StashGrid";
 import { propLines, setBonusLines } from "./lib/props";
 import { Link, usePath } from "./lib/router";
@@ -108,16 +109,10 @@ export default function App() {
           </nav>
           <div className="ml-auto flex items-center gap-4">
             {tab !== "welcome" && <SaveLoader saveData={saveData} onLoad={load} notStored={notStored} lang={lang} compact />}
-            <div className="segmented" role="group" aria-label={t("language", lang)}>
-              {Object.entries(LANGS).map(([code, label]) => (
-                <button key={code} className={lang === code ? "active" : ""} aria-pressed={lang === code} onClick={() => setLang(code)}>
-                  {label}
-                </button>
-              ))}
-            </div>
+            <Segmented label={t("language", lang)} options={Object.entries(LANGS)} value={lang} onChange={setLang} />
             {onDeck && (
               <button className="gothic-btn gothic-btn-secondary gothic-btn-small" onClick={closeDeck}>
-                {t("closeApp", lang)}
+                {t("close", lang)}
               </button>
             )}
           </div>

@@ -1,17 +1,11 @@
 // What each new find on the inbox pages of the shared stash is worth, before organizing. Unique and set items are
 // placed by organizing's own placeCopies over what organizing would take (the mode's mules and inbox pages), so the
 // verdict is what organizing will do; charms and jewels by isJunk.
-import { byMuleName, copiesNeeded, isCharmOrJewel, isJunk, modePrefix, museumLayout, placeCopies } from "./organize";
+import { byMuleName, copiesNeeded, isCharmOrJewel, isJunk, modePrefix, museumSlots, placeCopies } from "./organize";
 import { copyScore } from "./props";
 import { ownersOf, roleOf } from "./inventory";
 import items from "../data/items.json";
 
-const museums = new Map();
-const museumSlots = (mode) => {
-  const prefix = modePrefix(mode ?? "SoftCore:Modern");
-  if (!museums.has(prefix)) museums.set(prefix, museumLayout(prefix).slots);
-  return museums.get(prefix);
-};
 
 const pagesOf = (inboxes, mode) => (Array.isArray(inboxes?.[mode]) ? inboxes[mode] : []); // a stored value may be anything
 
@@ -43,7 +37,7 @@ export function verdictsOf(saveData, finds, roles = {}) {
     // What organizing this mode takes: its living mules and its inbox pages, not items inside other items
     const mules = new Set(owners.filter((o) => o.cls && o.mode === mode && !o.dead && roleOf(o, roles) === "mule").map((o) => o.name));
     const inbox = new Set(finds.filter((r) => owners.find((o) => o.name === r.owner)?.mode === mode));
-    const slots = museumSlots(mode);
+    const slots = museumSlots(modePrefix(mode ?? "SoftCore:Modern"));
     // In organizing's order, which settles ties: the mules by name, each as read, then the inbox pages
     const index = new Map(saveData.items.map((r, i) => [r, i]));
     const copies = saveData.items

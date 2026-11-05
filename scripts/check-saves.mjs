@@ -3,20 +3,17 @@
 // Lists every character (mode, class, level, item count) and what each shared stash page holds.
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { createServer } from "vite";
+import { withApp } from "./load.mjs";
 
 const dir = process.argv[2];
 if (!dir) throw new Error("usage: node scripts/check-saves.mjs <save dir>");
 
-const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
-try {
-  // Node can't fetch the .wasm by URL, so init the shared module instance with the bytes first
-  const wasm = await vite.ssrLoadModule("/wasm/pkg/d2_parser.js");
-  wasm.initSync({ module: readFileSync(new URL("../wasm/pkg/d2_parser_bg.wasm", import.meta.url)) });
-  const { parseSaveFiles } = await vite.ssrLoadModule("/src/lib/parseSaves.js");
-  const { catalog, labelOf } = await vite.ssrLoadModule("/src/lib/gameData.js");
-  const { groupByKey, totalCount, locationLines } = await vite.ssrLoadModule("/src/lib/inventory.js");
-  const { default: statData } = await vite.ssrLoadModule("/src/data/stats.json");
+await withApp(async ({ load, parser }) => {
+  await parser(); // the shared instance parseSaves uses
+  const { parseSaveFiles } = await load("/src/lib/parseSaves.js");
+  const { catalog, labelOf } = await load("/src/lib/gameData.js");
+  const { groupByKey, totalCount, locationLines } = await load("/src/lib/inventory.js");
+  const { default: statData } = await load("/src/data/stats.json");
 
   const names = readdirSync(dir, { withFileTypes: true }).filter((d) => d.isFile()).map((d) => d.name); // not subfolders (backups)
   const files = names.map((name) => new File([readFileSync(join(dir, name))], name));
@@ -56,6 +53,4 @@ try {
   damaged.forEach((f) => console.log("ERROR", `${f}: damaged or cut short (does not read back the same); items may be missing`));
   unmatched.forEach((i) => console.log("UNMATCHED", i.key, i.owner));
   process.exitCode = errors.length || damaged.length || unmatched.length ? 1 : 0;
-} finally {
-  await vite.close();
-}
+});

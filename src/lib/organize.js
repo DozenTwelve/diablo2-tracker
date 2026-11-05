@@ -81,8 +81,13 @@ export function byMuleName(a, b) {
 // The rest after the museum's four are packed in this order. LOWCHARM can't read as L + CHARM: L is only a mode prefix
 // before a group name, and no group is named OWCHARM. Longest name: HLLOWCHARM-AA, 13 of the 15 characters D2R allows.
 const GROUP_NAMES = ["UW", "UA", "UJ", "SET", "DUP", "RW", "CHARM", "LOWCHARM", "JEWEL", "LOWJEWEL", "RING", "MAG", "BASE", "MISC", "TRASH"];
-// A mule named by the layout, in any mode (HUW-A, LCHARM-B...)
-export const isLayoutName = (name) => new RegExp(`^H?[LC]?(${GROUP_NAMES.join("|")})-[A-Z]+$`, "i").test(name);
+const MULE_NAME = new RegExp(`^(H?[LC]?)(${GROUP_NAMES.join("|")})-[A-Z]+$`, "i");
+// A mule named by the layout, in any mode (HUW-A, LCHARM-B...): { prefix: modePrefix, group: "UW" }, else null
+export const muleGroupOf = (name) => {
+  const m = MULE_NAME.exec(name);
+  return m && { prefix: m[1].toUpperCase(), group: m[2].toUpperCase() };
+};
+export const isLayoutName = (name) => muleGroupOf(name) !== null;
 export const modePrefix = (mode) =>
   (mode.startsWith("HardCore") ? "H" : "") + (mode.endsWith("Legacy") ? "L" : mode.endsWith("Classic") ? "C" : "");
 
@@ -103,6 +108,13 @@ export function museumLayout(namePrefix = "") {
   ];
   const slots = new Map(mules.flatMap((m) => m.slots.map((s) => [s.ref, { mule: m.name, ...s }])));
   return { names: mules.map((m) => m.name), slots };
+}
+
+// museumLayout(prefix).slots, made once per mule name prefix (one per game mode); read only
+const museums = new Map();
+export function museumSlots(prefix) {
+  if (!museums.has(prefix)) museums.set(prefix, museumLayout(prefix).slots);
+  return museums.get(prefix);
 }
 
 // How many copies of a unique or set item are worth having: one for each class with a build recommending it,
@@ -296,11 +308,9 @@ const moveTo = (item, { page, x, y }) => ({
 const goldOf = (json) => json.stats.filter((s) => GOLD_STATS.has(s.id)).reduce((n, s) => n + s.value, 0);
 const deadHardcore = (json) => json.character.flags.includes("HARDCORE") && json.character.flags.includes("DEAD");
 
-export { modeOfCharacter, modeOfStash };
-
 // Mules of a mode: the named characters, or else every level 1 character; never a dead hardcore hero (it
 // can't be played, its items stay with it)
-export const mulesOf = (saves, mode, names) =>
+const mulesOf = (saves, mode, names) =>
   saves.filter(
     (s) =>
       s.ext === "d2s" &&
@@ -318,9 +328,13 @@ export const filesOfCharacter = (name, fileNames) =>
 // refused ("level" | "gold" | "corpse" | "charm"): not a mule organizing made (its own level, gold, or items it can't see
 // on a corpse or in an Iron Golem), so it is never deleted with the junk; "charm": it holds a charm or jewel, which
 // organizing no longer puts in TRASH (an older run did): organizing again moves it out.
+const isTrashMule = (name, mode) => {
+  const mule = muleGroupOf(name);
+  return mule?.group === "TRASH" && mule.prefix === modePrefix(mode);
+};
 export const trashMules = (saves, mode) =>
   saves
-    .filter((s) => s.ext === "d2s" && new RegExp(`^${modePrefix(mode)}TRASH-[A-Z]+$`, "i").test(s.name) && modeOfCharacter(s.json) === mode && !deadHardcore(s.json))
+    .filter((s) => s.ext === "d2s" && isTrashMule(s.name, mode) && modeOfCharacter(s.json) === mode && !deadHardcore(s.json))
     .sort((a, b) => byMuleName(a.name, b.name))
     .map(({ name, json }) => ({
       name,
@@ -463,13 +477,11 @@ export function organize(saves, { mode = "SoftCore:Modern", mules: names, inbox 
 
   const fromStash = (group) => moves.filter((m) => m.stash && m.group === group).map((m) => m.key);
   const owned = (prefix) => [...museum.slots.values()].filter((s) => s.mule.startsWith(`${namePrefix}${prefix}-`));
-  const groups = GROUP_NAMES.join("|");
-  const ownName = new RegExp(`^${namePrefix}(${groups})-[A-Z]+$`, "i");
   const report = {
     mode,
     mules: mules.map((s) => s.name),
     leftEmpty: mules
-      .filter((s) => s.json.character.level === 1 && !goldOf(s.json) && !ownName.test(s.name) && ![...placed.keys()].some((n) => n.toLowerCase() === s.name.toLowerCase()))
+      .filter((s) => s.json.character.level === 1 && !goldOf(s.json) && muleGroupOf(s.name)?.prefix !== namePrefix && ![...placed.keys()].some((n) => n.toLowerCase() === s.name.toLowerCase()))
       .map((s) => s.name)
       .sort((a, b) => a.localeCompare(b)),
     template: template.name,

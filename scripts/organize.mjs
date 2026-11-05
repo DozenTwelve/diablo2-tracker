@@ -11,7 +11,7 @@
 // files to delete from the save folder after copying back (neither is a save).
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { createServer } from "vite";
+import { withApp } from "./load.mjs";
 
 const USAGE = "usage: node scripts/organize.mjs <save dir> <out dir> [--mode SoftCore:Modern] [--mules a,b] [--inbox 1,2] [--delete a,b] [--yes]";
 const args = process.argv.slice(2);
@@ -37,15 +37,13 @@ const [dir, outDir] = rest;
 const partial = `${outDir}.partial`;
 if (existsSync(outDir) || existsSync(partial)) throw new Error(`${outDir} or ${partial} already exists`);
 
-const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
-try {
-  const wasm = await vite.ssrLoadModule("/wasm/pkg/d2_parser.js");
-  wasm.initSync({ module: readFileSync(new URL("../wasm/pkg/d2_parser_bg.wasm", import.meta.url)) });
-  const { filesOfCharacter, muleTimes, organizeFiles } = await vite.ssrLoadModule("/src/lib/organize.js");
-  const { codeOfNumber, labelOf } = await vite.ssrLoadModule("/src/lib/gameData.js");
-  const { ownerLabel } = await vite.ssrLoadModule("/src/lib/inventory.js");
-  const { describeStats } = await vite.ssrLoadModule("/src/lib/stats.js");
-  const { statsOf } = await vite.ssrLoadModule("/src/lib/parseSaves.js");
+await withApp(async ({ load, parser }) => {
+  const wasm = await parser();
+  const { filesOfCharacter, muleTimes, organizeFiles } = await load("/src/lib/organize.js");
+  const { codeOfNumber, labelOf } = await load("/src/lib/gameData.js");
+  const { ownerLabel } = await load("/src/lib/inventory.js");
+  const { describeStats } = await load("/src/lib/stats.js");
+  const { statsOf } = await load("/src/lib/parseSaves.js");
 
   const junkText = (m, lang) => describeStats(statsOf(m.item, codeOfNumber(m.item.code)), lang).join("; ");
   const files = readdirSync(dir).filter((f) => /\.d2[si]$/.test(f) && !f.startsWith("._")).map((name) => ({ name, bytes: new Uint8Array(readFileSync(join(dir, name))) }));
@@ -118,6 +116,4 @@ try {
     throw e;
   }
   console.log(`check passed, ${changed.length} saves changed; written with every mule (dated below the other characters) to ${outDir}`);
-} finally {
-  await vite.close();
-}
+});

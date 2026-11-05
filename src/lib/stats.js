@@ -67,16 +67,21 @@ const DUPLICATE_DAMAGE = [23, 24, 159, 160];
 const groupMembers = {};
 for (const [id, s] of Object.entries(stats)) if (s.group) (groupMembers[s.group] ??= []).push(Number(id));
 
-export function describeStats(list, lang) {
-  // A stat set twice (e.g. all resistances and cold resistance) adds up, as in game
-  const byId = new Map();
-  const added = new Set(); // set more than once: summing to 0 (Malice's -1 light radius and El's +1) shows nothing
+// Stats ([statId, layer, value]) added up as in game (e.g. all resistances and cold resistance); one set by several
+// sources that comes to 0 (Malice's -1 light radius and an El's +1) shows nothing in game and is left out
+export function sumStats(list) {
+  const sums = new Map();
+  const added = new Set();
   for (const [id, layer, value] of list) {
     const key = `${id}:${layer}`;
-    if (byId.has(key)) added.add(key);
-    byId.set(key, (byId.get(key) ?? 0) + value);
+    if (sums.has(key)) added.add(key);
+    sums.set(key, (sums.get(key) ?? 0) + value);
   }
-  for (const key of added) if (byId.get(key) === 0) byId.delete(key);
+  return [...sums].filter(([key, value]) => value || !added.has(key)).map(([key, value]) => [...key.split(":").map(Number), value]);
+}
+
+export function describeStats(list, lang) {
+  const byId = new Map(sumStats(list).map(([id, layer, value]) => [`${id}:${layer}`, value]));
   const get = (id) => byId.get(`${id}:0`);
   const lines = [];
   const take = (ids, priorityOf, text) => {

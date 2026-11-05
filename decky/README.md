@@ -28,7 +28,8 @@ In the plugin's runtime data folder on the Deck (Decky's `DECKY_PLUGIN_RUNTIME_D
 
 - `items/`: the item icons from "Get item icons";
 - `backups/<time>`: a copy of the save folder before each write or restore, labelled organize, clean, loadout or
-  restore (the newest 10 and the oldest kept per save folder);
+  restore (the newest 10 and the oldest kept per save folder, and interrupted ones and those from older plugin
+  versions never deleted);
 - `loadouts.json`: the saved loadouts.
 
 The saves themselves stay where the game keeps them.

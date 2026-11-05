@@ -9,9 +9,14 @@ import { useStoredState } from "../lib/useStoredState";
 import PageTitle from "./PageTitle";
 import { colorOf, Tooltip, tipHandlers, useTip } from "./StashGrid";
 
-// Kinds whose reason differs per find: the group says how to read the row (these strings), each row its numbers
-// (findRow_*). Every other kind's reason (findWhy_*) is the same for each find, so it is said once under the heading.
-const VARIES = { upgrade: ["findNote_upgrade"], needed: ["findNote_needed", "findLegend"], extra: ["findLegend"] };
+// Kinds whose reason differs per find: the group says how to read the rows (these strings, plus what is said of its
+// charms and jewels or ethereal copies when it has some), each row only its numbers (findRow_*). Every other kind's
+// reason (findWhy_*) is the same for each find, so it is said once under the heading.
+const VARIES = {
+  upgrade: () => ["findNote_upgrade"],
+  needed: (list) => ["findNote_needed", list.some((f) => f.verdict.charm) && "findNote_charm", list.some((f) => f.verdict.merc && !f.verdict.charm) && "findNote_merc", "findLegend"],
+  extra: (list) => [list.some((f) => f.verdict.merc && f.verdict.need) && "findNote_mercHave", "findLegend"],
+};
 
 // /new: what the finds dropped on the inbox pages of the shared stash are worth (src/lib/newItems.js), read only,
 // so it can be checked with the game still running. The inbox pages are picked here, per shared stash, and the
@@ -91,7 +96,7 @@ export default function NewItemsView({ saveData, keep, lang }) {
                 <h2>{t(`find_${kind}`, lang)}</h2>
                 <span className="gothic-text-muted">{list.length}</span>
               </div>
-              <p className="text-sm gothic-text-muted mb-1">{(VARIES[kind] ?? [`findWhy_${kind}`]).map((k) => t(k, lang, {})).join("")}</p>
+              <p className="text-sm gothic-text-muted mb-1">{(VARIES[kind]?.(list) ?? [`findWhy_${kind}`]).filter(Boolean).map((k) => t(k, lang, {})).join("")}</p>
               <div className="rows">
                 {list.map(({ r, verdict }, i) => {
                   const show = (e) => setTip({ item: r, rect: e.currentTarget.getBoundingClientRect() });
@@ -112,7 +117,7 @@ export default function NewItemsView({ saveData, keep, lang }) {
                           </span>
                           {!onePage && <span className="text-sm gothic-text-muted shrink-0">{placeLabel(r.place, lang)}</span>}
                         </span>
-                        {VARIES[kind] && <span className="block text-sm gothic-text-muted">{t(`findRow_${kind}`, lang, verdict)}</span>}
+                        {VARIES[kind] && <span className="block text-sm gothic-text-muted">{t(kind === "upgrade" ? "findRow_upgrade" : "findRow_kept", lang, verdict)}</span>}
                       </span>
                     </button>
                   );

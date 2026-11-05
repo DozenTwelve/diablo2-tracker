@@ -9,18 +9,17 @@ Details are in git history.
 - Getting saves in and out: [docs/saves.md](docs/saves.md). Organizing other players' stashes: the agent skill
   `.claude/skills/organize-stash`.
 - Keeping it organized: `--inbox` pages, museum slots, `DUP` mules, `LOWCHARM`/`LOWJEWEL` mules for low-rolled magic
-  charms and jewels, `TRASH` for extra copies past `copiesNeeded`. Nothing is deleted by organizing.
+  charms and jewels, `TRASH` for extra copies past `copiesNeeded`. Organizing never deletes items; emptied characters
+  are deleted only when ticked, `TRASH` only by Clean TRASH.
 - Deployment: `npm run deploy` to Cloudflare Pages, live at https://d2r.diamonddoge.org.
 - Steam Deck plugin ([decky/](decky/README.md)): on GitHub Releases ("Install Plugin from URL"); the Decky store
   turns away LLM-written plugins.
 - New finds page, six tabs, Clean TRASH on the Deck, runewords to make.
-- Pickup alerts on the Deck (`save_changes` in `decky/main.py`, `src/lib/pickups.js`). Not yet timed on a real Deck:
-  the panel shows the last check's time for that.
-
-## Saved loadouts (next, not started)
-
-Like WoW's equipment manager. The player equips a character (and its mercenary) by hand, then saves it in the plugin
-as that character's best setup. The plugin then shows, per main, which saved pieces are on it and where the others
-went (another main, a mule), so shared items are easy to find. Items are told apart by their seed. Picked entirely by
-hand, no recommendations. Moving pieces back with one click would be the first write to mains' saves: ask the user
-before building it.
+- Pickup alerts on the Deck (`save_changes` in `decky/main.py`, `src/lib/pickups.js`). No stutter reported on a real
+  Deck; timing not recorded (the panel shows the last check's time).
+- Loadouts (0.2.3): saved per main incl. mercenary, put on in one checked write; quest items never move.
+- "Not junk" ticks on Clean TRASH's list: an unticked copy stays in `DUP` from then on.
+- Item tooltips on the character grids and the item lists (New finds, charms, runewords, the organize preview, the
+  `TRASH` list).
+- Charms page: every charm owned, grouped by size, filtered by purpose, low rolls dimmed or hidden.
+- Runeword tabs: owned, can make, only missing a base, 1 or 2 runes short.

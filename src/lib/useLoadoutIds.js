@@ -5,6 +5,10 @@ import { loadoutIds } from "./loadouts";
 // Every saved loadout's piece ids (loadoutIds), read from the plugin when the page opens: they count as kept, as the
 // player's keep list does. { ids, failed }: ids null until read, and when the plugin couldn't give them (failed: why):
 // callers delete nothing then rather than assume there are none. The web has no loadouts: [].
+// Whether the loadouts are known (read, or none on the web): organizing and cleaning TRASH wait for them, and don't
+// run while the plugin can't give them
+export const loadoutsKnown = (state) => state.ids != null;
+
 export function useLoadoutIds() {
   const [state, setState] = useState(onDeck ? { ids: null } : { ids: [] });
   useEffect(() => {

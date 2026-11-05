@@ -14,13 +14,52 @@ await withApp(async ({ load }) => {
 
   const { parseSaveFiles } = await load("/src/lib/parseSaves.js");
   const { idOf } = await load("/src/lib/gameData.js");
-  const { applyLoadoutFiles, loadoutIds, loadoutOf, whereIs } = await load("/src/lib/loadouts.js");
-  const { readSaves, trashMules } = await load("/src/lib/organize.js");
+  const { applyLoadoutFiles: applyFiles, loadoutIds, loadoutOf, whereIs } = await load("/src/lib/loadouts.js");
+  const { groupOf, readSaves, trashMules } = await load("/src/lib/organize.js");
+  const { loadoutsKnown } = await load("/src/lib/useLoadoutIds.js");
   const { modeOfStash } = await load("/src/lib/modes.js");
   const mercs = (await load("/src/data/mercs.json")).default;
   const wasm = await load("/wasm/pkg/d2_parser.js");
   const items = (await load("/src/data/items.json")).default;
-  const { codeOfNumber, mercClassOf } = await load("/src/lib/gameData.js");
+  const { codeOfNumber, keyOf, mercClassOf } = await load("/src/lib/gameData.js");
+
+  // Every apply here is checked for a write cut off after any of its files, in the order given: every item is still
+  // on a save (twice is fine), as many copies as there are at the end
+  const parsed = new WeakMap(); // bytes -> item fingerprints
+  const fingerprints = (files) => {
+    const m = new Map();
+    for (const { name, bytes } of files) {
+      if (!parsed.has(bytes)) {
+        const j = JSON.parse(name.endsWith(".d2s") ? wasm.parseD2s(bytes) : wasm.parseD2i(bytes));
+        const all = name.endsWith(".d2s") ? [...j.items, ...(j.merc_items?.items ?? [])] : j.flatMap((tab) => tab.items);
+        parsed.set(bytes, all.map((i) => JSON.stringify({ ...i, position: undefined })));
+      }
+      for (const k of parsed.get(bytes)) m.set(k, (m.get(k) ?? 0) + 1);
+    }
+    return m;
+  };
+  const applyLoadoutFiles = (files, parser, loadout, options) => {
+    const result = applyFiles(files, parser, loadout, options);
+    const state = new Map(files.map((f) => [f.name, f]));
+    const end = fingerprints([...new Map([...state, ...result.files.map((f) => [f.name, f])]).values()]);
+    result.files.forEach((f, k) => {
+      state.set(f.name, f);
+      const now = fingerprints([...state.values()]);
+      for (const [fp, n] of end) assert((now.get(fp) ?? 0) >= n, `${loadout.character}: a write cut off after ${result.files.slice(0, k + 1).map((f) => f.name).join(" ")} leaves an item on no save`);
+    });
+    return result;
+  };
+
+  {
+    // Every quest item is in items.json (Potion of Life and Book of Skill are named only in ui.json); an unknown code
+    // is MISC to organizing, not a throw
+    assert(items.xyz?.quest && items.ass?.quest, "Potion of Life or Book of Skill missing from items.json");
+    assert.equal(groupOf("zzz", { quality: "Normal", stats: [] }, "zzz"), "MISC");
+    // Loadouts the plugin couldn't give: organizing must not run as if there were none
+    assert.equal(loadoutsKnown({ ids: null, failed: "x" }), false);
+    assert.equal(loadoutsKnown({ ids: [] }), true);
+    console.log("ok  quest items in items.json, an unknown code is MISC, unread loadouts stop organizing");
+  }
 
   {
     // Chinese has its own words for charm and amulet: the loadout texts about charms use the charm one
@@ -205,11 +244,13 @@ await withApp(async ({ load }) => {
       const stash = out.map((f) => f.name.endsWith(".d2i"));
       assert.deepEqual(stash, [...stash].sort((x, y) => x - y), "the shared stash last");
       const at = (name) => out.findIndex((f) => f.name === name);
+      const last = (name) => out.findLastIndex((f) => f.name === name);
       const me = at(`${report.pieces[0] ? a.character : ""}.d2s`);
       const givers = new Set(report.pieces.filter((p) => p.status === "take" && p.from.owner !== a.character).map((p) => p.from.owner));
-      for (const g of givers) if (at(`${g}.d2s`) >= 0) assert(at(`${g}.d2s`) > me, `${g} gives a piece but is written before ${a.character}`);
-      for (const o of report.off)
-        if (names.has(`${o.to.mule}.d2s`) && !givers.has(o.to.mule)) assert(at(`${o.to.mule}.d2s`) < me, `${o.to.mule} receives what came off but is written after ${a.character}`);
+      // (a save written twice: holding both first, as it ends up last)
+      const meLast = last(`${report.pieces[0] ? a.character : ""}.d2s`);
+      for (const g of givers) if (at(`${g}.d2s`) >= 0) assert(last(`${g}.d2s`) > me, `${g} gives a piece but is written before ${a.character}`);
+      for (const o of report.off) if (names.has(`${o.to.mule}.d2s`)) assert(at(`${o.to.mule}.d2s`) < meLast, `${o.to.mule} receives what came off but is written after ${a.character}`);
     };
     const applyChecked = (files, loadout, leave, keep = []) => {
       const result = applyLoadoutFiles(files, wasm, loadout, { mules, keep, leave });
@@ -381,6 +422,140 @@ await withApp(async ({ load }) => {
         const { files, report } = applyChecked(rehired, a);
         assert(report.pieces.filter((r) => r.piece.place === "merc").every((r) => r.status === "otherMerc"));
         assert.deepEqual(files, []);
+      });
+    }
+
+    if (mercPieces.length) {
+      await check("a loadout saved before the mercenary's kind was kept puts no mercenary piece on, whatever mercenary is hired", () => {
+        const old = { ...a, mercClass: undefined };
+        const p = mercPieces[0];
+        const item = json(base, aFile).merc_items.items.find((i) => id(i) === p.id);
+        const { w, h } = items[p.code];
+        const [muleFile, x, y] = freeSpot(base, w, h);
+        for (const hireling of [json(base, aFile).character.merc.hireling_id, 9999]) {
+          const moved = edit(base, {
+            [aFile]: (j) => ({ ...j, character: { ...j.character, merc: { ...j.character.merc, hireling_id: hireling } }, merc_items: { ...j.merc_items, items: j.merc_items.items.filter((i) => id(i) !== p.id) } }),
+            [muleFile]: (j) => ({ ...j, items: [...j.items, toStash(item, x, y)] }),
+          });
+          const { files, report } = applyChecked(moved, old);
+          assert(report.pieces.filter((r) => r.piece.place === "merc").every((r) => r.status === "mercUnknown"), `hireling ${hireling}`);
+          assert.deepEqual(files, []);
+        }
+      });
+    }
+
+    // A like-for-like swap: the loadout wants another unique or set item of a kind from a mule, and what it wears
+    // there now goes into that same mule (giving and receiving: written twice, around the character)
+    await check("a mule giving a piece and receiving what came off is written before and after the character", () => {
+      const typeOf = (c) => items[c]?.type;
+      let found = 0;
+      for (const piece of a.pieces.filter((p) => p.place === "equipped")) {
+        for (const m of mules) {
+          for (const it of json(base, `${m}.d2s`).items) {
+            const c = codeOfNumber(it.code);
+            if (found >= 3 || typeOf(c) !== typeOf(piece.code) || !/^[us]:/.test(keyOf(it, c)) || id(it) === piece.id) continue;
+            const b = { ...a, pieces: a.pieces.map((p) => (p === piece ? { ...p, id: id(it), key: keyOf(it, c), code: c } : p)) };
+            let r;
+            try {
+              r = applyChecked(base, b, [], loadoutIds({ loadouts: [a, b] }));
+            } catch (e) {
+              if (e.blocked) continue;
+              throw e;
+            }
+            if (!r.report.off.some((o) => o.to?.mule === m)) continue;
+            const order = r.files.map((f) => f.name);
+            assert(order.indexOf(`${m}.d2s`) < order.indexOf(aFile) && order.lastIndexOf(`${m}.d2s`) > order.indexOf(aFile), order.join(" "));
+            found++;
+          }
+        }
+      }
+      console.log(`    ${found} such swaps`);
+    });
+    await check("swapped in the saves: the character wears a mule's item, the mule holds the piece; a write cut off anywhere loses nothing", () => {
+      let n = 0;
+      const typeOf = (c) => items[c]?.type;
+      for (const piece of a.pieces.filter((p) => p.place === "equipped" && /^[us]:/.test(p.key)))
+        for (const m of mules) {
+          const theirs = json(base, `${m}.d2s`).items.find((i) => typeOf(codeOfNumber(i.code)) === typeOf(piece.code) && i.position.mode === "Stored");
+          if (!theirs) continue;
+          const mine = json(base, aFile).items.find((i) => id(i) === piece.id);
+          const files = edit(base, {
+            [aFile]: (j) => ({ ...j, items: j.items.map((i) => (id(i) === piece.id ? { ...theirs, position: i.position } : i)) }),
+            [`${m}.d2s`]: (j) => ({ ...j, items: j.items.map((i) => (id(i) === id(theirs) ? { ...mine, position: i.position } : i)) }),
+          });
+          try {
+            applyChecked(files, a);
+            n++;
+          } catch (e) {
+            if (!e.blocked) throw e;
+          }
+        }
+      console.log(`    ${n} swaps`);
+    });
+
+    if (b && neck && mule) {
+      await check(`identical twins on ${b.name} and in a mule: the mule's is taken, ${b.name} keeps its own; whereIs agrees`, async () => {
+        const mine = json(base, aFile).items.find((i) => id(i) === neck.id);
+        const [muleFile, x, y] = freeSpot(base, 1, 1);
+        // The main's save read first: the order saves come in doesn't choose
+        const files = edit(base, {
+          [aFile]: (j) => ({ ...j, items: j.items.filter((i) => id(i) !== neck.id) }),
+          [`${b.name}.d2s`]: (j) => ({ ...j, items: j.items.map((i) => (i.position.body_location === "Neck" ? { ...mine, position: i.position } : i)) }),
+          [muleFile]: (j) => ({ ...j, items: [...j.items, toStash(mine, x, y)] }),
+        }).toSorted((f, g) => (g.name === `${b.name}.d2s`) - (f.name === `${b.name}.d2s`));
+        const { files: out, report } = applyChecked(files, a);
+        assert.deepEqual(report.pieces.find((r) => r.piece.id === neck.id).from, { owner: muleFile.slice(0, -4), place: "stash" });
+        assert(!out.some((f) => f.name === `${b.name}.d2s`), `${b.name} was written`);
+        const data = await parseSaveFiles(files.map((f) => new File([f.bytes], f.name)));
+        assert.deepEqual(whereIs(neck, a.character, data, roles), { kind: "mule", owner: muleFile.slice(0, -4), place: "stash" });
+        // Unticked, the mule's stays where it is
+        assert.equal(applyChecked(files, a, [neck.id]).report.pieces.find((r) => r.piece.id === neck.id).status, "left");
+      });
+    }
+
+    if (neck) {
+      await check("a piece in an Iron Golem, or only in another mode's saves: whereIs says what applying does", () => {
+        const item = json(base, aFile).items.find((i) => id(i) === neck.id);
+        const golem = edit(base, { [aFile]: (j) => ({ ...j, items: j.items.filter((i) => id(i) !== neck.id), iron_golem: { ...j.iron_golem, golem_item: item } }) });
+        const { files, report } = applyChecked(golem, a);
+        assert.equal(report.pieces.find((r) => r.piece.id === neck.id).status, "golem");
+        assert.deepEqual(files, []);
+        assert.deepEqual(whereIs(piece, a.character, moved({ place: "golem" }), roles), { kind: "golem", owner: a.character, place: "golem" });
+        const other = { ...saveData, owners: [...saveData.owners, { name: "Elsewhere", mode: "HardCore:Classic", cls: "Barbarian", level: 1 }] };
+        assert.deepEqual(whereIs(piece, a.character, { ...other, items: other.items.map((r) => (idOf(r) === piece.id && r.place !== "socketed" ? { ...r, owner: "Elsewhere", place: "stash" } : r)) }, roles), { kind: "missing" });
+      });
+    }
+
+    await check("a loadout never holds two pieces of one id (identical twins worn at once)", () => {
+      const record = saveData.items.find((r) => r.owner === a.character && r.place === "inventory" && items[r.code] && ["scha", "mcha", "lcha", "csch"].includes(items[r.code].type));
+      if (!record) return;
+      const twice = loadoutOf({ ...saveData, items: [...saveData.items, { ...record, x: 9, y: 3 }] }, a.character);
+      assert.equal(new Set(twice.pieces.map((p) => p.id)).size, twice.pieces.length);
+      assert.deepEqual(twice.pieces, loadoutOf(saveData, a.character).pieces);
+    });
+
+    if (neck && mules.length > 1) {
+      await check("a mule with items on its corpse or in its Iron Golem: nothing to put into the mules applies; else a clear refusal", () => {
+        const item = json(base, aFile).items.find((i) => id(i) === neck.id);
+        const [muleFile, x, y] = freeSpot(base, 1, 1);
+        const other = mules.find((m) => `${m}.d2s` !== muleFile);
+        const junk = json(base, `${other}.d2s`).items[0] ?? item;
+        const files = edit(base, {
+          [aFile]: (j) => ({ ...j, items: j.items.filter((i) => id(i) !== neck.id) }),
+          [muleFile]: (j) => ({ ...j, items: [...j.items, toStash(item, x, y)] }),
+          [`${other}.d2s`]: (j) => ({ ...j, corpses: [{ unused: 0, x: 0, y: 0, items: [junk] }] }),
+        });
+        const { files: out } = applyChecked(files, a);
+        assert.deepEqual(out.map((f) => f.name).sort(), [aFile, muleFile].sort());
+        // No mules marked: the same
+        const noMules = applyLoadoutFiles(files, wasm, a, { mules: [], keep: [], leave: [] });
+        assert.deepEqual(noMules.files.map((f) => f.name).sort(), [aFile, muleFile].sort());
+        // Something comes off (another amulet worn there): refused, naming the mule
+        const theirs = b && json(base, `${b.name}.d2s`).items.find((i) => i.position.body_location === "Neck");
+        if (theirs) {
+          const worn = edit(files, { [aFile]: (j) => ({ ...j, items: [...j.items, { ...theirs, position: item.position }] }) });
+          assert.throws(() => applyLoadoutFiles(worn, wasm, a, { mules, keep: [], leave: [] }), (e) => e.organize?.includes(other));
+        }
       });
     }
   }

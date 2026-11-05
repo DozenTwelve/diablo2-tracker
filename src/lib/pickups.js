@@ -3,12 +3,11 @@
 // Only unique and set items and runes. A unique or set item is picked up when no save had it before, told by its
 // own random seed: moving it between the character and the stash, equipping it or the game rewriting a file finds
 // nothing. Runes have no seed of their own: one is picked up when a mode's runes of that kind add up to more.
-import { labelOf } from "./gameData";
+import { idOf, labelOf } from "./gameData";
 import { t } from "./i18n";
 import { ownersOf } from "./inventory";
 import { verdictsOf } from "./newItems";
 
-const idOf = (r) => `${r.code}:${r.seed}:${r.quality}`;
 const isUniqueOrSet = (r) => /^[us]:/.test(r.key);
 
 function runeCounts(data) {
@@ -23,7 +22,7 @@ function runeCounts(data) {
 
 // [{ r, runes? }]: r a record of after; for runes, runes = { picked, had } of that kind in its mode
 export function pickedUp(before, after) {
-  const had = new Set(before.items.filter(isUniqueOrSet).map(idOf));
+  const had = new Set(before.items.filter(isUniqueOrSet).map((r) => idOf(r)));
   const found = after.items.filter((r) => isUniqueOrSet(r) && !had.has(idOf(r))).map((r) => ({ r }));
   const was = runeCounts(before).counts;
   const { counts, modeOf } = runeCounts(after);

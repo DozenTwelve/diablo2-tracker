@@ -8,7 +8,7 @@
 // owned yet. Extra copies, runewords, charms, jewels, rings and amulets, other magic/rare items, bases
 // and the rest are packed into their own mules. Charms and jewels never go to TRASH: low rolls get their own
 // LOWCHARM and LOWJEWEL mules, extra unique and set ones stay in DUP.
-import { uniques, sets, uniqueKey, setItemKey, keyOf, codeOfNumber } from "./gameData";
+import { uniques, sets, uniqueKey, setItemKey, keyOf, codeOfNumber, idOf } from "./gameData";
 import { modeOfCharacter, modeOfStash } from "./modes";
 import { scoreOfItem, versionOf } from "./parseSaves";
 import { builds, keyOfOption } from "./builds";
@@ -148,7 +148,8 @@ export const copiesNeeded = (key) => NEEDED.get(key) ?? 0;
 // copy counting as one, plus one ethereal weapon or armor for a mercenary when any build uses the item) go to
 // TRASH, the lowest rolls first. Items without a museum slot (legacy) stay in DUP.
 // Never to TRASH: a charm or jewel (Annihilus, Hellfire Torch, Rainbow Facet...: every copy stays in DUP), a copy
-// holding runes, gems or jewels or personalized (fixed), nor the first copy of a version no copy kept so far has.
+// holding runes, gems or jewels or personalized or one the player said is not junk (fixed), nor the first copy of a
+// version no copy kept so far has.
 // copies: [{ key, code, eth, score (-1: none), home (in its museum slot now), fixed, version }],
 // slots: museumLayout().slots -> Map copy -> "MUSEUM" | "DUP" | "TRASH", in the order they were decided
 export function placeCopies(copies, slots) {
@@ -325,14 +326,15 @@ export const filesOfCharacter = (name, fileNames) =>
 
 // This mode's TRASH mules, for the player to delete after organizing: [{ name, items, refused? }] in name order.
 // Never a dead hardcore hero, as in mulesOf: organizing never filled it, so what it holds isn't junk it was given.
-// refused ("level" | "gold" | "corpse" | "charm"): not a mule organizing made (its own level, gold, or items it can't see
-// on a corpse or in an Iron Golem), so it is never deleted with the junk; "charm": it holds a charm or jewel, which
-// organizing no longer puts in TRASH (an older run did): organizing again moves it out.
+// refused ("level" | "gold" | "corpse" | "charm" | "kept"): not a mule organizing made (its own level, gold, or items it
+// can't see on a corpse or in an Iron Golem), so it is never deleted with the junk; "charm": it holds a charm or jewel,
+// which organizing no longer puts in TRASH (an older run did); "kept": it holds a copy the player said is not junk (keep:
+// idOf ids, as organize takes them). Organizing again moves either out.
 const isTrashMule = (name, mode) => {
   const mule = muleGroupOf(name);
   return mule?.group === "TRASH" && mule.prefix === modePrefix(mode);
 };
-export const trashMules = (saves, mode) =>
+export const trashMules = (saves, mode, keep = []) =>
   saves
     .filter((s) => s.ext === "d2s" && isTrashMule(s.name, mode) && modeOfCharacter(s.json) === mode && !deadHardcore(s.json))
     .sort((a, b) => byMuleName(a.name, b.name))
@@ -348,17 +350,20 @@ export const trashMules = (saves, mode) =>
               ? "corpse"
               : json.items.some((i) => isCharmOrJewel(codeOfNumber(i.code)))
                 ? "charm"
-                : undefined,
+                : [...json.items, ...(json.merc_items?.items ?? [])].some((i) => keep.includes(idOf(i, codeOfNumber(i.code))))
+                  ? "kept"
+                  : undefined,
     }));
 
-// saves: [{ name, ext: "d2s" | "d2i", json }]; options: { mode, mules: names, inbox: shared stash page numbers }
+// saves: [{ name, ext: "d2s" | "d2i", json }]; options: { mode, mules: names, inbox: shared stash page numbers, keep: idOf
+//   ids of copies the player said are not junk: never to TRASH, they stay in DUP }
 // -> { saves: [{ name, ext, json, template? }], report }. Only changed saves are returned; new mules carry
 // `template`, the save they were cloned from. Mules whose names the new layout uses are rewritten in place.
 // report: { mules: names emptied, leftEmpty: emptied level 1 mules without gold no new mule is named after, other
 //   than this mode's own mule names (an empty CHARM-B is kept for when charms grow again): the player may delete them,
 //   moved, dropped: [item], moves: [{ from, key, to, page, x, y, group }],
 //   inbox: what the shared stash pages brought: { museum: keys, dup: keys, trash: keys, other }, ... }
-export function organize(saves, { mode = "SoftCore:Modern", mules: names, inbox } = {}) {
+export function organize(saves, { mode = "SoftCore:Modern", mules: names, inbox, keep = [] } = {}) {
   // By name: the same saves give the same result whatever order the files came in (folder picker, Deck, Node)
   // "RW-A.d2s" and "rw-a.d2s" side by side (a case-sensitive file system): one would shadow the other
   const seen = new Set();
@@ -425,7 +430,7 @@ export function organize(saves, { mode = "SoftCore:Modern", mules: names, inbox 
       eth: e.item.flags.includes("ETHEREAL"),
       score: scoreOfItem(e.item) ?? -1,
       home: home(e),
-      fixed: e.item.sockets.some(Boolean) || Boolean(e.item.personalized_name),
+      fixed: e.item.sockets.some(Boolean) || Boolean(e.item.personalized_name) || keep.includes(idOf(e.item, e.code)),
       version: versionOf(e.item),
     }));
   for (const [c, group] of placeCopies(copies, museum.slots)) {

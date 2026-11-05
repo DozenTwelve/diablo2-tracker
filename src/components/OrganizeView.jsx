@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { codeOfNumber, keyOf, labelOf } from "../lib/gameData";
+import { codeOfNumber, idOf, keyOf, labelOf } from "../lib/gameData";
 import { deckBackups, deckSaveFiles, deleteDeckBackup, dismissDeckInterrupted, onDeck, restoreDeck, writeDeck } from "../lib/deck";
 import { roleOf } from "../lib/inventory";
 import { LOCALES, t } from "../lib/i18n";
@@ -51,8 +51,9 @@ const hashes = async (files) =>
 // would happen, then hand the result back. On the web: a zip download of the whole organized folder (rawFiles: the
 // files as last picked, kept in memory only; picker asks for them again). On the Steam Deck: the plugin backs
 // up the save folder and writes. Emptied characters no new mule reuses can be ticked for deletion: the plugin
-// deletes them after the backup, the web leaves them out of the zip.
-export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
+// deletes them after the backup, the web leaves them out of the zip. keep, setKeep: idOf ids of copies the player
+// unticked in the TRASH list (not junk): organizing keeps them in DUP, and cleaning waits until it has.
+export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKeep, lang }) {
   const [roles] = useStoredState("roles", {});
   const [inboxes, setInboxes] = useStoredState("inbox", {}); // mode -> page numbers
   const [files, setFiles] = useState(null); // [{ name, bytes }]: saves, and on the web their other files
@@ -169,7 +170,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
   const pages = saves.find((s) => s.pages && s.mode === current)?.pages ?? [];
   const inbox = (inboxes[current] ?? []).filter((n) => pages.some((p) => p.page === n));
   const mules = saves.filter((s) => s.level != null && s.mode === current && roleOf(s, roles) === "mule").map((s) => s.name);
-  const options = { mode: current, mules, inbox };
+  const options = { mode: current, mules, inbox, keep };
   const setInbox = (list) => (setInboxes({ ...inboxes, [current]: list }), setState({}));
 
   const preview = () => {
@@ -334,8 +335,14 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
   const names = (keys) => keys.map((k) => labelOf(k, lang)).join(t("listSeparator", lang));
   const toTrash = report?.moves.filter((m) => m.group === "TRASH" && m.stash) ?? [];
   // On the Deck only: the web hands back a zip and can't delete files
-  const trash = onDeck ? trashMules(saves.filter((s) => s.json), current) : [];
-  const trashItems = trash.flatMap((m) => m.items.map((item) => ({ item, mule: m.name, code: codeOfNumber(item.code) })));
+  const trash = onDeck ? trashMules(saves.filter((s) => s.json), current, keep) : [];
+  const trashItems = trash.flatMap((m) =>
+    m.items.map((item) => {
+      const code = codeOfNumber(item.code);
+      return { item, mule: m.name, code, id: idOf(item, code) };
+    }),
+  );
+  const kept = trashItems.filter((i) => keep.includes(i.id)).length;
   const stats = (item, code) => describeStats(statsOf(item, code), lang).join(t("listSeparator", lang));
   return (
     <>
@@ -497,19 +504,30 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
             </div>
             <p className="text-sm">{t("trashCleanAbout", lang)}</p>
             <ul className="text-sm pl-4 space-y-1">
-              {trashItems.map(({ item, mule, code }, i) => {
+              {trashItems.map(({ item, mule, code, id }, i) => {
                 const key = keyOf(item, code);
                 const why = isJunk(item, code) ? stats(item, code) : /^[us]:/.test(key) ? t("trashExtraCopy", lang) : "";
                 return (
                   <li key={i}>
-                    {labelOf(key, lang)} <span className="gothic-text-muted">{mule}</span>
-                    {why && <span style={{ color: "var(--color-accent-blue)" }}>{t("colon", lang) + why}</span>}
+                    {/* Ticked: junk. Unticked: this copy is not junk, kept by its id */}
+                    <label className="gothic-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={!keep.includes(id)}
+                        onChange={(e) => (setKeep(e.target.checked ? keep.filter((k) => k !== id) : [...keep, id]), setState({ ...state, confirm: null }))}
+                      />
+                      <span>
+                        {labelOf(key, lang)} <span className="gothic-text-muted">{mule}</span>
+                        {why && <span style={{ color: "var(--color-accent-blue)" }}>{t("colon", lang) + why}</span>}
+                      </span>
+                    </label>
                   </li>
                 );
               })}
             </ul>
+            {kept > 0 && <p className="text-sm text-red-400">{t("trashKept", lang, kept)}</p>}
             {trash
-              .filter((m) => m.refused)
+              .filter((m) => m.refused && m.refused !== "kept")
               .map((m) => (
                 <p key={m.name} className="text-sm text-red-400">
                   {t(`trashRefused_${m.refused}`, lang, m.name)}

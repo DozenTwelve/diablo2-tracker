@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { uniques, sets, runewords, runes, uniqueKey, setItemKey, runewordKey, runeKey } from "./lib/gameData";
+import { uniques, sets, runewords, runes, uniqueKey, setItemKey, runewordKey, runeKey, idOf } from "./lib/gameData";
 import { groupByKey } from "./lib/inventory";
 import { LANGS, LOCALES, nameOf, t } from "./lib/i18n";
 import { useStoredState } from "./lib/useStoredState";
@@ -62,6 +62,14 @@ export default function App() {
   const [deckError, setDeckError] = useState(null); // the Deck's own read of the saves failed
   const [rawFiles, setRawFiles] = useState(null); // the files as last picked, for organizing; memory only
   const [offered, setOffered] = useStoredState("organizeOffered", false);
+  // Copies the player said are not junk (unticked in the Organize page's TRASH list), by idOf: organizing keeps them in
+  // DUP. One no save holds any more (sold, dropped, deleted) is forgotten when saves load.
+  const [keep, setKeep] = useStoredState("keep", []);
+  useEffect(() => {
+    if (!saveData) return;
+    const ids = new Set(saveData.items.map((r) => idOf(r)));
+    setKeep((list) => (list.every((id) => ids.has(id)) ? list : list.filter((id) => ids.has(id))));
+  }, [saveData, setKeep]);
   const load = (data, files) => {
     setSaveData(data);
     setDeckError(null);
@@ -139,7 +147,7 @@ export default function App() {
             <AboutView lang={lang} />
           ) : tab === "new" ? (
             saveData ? (
-              <NewItemsView saveData={saveData} lang={lang} />
+              <NewItemsView saveData={saveData} keep={keep} lang={lang} />
             ) : (
               <SaveLoader saveData={saveData} onLoad={load} notStored={notStored} lang={lang} />
             )
@@ -150,6 +158,8 @@ export default function App() {
               rawFiles={rawFiles}
               picker={<SaveLoader saveData={saveData} onLoad={load} notStored={notStored} lang={lang} />}
               onWritten={readDeck}
+              keep={keep}
+              setKeep={setKeep}
               lang={lang}
             />
           ) : tab === "characters" ? (
@@ -175,7 +185,7 @@ export default function App() {
                   );
                 })}
               </nav>
-              <CollectionView key={page} label={t(page, lang)} groups={collectionGroups(page, lang)} owned={owned} lang={lang}>
+              <CollectionView key={page} label={t(page, lang)} groups={collectionGroups(page, lang)} owned={owned} keep={keep} setKeep={setKeep} lang={lang}>
                 {page === "runewords" && saveData && <RunewordMaker saveData={saveData} lang={lang} />}
               </CollectionView>
             </>

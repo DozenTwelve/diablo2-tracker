@@ -498,10 +498,10 @@ const UI = {
     (n, m) => `TRASH 창고캐 ${m}개, ${n}개`,
   ],
   trashCleanAbout: [
-    "整理放进 TRASH 的东西：多余的重复品。看过下面的清单，没问题就连同这些 TRASH 骡子一起删除。下次整理会再新建。",
-    "整理放進 TRASH 的東西：多餘的重複品。看過下面的清單，沒問題就連同這些 TRASH 騾子一起刪除。下次整理會再新建。",
-    "What organizing put in TRASH: extra copies. Look over the list, then delete it with the TRASH mules. The next organize makes new ones.",
-    "정리하면서 TRASH에 넣은 것들입니다: 남는 중복품. 목록을 확인한 뒤 TRASH 창고캐와 함께 삭제하세요. 다음 정리 때 다시 만듭니다.",
+    "整理放进 TRASH 的东西：多余的重复品。看过下面的清单，不是垃圾的取消勾选（以后整理都会放进 DUP），没问题就连同这些 TRASH 骡子一起删除。下次整理会再新建。",
+    "整理放進 TRASH 的東西：多餘的重複品。看過下面的清單，不是垃圾的取消勾選（以後整理都會放進 DUP），沒問題就連同這些 TRASH 騾子一起刪除。下次整理會再新建。",
+    "What organizing put in TRASH: extra copies. Look over the list and untick what is not junk (organizing keeps it in DUP from then on), then delete the rest with the TRASH mules. The next organize makes new ones.",
+    "정리하면서 TRASH에 넣은 것들입니다: 남는 중복품. 목록을 확인하고 버리지 않을 것은 체크를 해제하세요(이후 정리 때 DUP에 둡니다). 그다음 TRASH 창고캐와 함께 삭제하세요. 다음 정리 때 다시 만듭니다.",
   ],
   trashExtraCopy: ["多余的重复品", "多餘的重複品", "an extra copy", "남는 중복품"],
   trashRefused_level: [
@@ -528,6 +528,14 @@ const UI = {
     (name) => `${name} holds charms or jewels (an older organize put them there): they no longer go to TRASH, organize again first; nothing is deleted`,
     (name) => `${name}에 부적이나 주얼이 있습니다(이전 정리가 넣은 것): 이제 TRASH로 가지 않으니 먼저 다시 정리하세요. 아무것도 삭제하지 않습니다`,
   ],
+  trashKept: [
+    (n) => `${n} 件不是垃圾：先重新整理一次，它们会移到 DUP，没有删除任何东西`,
+    (n) => `${n} 件不是垃圾：先重新整理一次，它們會移到 DUP，沒有刪除任何東西`,
+    (n) => `${count(n, "item")} ${n === 1 ? "is" : "are"} not junk: organize again first, ${n === 1 ? "it moves" : "they move"} to DUP; nothing is deleted`,
+    (n) => `${n}개는 버릴 것이 아닙니다: 먼저 다시 정리하세요. DUP로 옮겨집니다. 아무것도 삭제하지 않습니다`,
+  ],
+  keptCopy: ["你标记的：不是垃圾", "你標記的：不是垃圾", "kept by you: not junk", "직접 표시함: 버리지 않음"],
+  unkeep: ["取消标记", "取消標記", "un-keep", "표시 해제"],
   trashCleanButton: [(n) => `删除这 ${n} 件`, (n) => `刪除這 ${n} 件`, (n) => `Delete ${n === 1 ? "this item" : `these ${n} items`}`, (n) => `이 ${n}개 삭제`],
   trashWarn: [
     (m) => `会删除 ${m} 个 TRASH 骡子和上面所有物品。删除前会先备份整个存档文件夹。请先完全退出游戏。`,

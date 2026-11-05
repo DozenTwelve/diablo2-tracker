@@ -2,6 +2,7 @@
 // placed by organizing's own placeCopies over what organizing would take (the mode's mules and inbox pages), so the
 // verdict is what organizing will do; charms and jewels by isJunk.
 import { byMuleName, copiesNeeded, isCharmOrJewel, isJunk, modePrefix, museumSlots, placeCopies } from "./organize";
+import { idOf } from "./gameData";
 import { copyScore } from "./props";
 import { ownersOf, roleOf } from "./inventory";
 import items from "../data/items.json";
@@ -25,12 +26,13 @@ export function inboxItems(saveData, inboxes) {
 //   { have, need, merc }; junk / keep: a magic charm or jewel that is likely junk (to the LOWCHARM / LOWJEWEL mules) /
 //   worth keeping; newRune: a rune type not owned yet; legacy: a unique or set item with no museum slot, every copy
 //   kept in DUP; other: anything else.
-// roles: the Characters page's main/mule choice (roleOf), as the Organize page passes it.
-export const findsOf = (saveData, inboxes, roles = {}) => verdictsOf(saveData, inboxItems(saveData, inboxes), roles);
+// roles: the Characters page's main/mule choice (roleOf), keep: idOf ids of copies the player said are not junk, as the
+// Organize page passes them.
+export const findsOf = (saveData, inboxes, roles = {}, keep = []) => verdictsOf(saveData, inboxItems(saveData, inboxes), roles, keep);
 
 // The same for any records of saveData (the inbox pages' items, or what was just picked up): each is taken as if
 // organizing took it along with the mode's mules, like an inbox item
-export function verdictsOf(saveData, finds, roles = {}) {
+export function verdictsOf(saveData, finds, roles = {}, keep = []) {
   const owners = ownersOf(saveData);
   const verdicts = new Map();
   for (const mode of new Set(finds.map((r) => owners.find((o) => o.name === r.owner)?.mode))) {
@@ -50,7 +52,7 @@ export function verdictsOf(saveData, finds, roles = {}) {
         eth: r.ethereal,
         score: copyScore(r) ?? -1,
         home: r.owner === slots.get(r.key)?.mule,
-        fixed: r.rolls != null || Boolean(r.personalized), // holds runes, gems or jewels (rollsOf), or personalized
+        fixed: r.rolls != null || Boolean(r.personalized) || keep.includes(idOf(r)), // holds runes, gems or jewels (rollsOf), personalized, or kept
         version: r.variant ?? r.stats.find(([id]) => id === 83)?.[1],
       }));
     const where = placeCopies(copies, slots);

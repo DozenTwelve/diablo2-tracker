@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef } from "react";
-import { baseNameOf, imageOf, labelOf } from "../lib/gameData";
+import { baseNameOf, idOf, imageOf, labelOf } from "../lib/gameData";
 import { ownerLabel, placeLabel, statLines, totalCount } from "../lib/inventory";
 import { compareCopies, copyScore, damageOf, ranksBest } from "../lib/props";
 import { t } from "../lib/i18n";
@@ -41,7 +41,8 @@ export function Modal({ open, title, onClose, lang, children }) {
 
 // Every copy of one catalog entry, best first (compareCopies): where it is, its base, and its stats. records: null when
 // closed. Entries ranked by their own stats (Insight) mark the top copy as the best and show the damage it is ranked by.
-export default function Copies({ entryKey, records, onClose, lang }) {
+// A copy the player said is not junk (keep: idOf ids, from the Organize page) is marked, with a button to take that back.
+export default function Copies({ entryKey, records, onClose, keep = [], setKeep, lang }) {
   const copies = [...(records ?? [])].sort(compareCopies).map((r) => ({ r, score: copyScore(r) }));
   const markBest = copies.length > 1 && ranksBest(entryKey);
 
@@ -81,6 +82,14 @@ export default function Copies({ entryKey, records, onClose, lang }) {
                   {line}
                 </div>
               ))}
+              {keep.includes(idOf(r)) && (
+                <div className="gothic-text-muted">
+                  {t("keptCopy", lang)}{" "}
+                  <button className="underline" onClick={() => setKeep(keep.filter((id) => id !== idOf(r)))}>
+                    {t("unkeep", lang)}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

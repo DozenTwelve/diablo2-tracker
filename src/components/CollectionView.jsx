@@ -32,8 +32,9 @@ function Icon({ entryKey, records, lang }) {
 // One collection tab: groups of entry keys, each an icon tile, owned or dimmed.
 // Hovering shows an owned copy's stats and where it is; with several copies, the catalog ranges and their
 // owners in one line, and clicking lists every copy (Copies).
-// groups: [{ title, keys: [key], notes?: [[color, line]] }] (notes: set bonuses); children: shown above the tiles
-export default function CollectionView({ label, groups, owned, keep, setKeep, lang, children }) {
+// groups: [{ title, keys: [key], notes?: [[color, line]] }] (notes: set bonuses); tabs: shown under the title;
+// children: shown in place of the tiles (another tab picked)
+export default function CollectionView({ label, groups, owned, keep, setKeep, lang, tabs, children }) {
   const [missingOnly, setMissingOnly] = useState(false);
   const [tip, setTip] = useTip();
   const [opened, setOpened] = useState(null); // key whose copies are listed
@@ -58,12 +59,15 @@ export default function CollectionView({ label, groups, owned, keep, setKeep, la
   return (
     <>
       <PageTitle label={label} owned={ownedIn(all)} total={all.length}>
-        <label className="gothic-checkbox text-sm">
-          <input type="checkbox" checked={missingOnly} onChange={(e) => setMissingOnly(e.target.checked)} />
-          <span>{t("missingOnly", lang)}</span>
-        </label>
+        {!children && (
+          <label className="gothic-checkbox text-sm">
+            <input type="checkbox" checked={missingOnly} onChange={(e) => setMissingOnly(e.target.checked)} />
+            <span>{t("missingOnly", lang)}</span>
+          </label>
+        )}
       </PageTitle>
-      {children}
+      {tabs}
+      {children || (
       <div className="lg:grid lg:gap-10 items-start" style={{ gridTemplateColumns: groups.length > 1 ? "13rem minmax(0, 1fr)" : "minmax(0, 1fr)" }}>
         {groups.length > 1 && (
           <nav className="toc hidden lg:block sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
@@ -130,6 +134,7 @@ export default function CollectionView({ label, groups, owned, keep, setKeep, la
           })}
         </div>
       </div>
+      )}
       {tip && <Tooltip tip={tip} lang={lang} />}
       <Copies entryKey={opened} records={opened ? owned.get(opened) : null} onClose={() => setOpened(null)} keep={keep} setKeep={setKeep} lang={lang} />
     </>

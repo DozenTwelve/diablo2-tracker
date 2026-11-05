@@ -19,23 +19,53 @@ tracking.
 - **New finds.** Drop what you find on the inbox pages of the shared stash and see at once whether each item is
   worth keeping: new to the collection, better than the copy you have, a duplicate some build could still use, or
   extra. It only reads, so it works with the game running.
-- **Collection.** Uniques, sets, runewords and runes, each page with how many you own out of how many exist and a
-  list of what is missing.
+- **Collection.** Uniques, sets, runewords, runes and charms.
+  - Uniques, sets, runewords and runes show how many you own out of how many exist and what is still missing;
+    sets show their bonuses.
+  - Runewords also has what your loose runes and empty bases make, in tabs: owned, can make, only missing a base,
+    1 rune short, 2 runes short. Bases Larzuk or the Horadric Cube could socket count too, with the runes and gem
+    the cube recipe uses up.
+  - Charms shows every charm you own, grouped grand, large and small, uniques first. Filter by purpose (skills,
+    magic find, life, resistances, attack, attributes) and dim or hide low rolls.
 - **Search.** Find any item, owned or not, in any of the four languages, and see where every copy is.
 - **Characters.** Each character's equipment, inventory, stash, cube and belt drawn as the in-game grids, with
   item tooltips. Collection mules show their empty slots, so a gap is an item still missing.
 - **Build gear.** Pick one of 22 popular builds for a main character, click an equipment slot, and see which of
   the recommended items you have and where they are. The lists come from [Maxroll](https://maxroll.gg/d2/category/guides)
   guides, link back to them, and may be out of date.
-- **Organize.** Sort your mules and chosen shared stash pages into numbered mules by fixed rules: uniques and set
-  items in fixed "museum" slots (always the best-rolled copy), then duplicates, runewords, charms, jewels, rings,
-  magic items, bases, low-roll charms and jewels in their own mules, and duplicates past what the builds of every
-  class could use for you to look through (never charms or jewels, which stay in the duplicates). Duplicates show whether they rolled better or worse than the museum copy. The page checks that every item is kept exactly once and hands the result back as
-  a zip of the whole organized save folder; it never writes to your save folder.
+- **Organize.** Sort your mules and chosen shared stash pages into numbered mules by fixed rules:
+  - uniques and set items in fixed "museum" slots (`UW`, `UA`, `UJ`, `SET` mules), always the best-rolled copy, so
+    an empty slot is an item not owned yet;
+  - then `DUP` (duplicates a build could use), `RW`, `CHARM`, `LOWCHARM`, `JEWEL`, `LOWJEWEL`, `RING` (and
+    amulets), `MAG` (other magic and rare items), `BASE`, `MISC`, and `TRASH` for copies past what the builds of
+    every class could use. Hardcore, legacy and classic mules get an `H`, `L` or `C` in front.
+  - Charms and jewels never go to `TRASH`: low rolls go to `LOWCHARM` and `LOWJEWEL`, extra unique ones stay in
+    `DUP`. Duplicates show whether they rolled better or worse than the museum copy.
+  - The preview shows what would happen, with item tooltips.
+
+  The page checks that every item is kept exactly once and hands the result back as a zip of the whole organized
+  save folder; on the web it never writes to your save folder.
 - **Languages.** Traditional Chinese, Simplified Chinese, English and Korean, with the game's own item names.
 
 Works with offline characters on PC and Steam Deck, including Reign of the Warlock saves. Online (Battle.net)
 characters live on Blizzard's servers and can't be read; consoles aren't supported.
+
+## Safety
+
+Everything stays on your machine: saves are read in the browser or by the plugin on the Deck, never uploaded.
+Before any write to the save folder (Deck only), the plugin and the page check that:
+
+- the whole save folder is backed up first;
+- D2R is closed (it saves on exit and would undo the write; the plugin refuses while it runs);
+- the saves are byte for byte the ones the page read, so a game save in between is never overwritten;
+- no item is lost or duplicated over all files;
+- for a loadout, every main character changed only in what the loadout covers, and other mains only lost the
+  pieces taken.
+
+Files are written next to their targets, renamed over them and read back, the saves receiving items before the
+ones giving them up, so a write cut off half way (power loss, Decky killed) leaves an item on two saves rather
+than none (mules trading items with each other are the exception). Either way that write's backup is the way
+back: the plugin writes nothing more until it is restored or the warning dismissed.
 
 ## Finding your saves
 
@@ -55,12 +85,23 @@ walks through backing up, a dry run explained in plain words, and writing only a
 ## Steam Deck plugin
 
 [decky/](decky/README.md) is a [Decky Loader](https://decky.xyz) plugin that opens the tracker from the quick access
-menu in Game Mode with the Deck's own saves, and gets the item icons from your installed game. It can also organize
-right on the Deck: it refuses while the game runs, backs up the save folder first and reads every written file back.
-Emptied characters you tick are deleted, and the Organize page lists the backups (the newest 10 and the oldest are
-kept) with buttons to restore or delete them. A main character's page keeps named loadouts (what it and its mercenary wear,
-the charms in its inventory; stored in the plugin's runtime folder) and puts one on in one write the same way: the
-pieces come from the mules, the shared stash or another main, and what comes off goes into the mules.
+menu in Game Mode with the Deck's own saves, and gets the item icons from your installed game. On the Deck the
+tracker can also do what the web page can't:
+
+- **Pickup alerts.** While you play, a toast over the game says whether a unique, set item or rune you just picked
+  up is new to the collection. Turn it off in the plugin's panel.
+- **Organize and clean `TRASH` for real.** "Organize now" writes the organized saves into the save folder instead
+  of handing back a zip, and deletes the emptied characters you tick. "Clean TRASH" deletes the `TRASH` mules,
+  items and all, after a backup. Its list of `TRASH` copies has item tooltips; untick a copy as "not junk" and
+  organizing keeps that copy (just that one) in `DUP` from then on.
+- **Loadouts.** On a main character's page, save what it and its mercenary wear and the charms in its inventory
+  under a name. The page shows where every piece of a loadout is now (on it, a mule, the shared stash, another
+  main). Put a loadout on in one checked write: the pieces come from the mules, the shared stash or other mains
+  (untick one to leave it where it is), and what comes off goes into the mules as organizing puts it. Quest items
+  never move. Loadout pieces count as kept: never `TRASH`, never cleaned.
+- **Backups.** Every write backs up the save folder first. The Organize page lists the backups (the newest 10 and
+  the oldest are kept) with buttons to restore or delete them; a restore backs up the folder first too, so it can
+  be undone.
 
 It isn't in the Decky store yet. To install: Decky → settings → General → turn on Developer mode, then Developer →
 Install Plugin from URL, and enter
@@ -70,7 +111,8 @@ https://github.com/DozenTwelve/diablo2-tracker/releases/latest/download/d2r-coll
 ```
 
 (or download the zip from [Releases](https://github.com/DozenTwelve/diablo2-tracker/releases) and use Install Plugin
-from ZIP file). Open the plugin, press "Get item icons" once (about a minute), then "Open collection".
+from ZIP file). Open the plugin, press "Get item icons from the game files" once (about a minute), then "Open
+collection". To update, install from the same URL again.
 
 ## Development
 
@@ -102,11 +144,13 @@ The app is React and Vite. `src/lib/` holds the logic (reading saves, item looku
 | `node scripts/check-parse.mjs <save dir>` | Regression checks for reading saves (cut-short stash, corpses, golems, dead heroes, `._` files, New finds verdicts); needs a folder with a `ModernSharedStashSoftCoreV2.d2i` |
 | `node scripts/check-pickups.mjs <save dir>` | Checks for the Deck plugin's pickup alerts on a real save folder, read only; prints how long parsing takes |
 | `node scripts/check-loadouts.mjs <save dir> [<save dir>...]` | Checks for saving and putting on loadouts (pieces taken from mules and other mains, unticked, blocked charm cells) on copies of real save folders in memory |
-| `node scripts/check-runewords.mjs [save dir]` | Checks for runewords to make on hand-made items, then what a save folder can make |
+| `node scripts/check-runewords.mjs [save dir]` | Checks for runewords to make on hand-made items, then, given a save folder, what it can make |
 | `node scripts/check-props.mjs` | Check every catalog property shows as text |
 | `node scripts/check-junk.mjs` | Check the likely-junk rules |
 | `node scripts/check-zip.mjs` | Check the zip writer used for organized saves |
 | `node scripts/check-builds.mjs` | Check every item in `builds.json` is in the catalog and every text is translated |
+| `python3 decky/test_tracker.py [sprite dir]` | Checks for the Deck plugin's backend (writes, backups, restores, cut-off writes, icons) on any computer |
+| `cd decky && npm install && ./pack.sh` | Build the plugin zip, `decky/out/d2r-collection-tracker.zip` (after `npm install` at the top) |
 
 [ROADMAP.md](ROADMAP.md) records what was planned and why.
 

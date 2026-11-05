@@ -87,4 +87,12 @@ function otherVerdict(record, all) {
   return { kind: "other" };
 }
 
+// The keep list without the ids no save holds any more (sold, dropped, deleted): the same list when nothing is to go, and
+// when not every file was read (an error, a damaged file): a save not read may hold them
+export function prunedKeep(keep, saveData) {
+  if (saveData.errors?.length || saveData.damaged?.length) return keep;
+  const ids = new Set(saveData.items.map((r) => idOf(r)));
+  return keep.every((id) => ids.has(id)) ? keep : keep.filter((id) => ids.has(id));
+}
+
 export const KINDS = ["new", "museum", "upgrade", "newRune", "needed", "legacy", "keep", "extra", "junk", "other"];

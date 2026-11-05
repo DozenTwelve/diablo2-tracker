@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { uniques, sets, runewords, runes, uniqueKey, setItemKey, runewordKey, runeKey, idOf } from "./lib/gameData";
+import { uniques, sets, runewords, runes, uniqueKey, setItemKey, runewordKey, runeKey } from "./lib/gameData";
 import { groupByKey } from "./lib/inventory";
 import { LANGS, LOCALES, nameOf, t } from "./lib/i18n";
 import { useStoredState } from "./lib/useStoredState";
 import { closeDeck, deckSaveFiles, onDeck } from "./lib/deck";
 import { parseSaveFiles } from "./lib/parseSaves";
+import { prunedKeep } from "./lib/newItems";
 import SaveLoader from "./components/SaveLoader";
 import SearchView from "./components/SearchView";
 import CollectionView from "./components/CollectionView";
@@ -63,12 +64,10 @@ export default function App() {
   const [rawFiles, setRawFiles] = useState(null); // the files as last picked, for organizing; memory only
   const [offered, setOffered] = useStoredState("organizeOffered", false);
   // Copies the player said are not junk (unticked in the Organize page's TRASH list), by idOf: organizing keeps them in
-  // DUP. One no save holds any more (sold, dropped, deleted) is forgotten when saves load.
+  // DUP. One no save holds any more (sold, dropped, deleted) is forgotten when saves load (prunedKeep).
   const [keep, setKeep] = useStoredState("keep", []);
   useEffect(() => {
-    if (!saveData) return;
-    const ids = new Set(saveData.items.map((r) => idOf(r)));
-    setKeep((list) => (list.every((id) => ids.has(id)) ? list : list.filter((id) => ids.has(id))));
+    if (saveData) setKeep((list) => prunedKeep(list, saveData));
   }, [saveData, setKeep]);
   const load = (data, files) => {
     setSaveData(data);

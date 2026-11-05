@@ -9,6 +9,7 @@ import { modeLabel, modeOfCharacter, modeOfStash } from "../lib/modes";
 import { loadParser, recordOf, saveFolder, statsOf } from "../lib/parseSaves";
 import { describeStats } from "../lib/stats";
 import { Link } from "../lib/router";
+import { useLoadoutIds } from "../lib/useLoadoutIds";
 import { useStoredState } from "../lib/useStoredState";
 import { zip } from "../lib/zip";
 import OrganizeDemo from "./OrganizeDemo";
@@ -41,7 +42,8 @@ const sameBytes = (a, b) => a?.length === b.length && a.every((x, i) => x === b[
 // files as last picked, kept in memory only; picker asks for them again). On the Steam Deck: the plugin backs
 // up the save folder and writes. Emptied characters no new mule reuses can be ticked for deletion: the plugin
 // deletes them after the backup, the web leaves them out of the zip. keep, setKeep: idOf ids of copies the player
-// unticked in the TRASH list (not junk): organizing keeps them in DUP, and cleaning waits until it has.
+// unticked in the TRASH list (not junk): organizing keeps them in DUP, and cleaning waits until it has. Every piece of a
+// saved loadout counts as kept too (read from the plugin; cleaning refuses while they can't be read).
 export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKeep, lang }) {
   const [roles] = useStoredState("roles", {});
   const [inboxes, setInboxes] = useStoredState("inbox", {}); // mode -> page numbers
@@ -55,6 +57,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
   const [backupsOpen, setBackupsOpen] = useState(false); // the player opened the backup list
   const [reads, setReads] = useState(0); // bumped to read the files again
   const [tip, setTip] = useTip();
+  const loadouts = useLoadoutIds(); // { ids, failed }
   // "How organizing works" is open on the first visit only
   const [introSeen, setIntroSeen] = useStoredState("organizeIntroSeen", false);
   const [introOpen] = useState(!introSeen);
@@ -160,7 +163,8 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
   const pages = saves.find((s) => s.pages && s.mode === current)?.pages ?? [];
   const inbox = (inboxes[current] ?? []).filter((n) => pages.some((p) => p.page === n));
   const mules = saves.filter((s) => s.level != null && s.mode === current && roleOf(s, roles) === "mule").map((s) => s.name);
-  const options = { mode: current, mules, inbox, keep };
+  const keepAll = [...keep, ...(loadouts.ids ?? [])];
+  const options = { mode: current, mules, inbox, keep: keepAll };
   const setInbox = (list) => (setInboxes({ ...inboxes, [current]: list }), setState({}));
 
   const preview = () => {
@@ -326,14 +330,14 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
   const tipOf = (item, owner) => tipHandlers((e) => setTip({ item: recordOf(item, owner, "stash"), rect: e.currentTarget.getBoundingClientRect() }), setTip);
   const toTrash = report?.moves.filter((m) => m.group === "TRASH" && m.stash) ?? [];
   // On the Deck only: the web hands back a zip and can't delete files
-  const trash = onDeck ? trashMules(saves.filter((s) => s.json), current, keep) : [];
+  const trash = onDeck ? trashMules(saves.filter((s) => s.json), current, keepAll) : [];
   const trashItems = trash.flatMap((m) =>
     m.items.map((item) => {
       const code = codeOfNumber(item.code);
       return { item, mule: m.name, code, id: idOf(item, code) };
     }),
   );
-  const kept = trashItems.filter((i) => keep.includes(i.id)).length;
+  const kept = trashItems.filter((i) => keepAll.includes(i.id)).length;
   const stats = (item, code) => describeStats(statsOf(item, code), lang).join(t("listSeparator", lang));
   return (
     <>
@@ -396,7 +400,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
           </div>
           <p className="text-sm break-words">{t("mulesToSort", lang, mules.length, mules.toSorted((a, b) => a.localeCompare(b)).join(t("listSeparator", lang)))}</p>
         </section>
-        <button className="gothic-btn" disabled={!inbox.length || !mules.length} onClick={preview}>
+        <button className="gothic-btn" disabled={!inbox.length || !mules.length || (!loadouts.ids && !loadouts.failed)} onClick={preview}>
           {t("preview", lang)}
         </button>
         {!inbox.length && <p className="text-sm gothic-text-muted">{t("pickInbox", lang)}</p>}
@@ -498,18 +502,22 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
               {trashItems.map(({ item, mule, code, id }, i) => {
                 const key = keyOf(item, code);
                 const why = isJunk(item, code) ? stats(item, code) : /^[us]:/.test(key) ? t("trashExtraCopy", lang) : "";
+                const inLoadout = loadouts.ids?.includes(id); // kept while a loadout holds it, not the player's tick
                 return (
                   <li key={i}>
                     {/* Ticked: junk. Unticked: this copy is not junk, kept by its id */}
                     <label className="gothic-checkbox" {...tipOf(item, mule)}>
                       <input
                         type="checkbox"
-                        checked={!keep.includes(id)}
-                        onChange={(e) => (setKeep(e.target.checked ? keep.filter((k) => k !== id) : [...keep, id]), setState({ ...state, confirm: null }))}
+                        checked={!keepAll.includes(id)}
+                        disabled={inLoadout}
+                        // The preview was organized with the old keep list: shown again only once previewed again
+                        onChange={(e) => (setKeep(e.target.checked ? keep.filter((k) => k !== id) : [...keep, id]), setState({ ...state, confirm: null, plan: undefined, remove: undefined }))}
                       />
                       <span>
                         {labelOf(key, lang)} <span className="gothic-text-muted">{mule}</span>
                         {why && <span style={{ color: "var(--color-accent-blue)" }}>{t("colon", lang) + why}</span>}
+                        {inLoadout && <span className="gothic-text-gold">{t("colon", lang) + t("inLoadout", lang)}</span>}
                       </span>
                     </label>
                   </li>
@@ -525,7 +533,8 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
                 </p>
               ))}
             {state.cleanError && <p className="text-red-400">{state.cleanError}</p>}
-            {trash.some((m) => m.refused) ? null : state.confirm?.action === "trash" ? (
+            {loadouts.failed && <p className="text-sm text-red-400">{t("trashLoadoutsUnknown", lang, loadouts.failed)}</p>}
+            {trash.some((m) => m.refused) || !loadouts.ids ? null : state.confirm?.action === "trash" ? (
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <ConfirmButton
                   warn={t("trashWarn", lang, trash.length)}

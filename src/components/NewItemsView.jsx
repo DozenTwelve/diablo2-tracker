@@ -3,6 +3,7 @@ import { ownerLabel, ownersOf, placeLabel } from "../lib/inventory";
 import { t } from "../lib/i18n";
 import { findsOf, KINDS } from "../lib/newItems";
 import { Link } from "../lib/router";
+import { useLoadoutIds } from "../lib/useLoadoutIds";
 import { useStoredState } from "../lib/useStoredState";
 import PageTitle from "./PageTitle";
 import { colorOf, Tooltip, tipHandlers, useTip } from "./StashGrid";
@@ -15,6 +16,7 @@ export default function NewItemsView({ saveData, keep, lang }) {
   const [roles] = useStoredState("roles", {});
   const picked = (mode) => (Array.isArray(inboxes[mode]) ? inboxes[mode] : []);
   const [tip, setTip] = useTip();
+  const loadouts = useLoadoutIds(); // their pieces count as kept, as organizing takes them
   const pagesOf = (stash) => {
     const used = saveData.items.filter((r) => r.owner === stash.name && /^shared\d+$/.test(r.place)).map((r) => Number(r.place.slice(6)));
     const last = Math.max(stash.pages ?? 0, ...used, ...picked(stash.mode));
@@ -27,7 +29,7 @@ export default function NewItemsView({ saveData, keep, lang }) {
     setInboxes({ ...inboxes, [mode]: now.includes(page) ? now.filter((p) => p !== page) : [...now, page].sort((a, b) => a - b) });
   };
 
-  const finds = findsOf(saveData, inboxes, roles, keep);
+  const finds = findsOf(saveData, inboxes, roles, [...keep, ...(loadouts.ids ?? [])]);
   const chosen = Object.keys(inboxes).some((mode) => picked(mode).length);
 
   return (

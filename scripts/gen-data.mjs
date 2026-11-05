@@ -207,6 +207,7 @@ for (const t of ["armor", "weapons", "misc"]) {
         img: baseImg[r.code], variants: variantsOf(baseImg[r.code]),
         stack: r.AdvancedStashStackable === "1" || undefined, // goes in the stackable tab
         starter: starterCodes.has(r.code) || undefined,
+        quest: Number(r.quest) > 0 || undefined, // a quest item (Hellforge Hammer, Horadric Staff...): loadouts never move it
         maxSockets: (t !== "misc" && Number(r.gemsockets)) || undefined, // its type may allow fewer (itemtypes.json)
         // Weapon damage, two-handed where it has that (bows and crossbows only have one-handed), for ranking copies
         minDamage: (t === "weapons" && (Number(r["2handmindam"]) || Number(r.mindam))) || undefined,
@@ -277,6 +278,11 @@ write("sets", [...sets.values()]);
 write("runewords", runewords);
 write("runes", runes);
 write("items", items);
+// Mercenary kind by hireling id (hireling.txt Id -> Class, the monster row of that act's mercenary): a loadout puts its
+// mercenary's gear back only on a mercenary of the same kind
+const mercs = {};
+for (const r of table("hireling")) if (r.Id !== "" && r.Class) mercs[r.Id] = Number(r.Class);
+write("mercs", mercs);
 // Item type -> parent types (itemtypes.txt Equiv1/Equiv2), to tell which runewords a base's type takes, and the most
 // sockets an item of the type can get by item level: [max up to ilvl threshold 1, threshold 1, up to threshold 2,
 // threshold 2, above], for Larzuk's socket and the cube's

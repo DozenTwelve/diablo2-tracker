@@ -5,7 +5,7 @@
 // gfx: which look a ring, amulet, charm or jewel has; filled: sockets holding something; seed: the item's own random
 // seed, which stays with it when it moves between saves, 0 for runes and other simple items),
 // stats as [statId, layer, value] (see src/lib/stats.js).
-import { codeOfNumber, keyOf, variantOf } from "./gameData";
+import { codeOfNumber, keyOf, mercClassOf, variantOf } from "./gameData";
 import { modeOfCharacter, modeOfStash } from "./modes";
 import { copyScore, socketStats } from "./props";
 import { sumStats } from "./stats";
@@ -163,9 +163,10 @@ export async function parseSaveFiles(files) {
           // An Iron Golem made from an item keeps it
           if (save.iron_golem?.golem_item) collect(save.iron_golem.golem_item, owner, "golem", items);
         }
-        // merc: a mercenary is hired (a loadout covers what it wears)
+        // merc: a mercenary is hired (a loadout covers what it wears); mercClass: its kind (mercClassOf)
         const merc = Boolean(save.character.merc?.seed);
-        owners.push({ name: owner, mode: modeOfCharacter(save), cls: save.character.class, level: save.character.level, quests: questsOf(save.quests), dead, merc });
+        const mercClass = merc ? mercClassOf(save.character.merc.hireling_id) : undefined;
+        owners.push({ name: owner, mode: modeOfCharacter(save), cls: save.character.class, level: save.character.level, quests: questsOf(save.quests), dead, merc, mercClass });
       }
     } catch (e) {
       errors.push(`${file.name}: ${e.message ?? e}`);

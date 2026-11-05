@@ -27,3 +27,22 @@ export async function deckSaveFiles() {
   const names = await (await get("/api/saves")).json();
   return Promise.all(names.map(async (name) => new File([await (await get(`/api/saves/${encodeURIComponent(name)}`)).blob()], name)));
 }
+
+// Saved loadouts, kept by the plugin (read_loadouts / write_loadouts in decky/py_modules/tracker.py): { loadouts: [...] },
+// stored whole (src/lib/loadouts.js)
+export const deckLoadouts = async () => (await get("/api/loadouts")).json();
+export const saveDeckLoadouts = (doc) => post("/api/loadouts", doc);
+
+// For writeDeck: a file's bytes as base64, and { name: sha256 hex } of the saves read (the plugin writes only if the
+// folder still holds exactly these)
+export const toBase64 = (bytes) => {
+  let s = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+};
+export const hashes = async (files) =>
+  Object.fromEntries(
+    await Promise.all(
+      files.map(async (f) => [f.name, [...new Uint8Array(await crypto.subtle.digest("SHA-256", f.bytes))].map((b) => b.toString(16).padStart(2, "0")).join("")]),
+    ),
+  );

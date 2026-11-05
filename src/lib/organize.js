@@ -356,14 +356,15 @@ export const trashMules = (saves, mode, keep = []) =>
     }));
 
 // saves: [{ name, ext: "d2s" | "d2i", json }]; options: { mode, mules: names, inbox: shared stash page numbers, keep: idOf
-//   ids of copies the player said are not junk: never to TRASH, they stay in DUP }
+//   ids of copies the player said are not junk: never to TRASH, they stay in DUP; extra: [{ item, from }] items from
+//   elsewhere to put in the mules too (what a loadout takes off, src/lib/loadouts.js) }
 // -> { saves: [{ name, ext, json, template? }], report }. Only changed saves are returned; new mules carry
 // `template`, the save they were cloned from. Mules whose names the new layout uses are rewritten in place.
 // report: { mules: names emptied, leftEmpty: emptied level 1 mules without gold no new mule is named after, other
 //   than this mode's own mule names (an empty CHARM-B is kept for when charms grow again): the player may delete them,
 //   moved, dropped: [item], moves: [{ from, key, to, page, x, y, group }],
 //   inbox: what the shared stash pages brought: { museum: keys, dup: keys, trash: keys, other }, ... }
-export function organize(saves, { mode = "SoftCore:Modern", mules: names, inbox, keep = [] } = {}) {
+export function organize(saves, { mode = "SoftCore:Modern", mules: names, inbox, keep = [], extra = [] } = {}) {
   // By name: the same saves give the same result whatever order the files came in (folder picker, Deck, Node)
   // "RW-A.d2s" and "rw-a.d2s" side by side (a case-sensitive file system): one would shadow the other
   const seen = new Set();
@@ -387,7 +388,7 @@ export function organize(saves, { mode = "SoftCore:Modern", mules: names, inbox,
   const template = blank.find((s) => s.json.character.class === "Barbarian") ?? blank[0];
   if (!template) throw new Error(`no level 1 character among the mules of ${mode} to make new mules from`);
 
-  const source = []; // { item, from }
+  const source = [...extra]; // { item, from }
   const dropped = [];
   const out = new Map(); // name (lower case) -> changed save
   for (const s of mules) {
@@ -527,20 +528,27 @@ export function muleTimes(times, mules) {
 // (10x10) or inventory (10x4), not overlapping. Throws when a check fails or a save would not round-trip.
 // files: [{ name: "Zanna.d2s", bytes }]; wasm: the parser (parseD2s, parseD2i, writeD2s, writeD2i); options as organize()
 // -> { files: [{ name, bytes, template? }] (only saves whose bytes change), saves (as read), report }
-export function organizeFiles(files, wasm, options) {
+// The saves among files, parsed, each checked to come back byte for byte from its JSON (JavaScript numbers can't hold
+// every 64-bit value): { saves: [{ name, ext, json }], parse(ext, bytes), write(ext, json) }. Throws for one that doesn't.
+export function readSaves(files, wasm) {
   const parse = (ext, bytes) => JSON.parse(ext === "d2s" ? wasm.parseD2s(bytes) : wasm.parseD2i(bytes));
   const write = (ext, json) => (ext === "d2s" ? wasm.writeD2s : wasm.writeD2i)(JSON.stringify(json));
-  const equal = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
-  // A save must come back byte for byte from its JSON: JavaScript numbers can't hold every 64-bit value
   const saves = files
     // Lower case only, as written back: "X.D2S" would come back as a second file "X.d2s" next to it
     .filter((f) => /\.d2[si]$/.test(f.name) && !f.name.startsWith("._")) // not macOS's "._" metadata files
     .map((f) => {
       const save = { name: f.name.slice(0, -4), ext: f.name.slice(-3) };
       save.json = parse(save.ext, f.bytes);
-      if (!equal(write(save.ext, save.json), f.bytes)) throw new Error(`${f.name} does not round-trip, not touching it`);
+      if (!sameBytes(write(save.ext, save.json), f.bytes)) throw new Error(`${f.name} does not round-trip, not touching it`);
       return save;
     });
+  return { saves, parse, write };
+}
+export const sameBytes = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+
+export function organizeFiles(files, wasm, options) {
+  const { saves, parse, write } = readSaves(files, wasm);
+  const equal = sameBytes;
   const { saves: changed, report } = organize(saves, options);
   const out = changed.map((s) => ({ name: `${s.name}.${s.ext}`, bytes: write(s.ext, s.json), template: s.template }));
   const input = new Map(files.map((f) => [f.name, f.bytes]));

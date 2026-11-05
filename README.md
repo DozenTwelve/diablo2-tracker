@@ -58,7 +58,9 @@ walks through backing up, a dry run explained in plain words, and writing only a
 menu in Game Mode with the Deck's own saves, and gets the item icons from your installed game. It can also organize
 right on the Deck: it refuses while the game runs, backs up the save folder first and reads every written file back.
 Emptied characters you tick are deleted, and the Organize page lists the backups (the newest 10 and the oldest are
-kept) with buttons to restore or delete them.
+kept) with buttons to restore or delete them. A main character's page keeps named loadouts (what it and its mercenary wear,
+the charms in its inventory; stored in the plugin's runtime folder) and puts one on in one write the same way: the
+pieces come from the mules, the shared stash or another main, and what comes off goes into the mules.
 
 It isn't in the Decky store yet. To install: Decky → settings → General → turn on Developer mode, then Developer →
 Install Plugin from URL, and enter
@@ -99,6 +101,7 @@ The app is React and Vite. `src/lib/` holds the logic (reading saves, item looku
 | `node scripts/check-organize.mjs <save dir>` | Regression checks for organizing (starting kit, gold, dead heroes, stash copies, running twice...) on a copy of a real save folder in memory |
 | `node scripts/check-parse.mjs <save dir>` | Regression checks for reading saves (cut-short stash, corpses, golems, dead heroes, `._` files, New finds verdicts); needs a folder with a `ModernSharedStashSoftCoreV2.d2i` |
 | `node scripts/check-pickups.mjs <save dir>` | Checks for the Deck plugin's pickup alerts on a real save folder, read only; prints how long parsing takes |
+| `node scripts/check-loadouts.mjs <save dir> [<save dir>...]` | Checks for saving and putting on loadouts (pieces taken from mules and other mains, unticked, blocked charm cells) on copies of real save folders in memory |
 | `node scripts/check-runewords.mjs [save dir]` | Checks for runewords to make on hand-made items, then what a save folder can make |
 | `node scripts/check-props.mjs` | Check every catalog property shows as text |
 | `node scripts/check-junk.mjs` | Check the likely-junk rules |

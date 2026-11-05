@@ -19,6 +19,10 @@ menu in Game Mode, with the saves read straight from the Deck.
   its target and renames it over, then reads everything back. Emptied characters the player ticks are deleted
   after the backup. The page lists the backups; restoring one backs up the folder as it is first, so a restore
   can be undone the same way.
+- Loadouts: a main character's page saves what it wears as a named loadout, kept in Decky's data folder
+  (`loadouts.json`, `GET`/`POST /api/loadouts`, the whole document, never the saves). Putting one on goes through the
+  same write as organizing (backup labelled "loadout"): the page checks that on every main only the covered slots,
+  the inventory charms and the pieces taken changed, and that no item was lost or duplicated, before posting.
 
 ## Build and install
 

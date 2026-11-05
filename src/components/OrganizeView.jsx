@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { codeOfNumber, idOf, keyOf, labelOf } from "../lib/gameData";
-import { deckBackups, deckSaveFiles, deleteDeckBackup, dismissDeckInterrupted, onDeck, restoreDeck, writeDeck } from "../lib/deck";
+import { deckBackups, deckSaveFiles, deleteDeckBackup, dismissDeckInterrupted, hashes, onDeck, restoreDeck, toBase64, writeDeck } from "../lib/deck";
 import { roleOf } from "../lib/inventory";
 import { LOCALES, t } from "../lib/i18n";
 import { SKILL } from "../lib/links";
@@ -16,15 +16,10 @@ import PageTitle from "./PageTitle";
 import Segmented from "./Segmented";
 import { Tooltip, tipHandlers, useTip } from "./StashGrid";
 
-const toBase64 = (bytes) => {
-  let s = "";
-  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  return btoa(s);
-};
 const isSave = (name) => /\.d2[si]$/i.test(name);
 // The second button of a two-step confirm, with its warning and a cancel button. Not the second click of a double
 // click on the button that was in this place (500 ms), nor a held key repeating
-function ConfirmButton({ warn, at, busy, onConfirm, onCancel, lang, children }) {
+export function ConfirmButton({ warn, at, busy, onConfirm, onCancel, lang, children }) {
   return (
     <>
       {warn && <span className="text-sm text-red-400">{warn}</span>}
@@ -40,13 +35,6 @@ function ConfirmButton({ warn, at, busy, onConfirm, onCancel, lang, children }) 
 const COMPANIONS = ["ctl", "key", "ma0", "map"]; // a character's other files, copied from the template for new mules
 
 const sameBytes = (a, b) => a?.length === b.length && a.every((x, i) => x === b[i]);
-// { name: sha256 hex } of the saves read: the plugin writes only if the folder still holds exactly these
-const hashes = async (files) =>
-  Object.fromEntries(
-    await Promise.all(
-      files.map(async (f) => [f.name, [...new Uint8Array(await crypto.subtle.digest("SHA-256", f.bytes))].map((b) => b.toString(16).padStart(2, "0")).join("")]),
-    ),
-  );
 
 // /organize: sort the mules and the chosen inbox pages of the shared stash (src/lib/organize.js), show what
 // would happen, then hand the result back. On the web: a zip download of the whole organized folder (rawFiles: the
@@ -579,7 +567,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
               {backups.map((b) => (
                 <li key={b.name} className="flex flex-wrap items-center gap-x-4 gap-y-2">
                   <span>{when(b.name)}</span>
-                  {b.reason && <span className="text-sm">{t({ restore: "backupBeforeRestore", clean: "backupBeforeClean" }[b.reason] ?? "backupBeforeOrganize", lang)}</span>}
+                  {b.reason && <span className="text-sm">{t({ restore: "backupBeforeRestore", clean: "backupBeforeClean", loadout: "backupBeforeLoadout" }[b.reason] ?? "backupBeforeOrganize", lang)}</span>}
                   {b.interrupted && <span className="text-sm text-red-400">{t("backupInterrupted", lang)}</span>}
                   <span className="text-sm gothic-text-muted">{t("backupCharacters", lang, b.characters)}</span>
                   {state.confirm?.name === b.name ? (

@@ -187,7 +187,7 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, re
     mules: every mule after organizing, put below the other characters in D2R's list (_order); expect: the saves
     the page organized ({name: sha256}), checked under the lock so a second write or a game save in between
     can't be overwritten by a plan made from older saves, required; reason: what the backup is labelled, "clean" when only
-    TRASH mules are deleted.
+    TRASH mules are deleted, "loadout" when a loadout is put on (applyLoadoutFiles: main characters are written too).
     The game must not be running. The folder's files are backed up first, each file is written next to its
     target and renamed over it, then read back. Returns the backup folder."""
     with _lock:
@@ -204,7 +204,7 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, re
         for name in delete:
             if not SAVE_NAME.fullmatch(name + ".d2s") or any(f["name"] == name + ".d2s" for f in files):
                 raise ValueError(f"not a character to delete: {name}")
-        if reason not in ("organize", "clean"):
+        if reason not in ("organize", "clean", "loadout"):
             raise BadRequest(f"not a reason: {reason}")
         # A clean only deletes TRASH mules: the label a backup gets must not hide that other saves changed
         if reason == "clean" and (files or not all(TRASH_NAME.fullmatch(name) for name in delete)):
@@ -269,7 +269,7 @@ def _order(folder, mules):
 BACKUP_NAME = re.compile(r"\d{8}-\d{6}Z?(-\d+)?")
 # What organizing writes (.tmp: one cut short); not settings or loot filters
 SAVE_FILE = re.compile(r".+\.(d2s|d2i|ctl|key|map|ma\d+)(\.tmp)?")
-ABOUT = ".d2r-backup.json"  # in each backup: {"reason": "organize" | "clean" | "restore", "from"?: name, "folder", "seq"}
+ABOUT = ".d2r-backup.json"  # in each backup: {"reason": "organize" | "clean" | "loadout" | "restore", "from"?: name, "folder", "seq"}
 PENDING = ".in-progress"  # in the backups folder while a write or restore runs: {"backup": name}
 KEEP = 10  # backups kept per save folder, besides the oldest (the saves before the plugin first wrote)
 _lock = threading.Lock()  # one write, restore or delete at a time
@@ -441,7 +441,7 @@ def _rmtree(path):
 
 def list_backups(backup_root, folder=None):
     """The plugin's backups of a save folder, newest first: [{name, characters, reason?, from?, interrupted?}].
-    reason: why it was made ("organize", "clean", "restore"); backups from older plugin versions have none, and are listed
+    reason: why it was made ("organize", "clean", "loadout", "restore"); backups from older plugin versions have none, and are listed
     for any folder. interrupted: the backup of an operation that was cut off."""
     if not os.path.isdir(backup_root):
         return []
@@ -546,17 +546,42 @@ def _write(folder, files):
                 raise IOError(f"{f['name']} did not read back the same")
 
 
+LOADOUTS_MAX = 1 << 20  # bytes: hundreds of loadouts; a page sending more is broken
+_loadouts_lock = threading.Lock()
+
+
+def read_loadouts(path):
+    """The player's saved loadouts ({"loadouts": [...]}, kept by the page as it likes), none before the first save.
+    A file that doesn't read raises: answering none would let the page's next save overwrite it."""
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {"loadouts": []}
+
+
+def write_loadouts(path, doc):
+    """Replace the loadouts file with doc, whole: written next to it and renamed over it. Never touches the saves."""
+    if not isinstance(doc, dict) or not isinstance(doc.get("loadouts"), list) or not all(isinstance(l, dict) for l in doc["loadouts"]):
+        raise BadRequest("not a loadouts document")
+    if len(json.dumps(doc)) > LOADOUTS_MAX:
+        raise BadRequest("too many loadouts")
+    with _loadouts_lock:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        _json_to(path, doc)
+
+
 class Handler(SimpleHTTPRequestHandler):
     """GET /api/saves: save file names; /api/saves/<name>: one save; /items/<x>.webp: an icon (PNG);
     anything else: the web app, index.html for unknown paths (the app routes on the client).
-    /api/backups: the plugin's backups (list_backups).
+    /api/backups: the plugin's backups (list_backups); /api/loadouts: the saved loadouts (read_loadouts).
     POST /api/write: organized saves to write and characters to delete (write_saves); /api/restore: a backup to put
     back (restore_backup); /api/delete-backup: a backup to delete (delete_backup); /api/dismiss: go on without
-    restoring the interrupted backup (dismiss_interrupted); /api/close: the app's close
-    button (on_close).
+    restoring the interrupted backup (dismiss_interrupted); /api/loadouts: the loadouts document to keep
+    (write_loadouts); /api/close: the app's close button (on_close).
     POSTs only from the app itself."""
 
-    web_dir = save_folder = icon_dir = backup_dir = on_close = None  # set by serve()
+    web_dir = save_folder = icon_dir = backup_dir = loadouts_file = on_close = None  # set by serve()
 
     def log_message(self, *args):
         pass
@@ -592,6 +617,11 @@ class Handler(SimpleHTTPRequestHandler):
             return self.send_bytes(json.dumps(list_saves(self.save_folder())).encode(), "application/json")
         if path == "/api/backups":
             return self.send_bytes(json.dumps(list_backups(self.backup_dir, self.save_folder())).encode(), "application/json")
+        if path == "/api/loadouts":
+            try:
+                return self.send_bytes(json.dumps(read_loadouts(self.loadouts_file)).encode(), "application/json")
+            except (OSError, ValueError):
+                return self.send_error(500)
         if path.startswith("/api/saves/"):
             folder = self.save_folder()
             name = unquote(path[len("/api/saves/") :])
@@ -615,7 +645,7 @@ class Handler(SimpleHTTPRequestHandler):
         # Only the app's own page: browsers send Origin on every POST, and another site can't send JSON here
         # without a CORS preflight, which this server never answers
         origin = f"http://127.0.0.1:{self.server.server_address[1]}"
-        if not self.local() or self.path not in ("/api/write", "/api/restore", "/api/delete-backup", "/api/dismiss", "/api/close") or self.headers.get("Origin") != origin or self.headers.get("Content-Type") != "application/json":
+        if not self.local() or self.path not in ("/api/write", "/api/restore", "/api/delete-backup", "/api/dismiss", "/api/loadouts", "/api/close") or self.headers.get("Origin") != origin or self.headers.get("Content-Type") != "application/json":
             return self.send_error(403)
         if self.path == "/api/close":
             self.send_response(204)
@@ -623,7 +653,10 @@ class Handler(SimpleHTTPRequestHandler):
             return self.on_close()
         try:
             body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
-            if self.path == "/api/restore":
+            if self.path == "/api/loadouts":
+                write_loadouts(self.loadouts_file, body)
+                result = {}
+            elif self.path == "/api/restore":
                 result = {"backup": restore_backup(self.save_folder(), self.backup_dir, body["name"])}
             elif self.path == "/api/delete-backup":
                 delete_backup(self.backup_dir, body["name"], self.save_folder())
@@ -664,10 +697,10 @@ class Server(ThreadingHTTPServer):
     request_queue_size = 128
 
 
-def serve(web_dir, save_folder, icon_dir, backup_dir, on_close=lambda: None, port=PORT):
-    """Start the server in a thread; save_folder is a function, so a new save folder is picked up.
-    on_close runs in a request thread when the app's close button is pressed."""
-    bound = {"web_dir": web_dir, "save_folder": staticmethod(save_folder), "icon_dir": icon_dir, "backup_dir": backup_dir, "on_close": staticmethod(on_close)}
+def serve(web_dir, save_folder, icon_dir, backup_dir, loadouts_file, on_close=lambda: None, port=PORT):
+    """Start the server in a thread; save_folder is a function, so a new save folder is picked up. loadouts_file: where
+    the saved loadouts are kept. on_close runs in a request thread when the app's close button is pressed."""
+    bound = {"web_dir": web_dir, "save_folder": staticmethod(save_folder), "icon_dir": icon_dir, "backup_dir": backup_dir, "loadouts_file": loadouts_file, "on_close": staticmethod(on_close)}
     handler = type("BoundHandler", (Handler,), bound)
     server = Server(("127.0.0.1", port), handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()

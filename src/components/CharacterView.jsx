@@ -12,6 +12,8 @@ import StackTab from "./StackTab";
 import PageTitle from "./PageTitle";
 import BuildGear from "./BuildGear";
 import { buildsOf, useBuild } from "../lib/builds";
+import { onDeck } from "../lib/deck";
+import Loadouts from "./Loadouts";
 
 // Places drawn as grids, with their size in cells, in this order (then shared stash pages); the rest are lists
 const GRIDS = { inventory: [10, 4], stash: [10, 10], cube: [3, 4] };
@@ -218,7 +220,7 @@ const Block = ({ title, count, width, children }) => (
 // /characters/<name>: a header (where in the list, who, what is left to collect), then equipment and storage
 // drawn as in game in one flowing row, then the stack tab and socketed items. ← and → go to the previous and
 // next character in list order.
-function CharacterPage({ saveData, name, lang }) {
+function CharacterPage({ saveData, name, keep, onWritten, lang }) {
   const [roles] = useStoredState("roles", {});
   const list = ordered(saveData, roles);
   const at = list.findIndex((o) => o.name === name);
@@ -325,6 +327,7 @@ function CharacterPage({ saveData, name, lang }) {
           </Block>
         )}
       </div>
+      {main && onDeck && <Loadouts owner={owner} saveData={saveData} keep={keep} onWritten={onWritten} lang={lang} />}
       {stacked.length > 0 && (
         <Block title={placeLabel("advanced", lang)} count={totalCount(stacked)}>
           <StackTab byKey={groupByKey(stacked)} lang={lang} />
@@ -356,9 +359,10 @@ function CharacterPage({ saveData, name, lang }) {
   );
 }
 
-export default function CharacterView({ saveData, name, lang }) {
+// keep, onWritten: as OrganizeView's, for putting on a loadout
+export default function CharacterView({ saveData, name, keep, onWritten, lang }) {
   return name ? (
-    <CharacterPage saveData={saveData} name={name} lang={lang} />
+    <CharacterPage saveData={saveData} name={name} keep={keep} onWritten={onWritten} lang={lang} />
   ) : (
     <CharacterList saveData={saveData} lang={lang} />
   );

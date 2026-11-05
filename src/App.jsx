@@ -164,7 +164,7 @@ export default function App() {
             />
           ) : tab === "characters" ? (
             saveData ? (
-              <CharacterView saveData={saveData} name={name} lang={lang} />
+              <CharacterView saveData={saveData} name={name} keep={keep} onWritten={readDeck} lang={lang} />
             ) : (
               <SaveLoader saveData={saveData} onLoad={load} notStored={notStored} lang={lang} />
             )

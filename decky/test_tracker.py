@@ -64,7 +64,8 @@ with tempfile.TemporaryDirectory() as tmp:
     open(os.path.join(icons, "axe/hand_axe.png"), "wb").write(data)
     backups = os.path.join(tmp, "backups")
     closed = []
-    server = tracker.serve(web, lambda: saves, icons, backups, on_close=lambda: closed.append(1), port=0)
+    loadouts = os.path.join(tmp, "runtime", "loadouts.json")
+    server = tracker.serve(web, lambda: saves, icons, backups, loadouts, on_close=lambda: closed.append(1), port=0)
     base = f"http://127.0.0.1:{server.server_address[1]}"
     get = lambda path: urllib.request.urlopen(base + path).read()
 
@@ -152,6 +153,11 @@ with tempfile.TemporaryDirectory() as tmp:
     assert post({"files": [], "delete": ["htrash-b"], "reason": "clean"})[0] == 200
     assert not [f for f in os.listdir(saves) if f.startswith("htrash-b.")]
     assert tracker.list_backups(backups, saves)[0]["reason"] == "clean"  # labelled as a TRASH clean
+    # Putting on a loadout writes like organizing, labelled as such; a clean still can't write files under that label
+    time.sleep(1)
+    assert post({"files": [{**new[0], "data": base64.b64encode(b"mule 3").decode()}], "reason": "loadout"})[0] == 200
+    assert tracker.list_backups(backups, saves)[0]["reason"] == "loadout" and open(os.path.join(saves, "UW-A.d2s"), "rb").read() == b"mule 3"
+    assert post({"files": new, "delete": ["TRASH-A"], "reason": "clean"})[0] == 400
     time.sleep(1)
     status, result = post({"files": new, "delete": ["Zanna"]})
     assert status == 200, result
@@ -218,6 +224,27 @@ with tempfile.TemporaryDirectory() as tmp:
     assert post({"name": "20000101-000000"}, path="/api/delete-backup")[0] == 500  # the stray file, no backup
     assert post({"name": zanna}, path="/api/delete-backup")[0] == 200
     assert zanna not in [b["name"] for b in json.loads(get("/api/backups"))] and not os.path.exists(os.path.join(backups, zanna))
+
+    # Loadouts: none before the first save; kept whole, only from the app itself, never touching the saves
+    before = tracker._hashes(saves)
+    assert json.loads(get("/api/loadouts")) == {"loadouts": []}
+    doc = {"loadouts": [{"id": "1", "name": "MF 魔法", "character": "Zanna", "pieces": [{"id": "amu:1:Unique", "place": "equipped", "slot": "Neck"}]}]}
+    assert post(doc, origin="http://evil.example", path="/api/loadouts")[0] == 403
+    assert post(doc, kind="text/plain", path="/api/loadouts")[0] == 403
+    assert not os.path.exists(loadouts)
+    assert post(doc, path="/api/loadouts") == (200, {})
+    assert json.loads(get("/api/loadouts")) == doc
+    for bad in ({"loadouts": "x"}, [], {"loadouts": [1]}, {"loadouts": [{"name": "x" * tracker.LOADOUTS_MAX}]}):
+        assert post(bad, path="/api/loadouts")[0] == 400
+    assert json.loads(get("/api/loadouts")) == doc and not [f for f in os.listdir(os.path.dirname(loadouts)) if f.endswith(".tmp")]
+    assert tracker._hashes(saves) == before
+    open(loadouts, "w").write("{broken")  # never answered as none: the page's next save would overwrite it
+    try:
+        get("/api/loadouts")
+        raise AssertionError("served a broken loadouts file")
+    except HTTPError as e:
+        assert e.code == 500
+    os.remove(loadouts)
 
     # Only requests to 127.0.0.1 itself: another name pointed at it (DNS rebinding) gets nothing
     request = urllib.request.Request(base + "/api/saves", headers={"Host": "evil.example"})

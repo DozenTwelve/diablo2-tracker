@@ -252,14 +252,21 @@ const KEEP_AT = {
   80: [6, 10, 10, 10], // magic find
   19: [20, 48, 76, 40], // attack rating
   21: [2, 4, 6, 8], 22: [3, 6, 10, 15], // min / max damage
-  ...Object.fromEntries([9, 11, 31, 79, 89, 48, 49, 50, 51, 54, 55, 57, 58, 59].map((id) => [id, Array(4).fill(Infinity)])),
+  ...Object.fromEntries([9, 11, 31, 79, 89, 48, 49, 50, 51, 54, 55, 56, 57, 58, 59].map((id) => [id, Array(4).fill(Infinity)])),
 };
 const ALL_RESIST_AT = [3, 6, 10, 10];
+// The save stores "+N min damage" as 21, 23 and 159 together, "+N max damage" as 22, 24 and 160: the copies are
+// judged as the main stat
+const DAMAGE_COPY = { 23: 21, 159: 21, 24: 22, 160: 22 };
 export function isJunk(item, code) {
   const base = JUNK_BASES.indexOf(items[code]?.type);
   if (item.quality !== "Magic" || base < 0) return false;
   const v = new Map();
   for (const s of item.stats) v.set(s.id, (v.get(s.id) ?? 0) + (s.value >> (statData.stats[s.id]?.shift ?? 0)));
+  for (const [copy, main] of Object.entries(DAMAGE_COPY)) {
+    if (v.has(+copy)) v.set(main, Math.max(v.get(main) ?? 0, v.get(+copy)));
+    v.delete(+copy);
+  }
   const res = RESISTS.map((id) => v.get(id));
   if (res.every((r) => r === res[0] && r >= ALL_RESIST_AT[base])) return false;
   return v.size > 0 && [...v].every(([id, value]) => KEEP_AT[id] && value < KEEP_AT[id][base]);

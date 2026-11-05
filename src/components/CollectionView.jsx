@@ -33,7 +33,7 @@ function Icon({ entryKey, records, lang }) {
 // Hovering shows an owned copy's stats and where it is; with several copies, the catalog ranges and their
 // owners in one line, and clicking lists every copy (Copies).
 // groups: [{ title, keys: [key], notes?: [[color, line]] }] (notes: set bonuses); children: shown above the tiles
-export default function CollectionView({ label, groups, owned, lang, children }) {
+export default function CollectionView({ label, groups, owned, keep, setKeep, lang, children }) {
   const [missingOnly, setMissingOnly] = useState(false);
   const [tip, setTip] = useTip();
   const [opened, setOpened] = useState(null); // key whose copies are listed
@@ -131,7 +131,7 @@ export default function CollectionView({ label, groups, owned, lang, children })
         </div>
       </div>
       {tip && <Tooltip tip={tip} lang={lang} />}
-      <Copies entryKey={opened} records={opened ? owned.get(opened) : null} onClose={() => setOpened(null)} lang={lang} />
+      <Copies entryKey={opened} records={opened ? owned.get(opened) : null} onClose={() => setOpened(null)} keep={keep} setKeep={setKeep} lang={lang} />
     </>
   );
 }

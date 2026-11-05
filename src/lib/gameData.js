@@ -35,6 +35,10 @@ export const catalog = new Map([
 // Item codes are up to 4 ASCII chars packed little-endian, space padded.
 export const codeOfNumber = (n) => String.fromCharCode(n & 255, (n >>> 8) & 255, (n >>> 16) & 255, n >>> 24).trim();
 
+// One copy of an item, the same in every save it moves to: its code, own random seed and quality. item: a record of
+// src/lib/parseSaves.js, or an item parsed from a save with its code (codeOfNumber) given
+export const idOf = (item, code = item.code) => `${code}:${item.seed}:${item.quality}`;
+
 // Key for an item parsed from a save (see wasm/: d2s crate JSON).
 export function keyOf(item, code) {
   if (item.runeword_id != null) {

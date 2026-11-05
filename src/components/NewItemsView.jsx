@@ -10,7 +10,7 @@ import { colorOf, Tooltip, tipHandlers, useTip } from "./StashGrid";
 // /new: what the finds dropped on the inbox pages of the shared stash are worth (src/lib/newItems.js), read only,
 // so it can be checked with the game still running. The inbox pages are picked here, per shared stash, and the
 // Organize page uses the same choice.
-export default function NewItemsView({ saveData, lang }) {
+export default function NewItemsView({ saveData, keep, lang }) {
   const [inboxes, setInboxes] = useStoredState("inbox", {}); // mode -> page numbers
   const [roles] = useStoredState("roles", {});
   const picked = (mode) => (Array.isArray(inboxes[mode]) ? inboxes[mode] : []);
@@ -27,7 +27,7 @@ export default function NewItemsView({ saveData, lang }) {
     setInboxes({ ...inboxes, [mode]: now.includes(page) ? now.filter((p) => p !== page) : [...now, page].sort((a, b) => a - b) });
   };
 
-  const finds = findsOf(saveData, inboxes, roles);
+  const finds = findsOf(saveData, inboxes, roles, keep);
   const chosen = Object.keys(inboxes).some((mode) => picked(mode).length);
 
   return (

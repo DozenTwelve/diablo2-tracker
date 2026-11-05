@@ -12,8 +12,9 @@ if (!dir) throw new Error("usage: node scripts/check-organize.mjs <save dir>");
 await withApp(async ({ load, parser }) => {
   const wasm = await parser();
   const { byMuleName, copiesNeeded, isCharmOrJewel, isJunk, isLayoutName, museumLayout, muleTimes, organizeFiles, placeCopies, trashMules } = await load("/src/lib/organize.js");
-  const { scoreOfItem, versionOf } = await load("/src/lib/parseSaves.js");
-  const { codeOfNumber } = await load("/src/lib/gameData.js");
+  const { parseSaveFiles, scoreOfItem, versionOf } = await load("/src/lib/parseSaves.js");
+  const { codeOfNumber, idOf } = await load("/src/lib/gameData.js");
+  const { verdictsOf } = await load("/src/lib/newItems.js");
 
   const parse = (name, bytes) => JSON.parse(name.endsWith(".d2s") ? wasm.parseD2s(bytes) : wasm.parseD2i(bytes));
   const write = (name, json) => (name.endsWith(".d2s") ? wasm.writeD2s : wasm.writeD2i)(JSON.stringify(json));
@@ -273,6 +274,38 @@ await withApp(async ({ load, parser }) => {
     const r = run(edit(gone, a, (j) => j.items.push(structuredClone(junk))));
     assert(r.files.some((f) => f.name === "TRASH-A.d2s" && f.template), "a new TRASH-A from the template");
   });
+
+  await (async () => {
+    const what = "a copy the player keeps (not junk) goes to DUP, every time; cleaning waits; the New finds verdict agrees";
+    const trashed = first.report.moves.filter((m) => m.group === "TRASH");
+    assert(trashed.length, "an extra copy in TRASH");
+    // An item with two or more copies in TRASH if any: keeping one leaves the other in TRASH
+    const m = trashed.find((m) => trashed.filter((o) => o.key === m.key).length > 1) ?? trashed[0];
+    const id = idOf(m.item, codeOfNumber(m.item.code));
+    const keep = [id];
+    const r = run(base, { keep });
+    const moved = r.report.moves.filter((o) => idOf(o.item, codeOfNumber(o.item.code)) === id);
+    assert.deepEqual(moved.map((o) => o.group), ["DUP"]);
+    const others = (report) => report.moves.filter((o) => o.group === "TRASH").map((o) => idOf(o.item, codeOfNumber(o.item.code)));
+    assert.deepEqual(others(r.report), others(first.report).filter((o) => o !== id));
+    if (trashed.filter((o) => o.key === m.key).length < 2) console.log("--  no item with two copies in TRASH: only the kept one checked");
+    // Organizing again with the same list moves nothing; from the organized saves, the kept copy leaves TRASH
+    const kept = after(base, r.files);
+    assert.deepEqual(run(kept, { keep }).files.map((f) => f.name), []);
+    const again = run(organized, { keep }).report.moves.filter((o) => idOf(o.item, codeOfNumber(o.item.code)) === id);
+    assert.deepEqual(again.map((o) => o.group), ["DUP"]);
+    // Cleaning is refused while a TRASH mule holds a kept copy, and works for the rest once it is in DUP
+    const saves = (files) => files.filter((f) => f.name.endsWith(".d2s")).map((f) => ({ name: f.name.slice(0, -4), ext: "d2s", json: json(files, f.name) }));
+    const trash = trashMules(saves(organized), "SoftCore:Modern", keep);
+    assert.equal(trash.find((t) => t.items.some((i) => idOf(i, codeOfNumber(i.code)) === id)).refused, "kept");
+    assert(trashMules(saves(kept), "SoftCore:Modern", keep).every((t) => !t.refused));
+    // The New finds page: that copy, taken along with the mules, is extra without the list and needed with it
+    const data = await parseSaveFiles(organized.map((f) => new File([f.bytes], f.name)));
+    const rec = data.items.find((x) => idOf(x) === id);
+    assert.equal(verdictsOf(data, [rec])[0].verdict.kind, "extra");
+    assert.equal(verdictsOf(data, [rec], {}, keep)[0].verdict.kind, "needed");
+    console.log(`ok  ${what}`);
+  })();
 
   check("a mistyped mule name or a missing inbox page stops the run", () => {
     assert.throws(() => run(base, { mules: [first.report.mules[0], "NoSuchMule"] }), /NoSuchMule/);

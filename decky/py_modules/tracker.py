@@ -216,8 +216,9 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, re
             raise SavesChanged("the saves changed since the page read them; nothing was written")
         # A write cut off between two renames (power loss, Decky killed) must leave items on two saves, never on
         # none: the files that receive items first (new mules, not in the folder yet), then the rewritten ones in
-        # the page's order (organizeFiles: those holding items before those only emptied), the shared stash (only
-        # ever emptied) last. Sorted here too, so a page sending another order can't undo it.
+        # the page's order (organizeFiles: those holding items before those only emptied; applyLoadoutFiles: the mules
+        # receiving what comes off, the character, then those giving it pieces), the shared stash (only ever emptied)
+        # last. Sorted here too, so a page sending another order can't undo it.
         # ponytail: layout mules trading items with each other can still lose one when cut between them; the
         # backup (PENDING) is the way back then
         files = sorted(files, key=lambda f: (os.path.exists(os.path.join(folder, f["name"])), f["name"].lower().endswith(".d2i")))

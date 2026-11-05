@@ -13,7 +13,11 @@ import { ConfirmButton } from "./OrganizeView";
 import { colorOf } from "./StashGrid";
 
 const PLACES = ["equipped", "merc", "inventory"];
-const STATUS_TEXT = { missing: "applyMissing", noMerc: "applyNoMerc", otherMerc: "applyOtherMerc", hand: "applyHand", quest: "applyQuest" };
+const STATUS_TEXT = { missing: "applyMissing", noMerc: "applyNoMerc", mercUnknown: "applyMercUnknown", otherMerc: "applyOtherMerc", hand: "applyHand", quest: "applyQuest" };
+// A piece's own key in a list: its spot and id
+const pieceKey = (p) => `${p.place}:${p.slot ?? `${p.x},${p.y}`}:${p.id}`;
+// Saved before the mercenary's kind was kept: putting it on skips the mercenary's pieces until it is saved again
+const mercUnknown = (l) => l.mercClass == null && l.pieces.some((p) => p.place === "merc");
 
 // A piece's spot in its loadout: "Helm", "Mercenary Helm", "Charms"
 const spotOf = (p, lang) =>
@@ -21,7 +25,7 @@ const spotOf = (p, lang) =>
 
 function whereText(w, lang) {
   if (w.kind === "on" || w.kind === "missing") return t(`where_${w.kind}`, lang);
-  if (w.kind === "corpse") return t("where_corpse", lang, w.owner === undefined ? "" : ownerLabel(w.owner, lang));
+  if (w.kind === "corpse" || w.kind === "golem") return t(`where_${w.kind}`, lang, w.owner === undefined ? "" : ownerLabel(w.owner, lang));
   return w.kind === "self" ? t("where_self", lang, placeLabel(w.place, lang)) : t(`where_${w.kind}`, lang, ownerLabel(w.owner, lang), placeLabel(w.place, lang));
 }
 
@@ -64,7 +68,7 @@ function Group({ head, className, open, count, children }) {
 // the ones already on (folded) last
 function Pieces({ loadout, saveData, roles, lang }) {
   const pieces = loadout.pieces.toSorted((a, b) => PLACES.indexOf(a.place) - PLACES.indexOf(b.place)).map((p) => ({ p, w: whereIs(p, loadout.character, saveData, roles) }));
-  const rank = (w) => (w.kind === "missing" || w.kind === "corpse" ? 0 : w.kind === "on" ? 2 : 1);
+  const rank = (w) => (w.kind === "missing" || w.kind === "corpse" || w.kind === "golem" ? 0 : w.kind === "on" ? 2 : 1);
   const groups = groupsOf(
     pieces.toSorted((a, b) => rank(a.w) - rank(b.w)),
     ({ w }) => ({ key: whereText(w, lang), open: w.kind !== "on", className: w.kind === "on" ? "gothic-text-gold" : rank(w) === 0 ? "text-red-400" : "" }),
@@ -74,7 +78,7 @@ function Pieces({ loadout, saveData, roles, lang }) {
       {groups.map((g) => (
         <Group key={g.key} head={g.key} className={g.className} open={g.open} count={g.rows.length}>
           {g.rows.map(({ p }) => (
-            <PieceRow key={p.id} piece={p} lang={lang} />
+            <PieceRow key={pieceKey(p)} piece={p} lang={lang} />
           ))}
         </Group>
       ))}
@@ -150,7 +154,7 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang, children }) {
 
   const kindOf = (name, place) => {
     const o = saveData.owners.find((o) => o.name === name);
-    return place === "corpse" ? "corpse" : name === loadout.character ? "self" : o?.cls && roleOf(o, roles) === "main" ? "main" : "mule";
+    return place === "corpse" || place === "golem" ? place : name === loadout.character ? "self" : o?.cls && roleOf(o, roles) === "main" ? "main" : "mule";
   };
   const from = (f) => whereText({ kind: kindOf(f.owner, f.place), ...f }, lang);
   const report = state?.plan?.report;
@@ -159,7 +163,9 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang, children }) {
   const twins = report?.pieces.filter((p) => p.twins) ?? [];
   // The mules organizing writes again besides putting the loadout on
   const muleNames = new Set((report?.organize?.muleNames ?? []).map((n) => n.toLowerCase()));
-  const muleFiles = state?.plan?.files.filter((f) => muleNames.has(f.name.slice(0, -4).toLowerCase())).map((f) => f.name.slice(0, -4)) ?? [];
+  // A save may be written twice (a mule giving a piece and receiving what comes off): each name once
+  const fileNames = [...new Set(state?.plan?.files.map((f) => f.name.slice(0, -4)) ?? [])];
+  const muleFiles = fileNames.filter((n) => muleNames.has(n.toLowerCase()));
   const tick = (id, ticked) => setState(plan({ ...state, confirm: null, message: undefined, leave: ticked ? state.leave.filter((x) => x !== id) : [...state.leave, id] }));
   const error = state?.error;
   const sep = t("listSeparator", lang);
@@ -178,18 +184,27 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang, children }) {
         <div className="space-y-2 pt-2" style={{ borderTop: "1px solid var(--color-border-metal)" }}>
           {error && (
             <p className="text-red-400">
-              {error.blocked ? t("loadoutBlocked", lang, labelOf(error.blocked.key, lang), error.blocked.x + 1, error.blocked.y + 1) : t("notWritten", lang, error.message ?? error)}
+              {error.blocked
+                ? t("loadoutBlocked", lang, labelOf(error.blocked.key, lang), error.blocked.x + 1, error.blocked.y + 1)
+                : error.organize
+                  ? t("applyCantOrganize", lang, error.organize)
+                  : t("notWritten", lang, error.message ?? error)}
             </p>
           )}
           {report && (
             <>
               {groupsOf(lines, ({ status, from: f }) => {
-                const key = status === "take" || status === "left" ? from(f) : status === "corpse" ? t("applyCorpse", lang, ownerLabel(f.owner, lang)) : t(STATUS_TEXT[status], lang);
+                const key =
+                  status === "take" || status === "left"
+                    ? from(f)
+                    : status === "corpse" || status === "golem"
+                      ? t(status === "corpse" ? "applyCorpse" : "applyGolem", lang, ownerLabel(f.owner, lang))
+                      : t(STATUS_TEXT[status], lang);
                 return { key, className: status === "take" || status === "left" ? "" : "gothic-text-muted" };
               }).map((g) => (
                 <Group key={g.key} head={g.key} className={g.className} open count={g.rows.length}>
                   {g.rows.map(({ piece, status, from: f }) => (
-                    <PieceRow key={piece.id} piece={piece} lang={lang}>
+                    <PieceRow key={pieceKey(piece)} piece={piece} lang={lang}>
                       {/* Ticked: taken. Unticked: left where it is; only from somewhere else than this character */}
                       {(status === "take" || status === "left") && f.owner !== loadout.character ? (
                         <input type="checkbox" checked={status === "take"} disabled={state.busy} onChange={(e) => tick(piece.id, e.target.checked)} aria-label={labelOf(piece.key, lang)} />
@@ -227,10 +242,10 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang, children }) {
                 </>
               )}
               {muleFiles.length > 0 && <p className="text-sm">{t("applyReorganizes", lang, muleFiles.length)}</p>}
-              {state.plan.files.length > 0 ? (
+              {fileNames.length > 0 ? (
                 <details className="text-sm gothic-text-muted">
-                  <summary className="cursor-pointer">{t("applyFiles", lang, state.plan.files.length)}</summary>
-                  <p className="mt-1 break-words">{state.plan.files.map((f) => f.name.slice(0, -4)).join(sep)}</p>
+                  <summary className="cursor-pointer">{t("applyFiles", lang, fileNames.length)}</summary>
+                  <p className="mt-1 break-words">{fileNames.join(sep)}</p>
                 </details>
               ) : (
                 <p className="text-sm gothic-text-gold">{t("applyNothing", lang)}</p>
@@ -249,7 +264,7 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang, children }) {
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             {state.plan?.files.length > 0 &&
               (state.confirm ? (
-                <ConfirmButton warn={t("applyConfirmWarn", lang, state.plan.files.length)} at={state.confirm} busy={state.busy} onConfirm={write} onCancel={() => setState({ ...state, confirm: null })} lang={lang}>
+                <ConfirmButton warn={t("applyConfirmWarn", lang, fileNames.length)} at={state.confirm} busy={state.busy} onConfirm={write} onCancel={() => setState({ ...state, confirm: null })} lang={lang}>
                   {t(state.busy ? "writing" : "confirmApply", lang)}
                 </ConfirmButton>
               ) : (
@@ -294,15 +309,29 @@ export default function Loadouts({ owner, saveData, keep, onWritten, lang }) {
     }
   };
   const update = (id, change) => store({ ...doc, loadouts: doc.loadouts.flatMap((l) => (l.id === id ? change(l) : [l])) });
-  // From the saves as they are now (the game may have saved since this page read them), as putting one on reads them
+  // What the character wears now, from the saves as they are now (the game may have saved since this page read
+  // them), as putting one on reads them
+  const wornNow = async () => {
+    const now = await parseSaveFiles(await deckSaveFiles());
+    const bad = [...now.errors, ...now.damaged].filter((e) => e.startsWith(`${owner.name}.d2s`));
+    if (bad.length || !now.owners.some((o) => o.name === owner.name)) throw new Error(bad.join(", ") || `no character ${owner.name}`);
+    return loadoutOf(now, owner.name);
+  };
   const add = async () => {
     setState({ busy: true });
     try {
-      const now = await parseSaveFiles(await deckSaveFiles());
-      const bad = [...now.errors, ...now.damaged].filter((e) => e.startsWith(`${owner.name}.d2s`));
-      if (bad.length || !now.owners.some((o) => o.name === owner.name)) throw new Error(bad.join(", ") || `no character ${owner.name}`);
-      const loadout = { id: crypto.randomUUID(), name: name.trim(), ...loadoutOf(now, owner.name) };
+      const loadout = { id: crypto.randomUUID(), name: name.trim(), ...(await wornNow()) };
       if (await store({ ...doc, loadouts: [...doc.loadouts, loadout] })) setName("");
+    } catch (e) {
+      setState({ error: e.message ?? String(e) });
+    }
+  };
+  // Saved again under its own id and name, from what the character and its mercenary wear now
+  const resave = async (l) => {
+    setState({ busy: true });
+    try {
+      const worn = await wornNow();
+      await store({ ...doc, loadouts: doc.loadouts.map((x) => (x.id === l.id ? { id: l.id, name: l.name, ...worn } : x)) });
     } catch (e) {
       setState({ error: e.message ?? String(e) });
     }
@@ -393,6 +422,14 @@ export default function Loadouts({ owner, saveData, keep, onWritten, lang }) {
               </>
             )}
           </div>
+          {mercUnknown(l) && (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <p className="text-sm text-red-400 max-w-prose">{t("loadoutResaveAbout", lang)}</p>
+              <button className="gothic-btn gothic-btn-small" disabled={state.busy} onClick={() => resave(l)}>
+                {t("loadoutResave", lang)}
+              </button>
+            </div>
+          )}
           <Apply loadout={l} saveData={saveData} roles={roles} keep={[...keep, ...loadoutIds(doc)]} onWritten={onWritten} lang={lang}>
             <Pieces loadout={l} saveData={saveData} roles={roles} lang={lang} />
           </Apply>

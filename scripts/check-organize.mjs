@@ -13,8 +13,9 @@ const vite = await createServer({ server: { middlewareMode: true, hmr: false }, 
 try {
   const wasm = await vite.ssrLoadModule("/wasm/pkg/d2_parser.js");
   wasm.initSync({ module: readFileSync(new URL("../wasm/pkg/d2_parser_bg.wasm", import.meta.url)) });
-  const { byMuleName, copiesNeeded, museumLayout, muleTimes, organizeFiles, placeCopies, trashMules } = await vite.ssrLoadModule("/src/lib/organize.js");
-  const { scoreOfItem } = await vite.ssrLoadModule("/src/lib/parseSaves.js");
+  const { byMuleName, copiesNeeded, isCharmOrJewel, isJunk, isLayoutName, museumLayout, muleTimes, organizeFiles, placeCopies, trashMules } = await vite.ssrLoadModule("/src/lib/organize.js");
+  const { scoreOfItem, versionOf } = await vite.ssrLoadModule("/src/lib/parseSaves.js");
+  const { codeOfNumber } = await vite.ssrLoadModule("/src/lib/gameData.js");
 
   const parse = (name, bytes) => JSON.parse(name.endsWith(".d2s") ? wasm.parseD2s(bytes) : wasm.parseD2i(bytes));
   const write = (name, json) => (name.endsWith(".d2s") ? wasm.writeD2s : wasm.writeD2i)(JSON.stringify(json));
@@ -165,15 +166,70 @@ try {
     const slots = museumLayout().slots;
     const copy = (key, code, extra) => ({ key, code, eth: false, score: 50, home: false, fixed: false, version: undefined, ...extra });
     const place = (copies) => copies.map((c) => placeCopies(copies, slots).get(c));
-    const unwanted = [...slots.keys()].find((k) => k.startsWith("u:") && !copiesNeeded(k));
+    const unwanted = [...slots.keys()].find((k) => k.startsWith("u:") && !copiesNeeded(k) && !isCharmOrJewel(slots.get(k).code));
     const code = slots.get(unwanted).code;
     assert.deepEqual(place([copy(unwanted, code, { score: 90 }), copy(unwanted, code, { fixed: true }), copy(unwanted, code)]), ["MUSEUM", "DUP", "TRASH"]);
+    // Charms and jewels never go to TRASH: every copy past need stays in DUP
     const facet = (v) => copy("u:Rainbow Facet", "jew", { version: v });
-    assert.deepEqual(place([facet(392), facet(393), facet(393), facet(394)]), ["MUSEUM", "DUP", "TRASH", "DUP"]);
+    assert.deepEqual(place([facet(392), facet(393), facet(393), facet(394)]), ["MUSEUM", "DUP", "DUP", "DUP"]);
+    const anni = Array.from({ length: copiesNeeded("u:Annihilus") + 3 }, (_, i) => copy("u:Annihilus", "cm1", { score: 90 - i }));
+    assert.deepEqual(place(anni), ["MUSEUM", ...anni.slice(1).map(() => "DUP")]);
+    const unusedCharm = [...slots.keys()].find((k) => !copiesNeeded(k) && isCharmOrJewel(slots.get(k).code));
+    if (unusedCharm) assert.deepEqual(place([copy(unusedCharm, slots.get(unusedCharm).code), copy(unusedCharm, slots.get(unusedCharm).code)]), ["MUSEUM", "DUP"]);
     const gloves = (score) => copy("u:Magefist", "lgl", { eth: true, score });
     assert(copiesNeeded("u:Magefist") > 2);
     assert.deepEqual(place([gloves(80), gloves(70), gloves(60)]), ["MUSEUM", "DUP", "DUP"]);
     assert.equal(copiesNeeded("u:Bartuc's Cut-Throat"), 2); // a phoenix strike Assassin holds one in each hand
+  });
+
+  check("low-roll magic charms and jewels go to LOWCHARM / LOWJEWEL mules, never TRASH", () => {
+    // A real magic small charm and jewel, given one low fire resistance (5: below 8 and 20), put on a mule
+    const junkOf = (code) => {
+      const item = allItems.find((i) => i.quality === "Magic" && codeOfNumber(i.code) === code);
+      if (!item) return null;
+      const stat = { ...item.stats[0], id: 39, layer: 0, value: 5 };
+      return { ...structuredClone(item), stats: [stat], position: { ...item.position, mode: "Stored", body_location: "None", store_page: "Inventory", inv_x: 0, inv_y: 0 } };
+    };
+    const added = ["cm1", "jew"].map(junkOf).filter(Boolean);
+    assert(added.length, "a magic small charm or jewel in these saves");
+    added.forEach((i) => assert(isJunk(i, codeOfNumber(i.code))));
+    const r = run(edit(base, a, (j) => j.items.push(...added.map((i, n) => ({ ...i, position: { ...i.position, inv_x: n } })))));
+    const junk = r.report.moves.filter((m) => isJunk(m.item, codeOfNumber(m.item.code)));
+    for (const m of junk) {
+      const group = codeOfNumber(m.item.code) === "jew" ? "LOWJEWEL" : "LOWCHARM";
+      assert(m.group === group && m.to.startsWith(`${group}-`), `${m.key} went to ${m.to}`);
+    }
+    for (const code of added.map((i) => codeOfNumber(i.code))) {
+      const group = code === "jew" ? "LOWJEWEL" : "LOWCHARM";
+      assert(r.report.newMules.some((n) => n.name === `${group}-A`) && junk.some((m) => m.to === `${group}-A`), `${group}-A`);
+    }
+    assert(!r.report.moves.some((m) => m.group === "TRASH" && isCharmOrJewel(codeOfNumber(m.item.code))), "a charm or jewel in TRASH");
+    // Layout names in every mode, the longest (hardcore legacy, 27+ mules) within D2R's 15 characters
+    assert(["", "H", "L", "HL", "HC"].flatMap((p) => [`${p}LOWCHARM-ZZ`, `${p}LOWJEWEL-ZZ`]).every((n) => n.length <= 15 && isLayoutName(n)));
+  });
+
+  check("for these saves: what leaves TRASH under the charm and jewel rule", () => {
+    // The old rule, played again on this run's copies: a code with no charm or jewel type (an amulet, same table)
+    const slots = museumLayout().slots;
+    const copies = first.report.moves
+      .filter((m) => /^[us]:/.test(m.key) && ["MUSEUM", "DUP", "TRASH"].includes(m.group))
+      .map((m) => ({
+        key: m.key,
+        code: codeOfNumber(m.item.code),
+        eth: m.item.flags.includes("ETHEREAL"),
+        score: scoreOfItem(m.item) ?? -1,
+        home: m.from.split(" ")[0].toLowerCase() === slots.get(m.key)?.mule.toLowerCase(),
+        fixed: m.item.sockets.some(Boolean) || Boolean(m.item.personalized_name),
+        version: versionOf(m.item),
+      }));
+    const now = placeCopies(copies, slots);
+    assert.equal([...now.values()].filter((g) => g === "TRASH").length, first.report.moves.filter((m) => m.group === "TRASH").length);
+    const old = placeCopies(copies.map((c) => (isCharmOrJewel(c.code) ? { ...c, code: "amu", charm: true } : c)), slots);
+    const toDup = [...old].filter(([c, g]) => g === "TRASH" && c.charm).length;
+    const count = (g) => first.report.moves.filter((m) => m.group === g).length;
+    const mules = (g) => first.report.newMules.filter((m) => m.name.startsWith(`${g}-`)).length;
+    const left = count("LOWCHARM") + count("LOWJEWEL") + toDup;
+    console.log(`--  TRASH before ${count("TRASH") + left}, now ${count("TRASH")}: ${count("LOWCHARM")} to LOWCHARM (${mules("LOWCHARM")} mules), ${count("LOWJEWEL")} to LOWJEWEL (${mules("LOWJEWEL")} mules), ${toDup} unique/set charms and jewels to DUP`);
   });
 
   check("mules keep their order past 26 in a group, and another mode's mules aren't main characters", () => {
@@ -197,6 +253,9 @@ try {
     assert.deepEqual(trashMules(saves(organized), "HardCore:Modern"), []);
     const rich = trashMules(saves(edit(organized, `${trash[0].name}.d2s`, (j) => j.stats.push({ id: 14, layer: 0, value: 1 }))), "SoftCore:Modern");
     assert.equal(rich[0].refused, "gold");
+    // A TRASH mule an older run filled with charms or jewels is not deleted: organizing again moves them out
+    const charm = allItems.find((i) => isCharmOrJewel(codeOfNumber(i.code)));
+    assert.equal(trashMules(saves(edit(organized, `${trash[0].name}.d2s`, (j) => j.items.push(structuredClone(charm)))), "SoftCore:Modern")[0].refused, "charm");
     // A hardcore TRASH-named hero: listed while alive, never once dead
     const hardcore = (dead) => (j) => (j.character.flags = dead ? "HARDCORE | DEAD" : "HARDCORE");
     const htrash = (dead) => trashMules(saves(edit(organized, `${trash[0].name}.d2s`, hardcore(dead), `H${trash[0].name}.d2s`)), "HardCore:Modern");

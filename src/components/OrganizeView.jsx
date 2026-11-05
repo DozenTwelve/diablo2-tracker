@@ -118,7 +118,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
             <span className="gothic-text-gold">UW UA UJ SET</span> {t("muleMuseum", lang)}
           </li>
           <li>
-            <span className="gothic-text-gold">DUP RW CHARM JEWEL RING MAG BASE MISC</span> {t("muleOther", lang)}
+            <span className="gothic-text-gold">DUP RW CHARM LOWCHARM JEWEL LOWJEWEL RING MAG BASE MISC</span> {t("muleOther", lang)}
           </li>
           <li>
             <span className="gothic-text-gold">TRASH</span> {t("muleTrash", lang)}

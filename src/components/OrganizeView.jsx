@@ -9,7 +9,7 @@ import { modeLabel, modeOfCharacter, modeOfStash } from "../lib/modes";
 import { loadParser, recordOf, saveFolder, statsOf } from "../lib/parseSaves";
 import { describeStats } from "../lib/stats";
 import { Link } from "../lib/router";
-import { useLoadoutIds } from "../lib/useLoadoutIds";
+import { loadoutsKnown, useLoadoutIds } from "../lib/useLoadoutIds";
 import { useStoredState } from "../lib/useStoredState";
 import { zip } from "../lib/zip";
 import OrganizeDemo from "./OrganizeDemo";
@@ -404,9 +404,11 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
             <p className="mt-1 break-words gothic-text-muted">{mules.toSorted((a, b) => a.localeCompare(b)).join(t("listSeparator", lang))}</p>
           </details>
         </section>
-        <button className="gothic-btn" disabled={!inbox.length || !mules.length || (!loadouts.ids && !loadouts.failed)} onClick={preview}>
+        {/* Without the loadouts their pieces could go to TRASH as if none were kept: as cleaning, it waits */}
+        <button className="gothic-btn" disabled={!inbox.length || !mules.length || !loadoutsKnown(loadouts)} onClick={preview}>
           {t("preview", lang)}
         </button>
+        {loadouts.failed && <p className="text-sm text-red-400">{t("organizeLoadoutsUnknown", lang, loadouts.failed)}</p>}
         {!inbox.length && <p className="text-sm gothic-text-muted">{t("pickInbox", lang)}</p>}
         {state.error && <p className="text-red-400">{state.error}</p>}
         {state.backup && <p className="gothic-text-gold break-all">{t("written", lang, state.backup)}</p>}
@@ -471,7 +473,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
             {onDeck ? (
               <>
                 <p className="text-sm gothic-text-muted pt-2">{t("writeWarning", lang)}</p>
-                <button className="gothic-btn" disabled={state.busy} onClick={write}>
+                <button className="gothic-btn" disabled={state.busy || !loadoutsKnown(loadouts)} onClick={write}>
                   {t(state.busy ? "writing" : "confirmWrite", lang)}
                 </button>
               </>

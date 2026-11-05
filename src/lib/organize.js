@@ -285,7 +285,8 @@ export function isJunk(item, code) {
   return v.size > 0 && [...v].every(([id, value]) => KEEP_AT[id] && value < KEEP_AT[id][base]);
 }
 
-function groupOf(key, item, code) {
+export function groupOf(key, item, code) {
+  if (!items[code]) return "MISC"; // not in the game's tables as read (src/data/items.json)
   if (key.startsWith("u:") || key.startsWith("s:")) return "DUP"; // extra copies and legacy uniques
   if (key.startsWith("w:")) return "RW";
   if (isJunk(item, code)) return `LOW${MAGIC_GROUPS[items[code].type]}`;

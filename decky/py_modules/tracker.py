@@ -219,6 +219,8 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, re
         # the page's order (organizeFiles: those holding items before those only emptied; applyLoadoutFiles: the mules
         # receiving what comes off, the character, then those giving it pieces), the shared stash (only ever emptied)
         # last. Sorted here too, so a page sending another order can't undo it.
+        # A name may come twice (applyLoadoutFiles writes a mule twice): the sort is stable, so its versions stay in
+        # the page's order and the last one is what the folder ends up with.
         # ponytail: layout mules trading items with each other can still lose one when cut between them; the
         # backup (PENDING) is the way back then
         files = sorted(files, key=lambda f: (os.path.exists(os.path.join(folder, f["name"])), f["name"].lower().endswith(".d2i")))
@@ -541,8 +543,9 @@ def _write(folder, files):
         os.replace(target + ".tmp", target)
         if when is not None:
             os.utime(target, (when, when))
-    for f in files:
-        with open(os.path.join(folder, f["name"]), "rb") as written:
+        # Read back now: a save may come twice (applyLoadoutFiles: a mule first holding both what it gives and what it
+        # receives, then as it ends up), each write checked against its own bytes
+        with open(target, "rb") as written:
             if written.read() != f["bytes"]:
                 raise IOError(f"{f['name']} did not read back the same")
 

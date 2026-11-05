@@ -371,11 +371,12 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
         )}
         <section>
           <div className="section-head">
-            <h2>{t("inboxPages", lang)}</h2>
+            <h2>{t("inboxPagesShort", lang)}</h2>
             <button className="text-sm gothic-text-muted" onClick={() => setInbox(pages.map((p) => p.page))}>
               {t("selectAll", lang)}
             </button>
           </div>
+          <p className="text-sm gothic-text-muted mb-3">{t("inboxPagesAbout", lang)}</p>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             {pages.map(({ page, items }) => (
               <label key={page} className="gothic-checkbox">
@@ -398,7 +399,10 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
               {t("changeMules", lang)}
             </Link>
           </div>
-          <p className="text-sm break-words">{t("mulesToSort", lang, mules.length, mules.toSorted((a, b) => a.localeCompare(b)).join(t("listSeparator", lang)))}</p>
+          <details className="text-sm">
+            <summary className="cursor-pointer">{t("mulesToSort", lang, mules.length)}</summary>
+            <p className="mt-1 break-words gothic-text-muted">{mules.toSorted((a, b) => a.localeCompare(b)).join(t("listSeparator", lang))}</p>
+          </details>
         </section>
         <button className="gothic-btn" disabled={!inbox.length || !mules.length || (!loadouts.ids && !loadouts.failed)} onClick={preview}>
           {t("preview", lang)}
@@ -498,32 +502,42 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
               <span className="gothic-text-muted">{t("trashCount", lang, trashItems.length, trash.length)}</span>
             </div>
             <p className="text-sm">{t("trashCleanAbout", lang)}</p>
-            <ul className="text-sm pl-4 space-y-1">
-              {trashItems.map(({ item, mule, code, id }, i) => {
-                const key = keyOf(item, code);
-                const why = isJunk(item, code) ? stats(item, code) : /^[us]:/.test(key) ? t("trashExtraCopy", lang) : "";
-                const inLoadout = loadouts.ids?.includes(id); // kept while a loadout holds it, not the player's tick
-                return (
-                  <li key={i}>
-                    {/* Ticked: junk. Unticked: this copy is not junk, kept by its id */}
-                    <label className="gothic-checkbox" {...tipOf(item, mule)}>
-                      <input
-                        type="checkbox"
-                        checked={!keepAll.includes(id)}
-                        disabled={inLoadout}
-                        // The preview was organized with the old keep list: shown again only once previewed again
-                        onChange={(e) => (setKeep(e.target.checked ? keep.filter((k) => k !== id) : [...keep, id]), setState({ ...state, confirm: null, plan: undefined, remove: undefined }))}
-                      />
-                      <span>
-                        {labelOf(key, lang)} <span className="gothic-text-muted">{mule}</span>
-                        {why && <span style={{ color: "var(--color-accent-blue)" }}>{t("colon", lang) + why}</span>}
-                        {inLoadout && <span className="gothic-text-gold">{t("colon", lang) + t("inLoadout", lang)}</span>}
-                      </span>
-                    </label>
-                  </li>
-                );
-              })}
-            </ul>
+            <details className="text-sm gothic-text-muted">
+              <summary className="cursor-pointer">{t("trashCleanHow", lang)}</summary>
+              <p className="mt-1 max-w-prose">{t("trashCleanSteps", lang)}</p>
+            </details>
+            {trash.map((m) => (
+              <div key={m.name}>
+                <h3 className="text-sm gothic-text-muted">{m.name}</h3>
+                <ul className="text-sm pl-4 space-y-1">
+                  {trashItems
+                    .filter((i) => i.mule === m.name)
+                    .map(({ item, mule, code, id }, i) => {
+                      const why = isJunk(item, code) && stats(item, code);
+                      const inLoadout = loadouts.ids?.includes(id); // kept while a loadout holds it, not the player's tick
+                      return (
+                        <li key={i}>
+                          {/* Ticked: junk. Unticked: this copy is not junk, kept by its id */}
+                          <label className="gothic-checkbox" {...tipOf(item, mule)}>
+                            <input
+                              type="checkbox"
+                              checked={!keepAll.includes(id)}
+                              disabled={inLoadout}
+                              // The preview was organized with the old keep list: shown again only once previewed again
+                              onChange={(e) => (setKeep(e.target.checked ? keep.filter((k) => k !== id) : [...keep, id]), setState({ ...state, confirm: null, plan: undefined, remove: undefined }))}
+                            />
+                            <span>
+                              {labelOf(keyOf(item, code), lang)}
+                              {why && <span style={{ color: "var(--color-accent-blue)" }}>{t("colon", lang) + why}</span>}
+                              {inLoadout && <span className="gothic-text-gold">{t("colon", lang) + t("inLoadout", lang)}</span>}
+                            </span>
+                          </label>
+                        </li>
+                      );
+                    })}
+                </ul>
+              </div>
+            ))}
             {kept > 0 && <p className="text-sm text-red-400">{t("trashKept", lang, kept)}</p>}
             {trash
               .filter((m) => m.refused && m.refused !== "kept")

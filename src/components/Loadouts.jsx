@@ -13,6 +13,7 @@ import { ConfirmButton } from "./OrganizeView";
 import { colorOf } from "./StashGrid";
 
 const PLACES = ["equipped", "merc", "inventory"];
+const STATUS_TEXT = { missing: "applyMissing", noMerc: "applyNoMerc", otherMerc: "applyOtherMerc", hand: "applyHand", quest: "applyQuest" };
 
 // A piece's spot in its loadout: "Helm", "Mercenary Helm", "Charms"
 const spotOf = (p, lang) =>
@@ -24,25 +25,60 @@ function whereText(w, lang) {
   return w.kind === "self" ? t("where_self", lang, placeLabel(w.place, lang)) : t(`where_${w.kind}`, lang, ownerLabel(w.owner, lang), placeLabel(w.place, lang));
 }
 
-// A loadout's pieces, equipment first, each with where it is now
-function Pieces({ loadout, saveData, roles, lang }) {
-  const pieces = loadout.pieces.toSorted((a, b) => PLACES.indexOf(a.place) - PLACES.indexOf(b.place));
+// Rows grouped by what they share, the shared part said once as a small heading: [{ key, head, className, open, rows }]
+function groupsOf(rows, keyOf) {
+  const groups = new Map();
+  for (const row of rows) {
+    const g = keyOf(row);
+    if (!groups.has(g.key)) groups.set(g.key, { ...g, rows: [] });
+    groups.get(g.key).rows.push(row);
+  }
+  return [...groups.values()];
+}
+
+// One piece: icon, name and its spot
+const PieceRow = ({ piece, lang, children }) => (
+  <li className="flex items-center gap-2">
+    {children}
+    <Icon piece={piece} />
+    <span className="min-w-0">
+      <Name piece={piece} lang={lang} />
+      <span className="gothic-text-muted"> · {spotOf(piece, lang)}</span>
+    </span>
+  </li>
+);
+
+// A group: its heading (with the count) once, then its rows; folded when nothing needs doing about them
+function Group({ head, className, open, count, children }) {
   return (
-    <ul className="grid md:grid-cols-2 gap-x-8 gap-y-1 text-sm">
-      {pieces.map((p) => {
-        const w = whereIs(p, loadout.character, saveData, roles);
-        return (
-          <li key={p.id} className="flex items-center gap-2">
-            <Icon piece={p} />
-            <span className="min-w-0">
-              <Name piece={p} lang={lang} />
-              <span className="gothic-text-muted"> · {spotOf(p, lang)} · </span>
-              <span className={w.kind === "on" ? "gothic-text-gold" : w.kind === "missing" || w.kind === "corpse" ? "text-red-400" : ""}>{whereText(w, lang)}</span>
-            </span>
-          </li>
-        );
-      })}
-    </ul>
+    <details open={open} className="text-sm">
+      <summary className="cursor-pointer">
+        <span className={className}>{head}</span> <span className="gothic-text-muted">({count})</span>
+      </summary>
+      <ul className="grid md:grid-cols-2 gap-x-8 gap-y-1 pl-4 pt-1">{children}</ul>
+    </details>
+  );
+}
+
+// A loadout's pieces, equipment first, grouped by where they are now: the ones missing or on a corpse first,
+// the ones already on (folded) last
+function Pieces({ loadout, saveData, roles, lang }) {
+  const pieces = loadout.pieces.toSorted((a, b) => PLACES.indexOf(a.place) - PLACES.indexOf(b.place)).map((p) => ({ p, w: whereIs(p, loadout.character, saveData, roles) }));
+  const rank = (w) => (w.kind === "missing" || w.kind === "corpse" ? 0 : w.kind === "on" ? 2 : 1);
+  const groups = groupsOf(
+    pieces.toSorted((a, b) => rank(a.w) - rank(b.w)),
+    ({ w }) => ({ key: whereText(w, lang), open: w.kind !== "on", className: w.kind === "on" ? "gothic-text-gold" : rank(w) === 0 ? "text-red-400" : "" }),
+  );
+  return (
+    <div className="space-y-1">
+      {groups.map((g) => (
+        <Group key={g.key} head={g.key} className={g.className} open={g.open} count={g.rows.length}>
+          {g.rows.map(({ p }) => (
+            <PieceRow key={p.id} piece={p} lang={lang} />
+          ))}
+        </Group>
+      ))}
+    </div>
   );
 }
 
@@ -58,7 +94,8 @@ const readFiles = async () => {
 // piece to leave it where it is, then a confirmed write through the plugin, as organizing writes (backed up first,
 // only if the saves are still the ones previewed, never while D2R runs). keep: the player's keep list and every saved
 // loadout's pieces: organizing the mules again never puts one in TRASH.
-function Apply({ loadout, saveData, roles, keep, onWritten, lang }) {
+// children: the pieces list, hidden while the preview shows them instead
+function Apply({ loadout, saveData, roles, keep, onWritten, lang, children }) {
   const [state, setState] = useState(null); // { files, wasm, leave, plan?, error?, message?, confirm?, busy?, interrupted?, backup? }
   const owner = saveData.owners.find((o) => o.name === loadout.character);
   const mules = saveData.owners.filter((o) => o.cls && o.mode === owner.mode && roleOf(o, roles) === "mule").map((o) => o.name);
@@ -125,10 +162,12 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang }) {
   const muleFiles = state?.plan?.files.filter((f) => muleNames.has(f.name.slice(0, -4).toLowerCase())).map((f) => f.name.slice(0, -4)) ?? [];
   const tick = (id, ticked) => setState(plan({ ...state, confirm: null, message: undefined, leave: ticked ? state.leave.filter((x) => x !== id) : [...state.leave, id] }));
   const error = state?.error;
+  const sep = t("listSeparator", lang);
   return (
     <div className="space-y-2">
       {!state?.files ? (
         <>
+          {children}
           <button className="gothic-btn gothic-btn-small" disabled={state?.busy} onClick={preview}>
             {t("applyLoadout", lang)}
           </button>
@@ -144,53 +183,55 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang }) {
           )}
           {report && (
             <>
-              <ul className="text-sm space-y-1">
-                {lines.map(({ piece, status, from: f }) => (
-                  <li key={piece.id} className="flex items-center gap-2">
-                    {/* Ticked: taken. Unticked: left where it is; only from somewhere else than this character */}
-                    {(status === "take" || status === "left") && f.owner !== loadout.character ? (
-                      <input type="checkbox" checked={status === "take"} disabled={state.busy} onChange={(e) => tick(piece.id, e.target.checked)} aria-label={labelOf(piece.key, lang)} />
-                    ) : (
-                      <span className="w-[13px] shrink-0" />
-                    )}
-                    <Icon piece={piece} />
-                    <span className="min-w-0">
-                      <Name piece={piece} lang={lang} />
-                      <span className="gothic-text-muted"> · {spotOf(piece, lang)} · </span>
-                      <span className={status === "take" ? "" : "gothic-text-muted"}>
-                        {status === "take"
-                          ? t("applyFrom", lang, from(f))
-                          : status === "left"
-                            ? t("applyLeft", lang, from(f))
-                            : status === "corpse"
-                              ? t("applyCorpse", lang, ownerLabel(f.owner, lang))
-                              : t({ missing: "applyMissing", noMerc: "applyNoMerc", otherMerc: "applyOtherMerc", hand: "applyHand", quest: "applyQuest" }[status], lang)}
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              {groupsOf(lines, ({ status, from: f }) => {
+                const key = status === "take" || status === "left" ? from(f) : status === "corpse" ? t("applyCorpse", lang, ownerLabel(f.owner, lang)) : t(STATUS_TEXT[status], lang);
+                return { key, className: status === "take" || status === "left" ? "" : "gothic-text-muted" };
+              }).map((g) => (
+                <Group key={g.key} head={g.key} className={g.className} open count={g.rows.length}>
+                  {g.rows.map(({ piece, status, from: f }) => (
+                    <PieceRow key={piece.id} piece={piece} lang={lang}>
+                      {/* Ticked: taken. Unticked: left where it is; only from somewhere else than this character */}
+                      {(status === "take" || status === "left") && f.owner !== loadout.character ? (
+                        <input type="checkbox" checked={status === "take"} disabled={state.busy} onChange={(e) => tick(piece.id, e.target.checked)} aria-label={labelOf(piece.key, lang)} />
+                      ) : (
+                        <span className="w-[13px] shrink-0" />
+                      )}
+                    </PieceRow>
+                  ))}
+                </Group>
+              ))}
+              {lines.some((l) => l.status === "take" || l.status === "left") && <p className="text-sm gothic-text-muted">{t("applyTickAbout", lang)}</p>}
               {on > 0 && <p className="text-sm gothic-text-muted">{t("applyOnCount", lang, on)}</p>}
               {twins.length > 0 && (
-                <p className="text-sm gothic-text-muted">{t("applyTwins", lang, twins.map((p) => labelOf(p.piece.key, lang)).join(t("listSeparator", lang)))}</p>
+                <details className="text-sm gothic-text-muted">
+                  <summary className="cursor-pointer">
+                    <span className="text-xs px-1 rounded-sm border border-gray-600">{t("applyTwinsTag", lang)}</span> {twins.map((p) => labelOf(p.piece.key, lang)).join(sep)}
+                  </summary>
+                  <p className="mt-1 max-w-prose">{t("applyTwinsAbout", lang)}</p>
+                </details>
               )}
               {report.off.length > 0 && (
                 <>
                   <p className="text-sm">{t("applyOff", lang)}</p>
                   <ul className="text-sm space-y-1 pl-4">
-                    {report.off.map(({ key, to }, i) => (
-                      <li key={i}>
-                        {labelOf(key, lang)} <span className="gothic-text-muted">→ {to?.mule}</span>
+                    {groupsOf(report.off, ({ to }) => ({ key: to?.mule ?? "?" })).map((g) => (
+                      <li key={g.key}>
+                        <span className="gothic-text-gold">{g.key}</span>
+                        {t("colon", lang)}
+                        {groupsOf(g.rows, ({ key }) => ({ key }))
+                          .map((k) => `${labelOf(k.key, lang)}${k.rows.length > 1 ? ` ×${k.rows.length}` : ""}`)
+                          .join(sep)}
                       </li>
                     ))}
                   </ul>
                 </>
               )}
-              {muleFiles.length > 0 && <p className="text-sm break-words">{t("applyReorganizes", lang, muleFiles.length, muleFiles.join(t("listSeparator", lang)))}</p>}
+              {muleFiles.length > 0 && <p className="text-sm">{t("applyReorganizes", lang, muleFiles.length)}</p>}
               {state.plan.files.length > 0 ? (
-                <p className="text-sm gothic-text-muted break-words">
-                  {t("applyFiles", lang, state.plan.files.map((f) => f.name.slice(0, -4)).join(t("listSeparator", lang)))}
-                </p>
+                <details className="text-sm gothic-text-muted">
+                  <summary className="cursor-pointer">{t("applyFiles", lang, state.plan.files.length)}</summary>
+                  <p className="mt-1 break-words">{state.plan.files.map((f) => f.name.slice(0, -4)).join(sep)}</p>
+                </details>
               ) : (
                 <p className="text-sm gothic-text-gold">{t("applyNothing", lang)}</p>
               )}
@@ -352,8 +393,9 @@ export default function Loadouts({ owner, saveData, keep, onWritten, lang }) {
               </>
             )}
           </div>
-          <Pieces loadout={l} saveData={saveData} roles={roles} lang={lang} />
-          <Apply loadout={l} saveData={saveData} roles={roles} keep={[...keep, ...loadoutIds(doc)]} onWritten={onWritten} lang={lang} />
+          <Apply loadout={l} saveData={saveData} roles={roles} keep={[...keep, ...loadoutIds(doc)]} onWritten={onWritten} lang={lang}>
+            <Pieces loadout={l} saveData={saveData} roles={roles} lang={lang} />
+          </Apply>
         </div>
       ))}
     </section>

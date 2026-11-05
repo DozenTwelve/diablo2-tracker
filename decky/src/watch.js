@@ -11,10 +11,11 @@ import init from "../../wasm/pkg/d2_parser.js";
 import wasmBase64 from "../../wasm/pkg/d2_parser_bg.wasm";
 
 const saveChanges = callable("save_changes");
-const lang = /^zh-(cn|sg|hans)/i.test(navigator.language) ? "zh" : navigator.language.startsWith("zh") ? "zh_tw" : navigator.language.startsWith("ko") ? "ko" : "en";
+export const lang = /^zh-(cn|sg|hans)/i.test(navigator.language) ? "zh" : navigator.language.startsWith("zh") ? "zh_tw" : navigator.language.startsWith("ko") ? "ko" : "en";
 const MANY = 5; // more pickups than this in one change: one toast that says how many
 
 let timer = null;
+let gen = 0; // bumped by start and stop: a look still in flight from before drops what it found
 let files = null; // name -> { mtime, data?: base64 not parsed yet, parsed?: saveData of that file }; null before the first look
 let pending = null; // a change seen but maybe not finished: { changed: Map(name -> { mtime, data }), gone: Set }
 let wasmReady = null;
@@ -27,6 +28,7 @@ export const onCheck = (fn) => (listeners.add(fn), () => listeners.delete(fn));
 
 export function startWatching() {
   if (timer) return;
+  gen++;
   files = null; // a fresh, silent first look: what changed while not watching is not a pickup
   pending = null;
   tries.clear();
@@ -37,6 +39,7 @@ export function startWatching() {
 export function stopWatching() {
   clearInterval(timer);
   timer = null;
+  gen++;
 }
 
 function bytesOf(b64) {
@@ -47,7 +50,10 @@ function bytesOf(b64) {
 }
 
 function loadWasm() {
-  wasmReady ??= init({ module_or_path: bytesOf(wasmBase64) });
+  wasmReady ??= init({ module_or_path: bytesOf(wasmBase64) }).catch((e) => {
+    wasmReady = null; // tried again next time
+    throw e;
+  });
   return wasmReady;
 }
 
@@ -66,40 +72,47 @@ async function parsedOf(name, file) {
 }
 
 let running = false;
+let lastError = null; // logged once, not every 2 s
 async function tick() {
   if (running) return; // a slow parse: skip a tick rather than overlap
   running = true;
   try {
-    const known = Object.fromEntries([...(files ?? [])].map(([name, f]) => [name, f.mtime]));
-    for (const [name, f] of pending?.changed ?? []) known[name] = f.mtime;
-    for (const name of pending?.gone ?? []) delete known[name];
-    const { changed, gone, busy } = await saveChanges(known);
-    if (!timer) return;
-    if (!files || busy) {
-      // The first look, or the collection page is open (organizing or restoring there): take the saves as they are
-      files ??= new Map();
-      for (const name of [...(pending?.gone ?? []), ...gone]) files.delete(name);
-      for (const [name, f] of pending?.changed ?? []) files.set(name, { mtime: f.mtime, data: f.data });
-      for (const f of changed) files.set(f.name, { mtime: f.mtime, data: f.data });
-      pending = null;
-      return;
-    }
-    if (changed.length || gone.length) {
-      // The game may write the character and then the stash: wait for a look that finds nothing new
-      pending ??= { changed: new Map(), gone: new Set() };
-      for (const f of changed) pending.changed.set(f.name, f), pending.gone.delete(f.name);
-      for (const name of gone) pending.gone.add(name), pending.changed.delete(name);
-      return;
-    }
-    if (pending) await settle();
+    await look(gen);
+    lastError = null;
   } catch (e) {
-    console.error("D2R pickup alerts", e);
+    if (String(e) !== lastError) console.error("D2R pickup alerts", e);
+    lastError = String(e);
   } finally {
     running = false;
   }
 }
 
-async function settle() {
+async function look(g) {
+  const known = Object.fromEntries([...(files ?? [])].map(([name, f]) => [name, f.mtime]));
+  for (const [name, f] of pending?.changed ?? []) known[name] = f.mtime;
+  for (const name of pending?.gone ?? []) delete known[name];
+  const { changed, gone, busy } = await saveChanges(known);
+  if (g !== gen) return;
+  if (!files || busy) {
+    // The first look, or the collection page is open (organizing or restoring there): take the saves as they are
+    files ??= new Map();
+    for (const name of [...(pending?.gone ?? []), ...gone]) files.delete(name);
+    for (const [name, f] of pending?.changed ?? []) files.set(name, { mtime: f.mtime, data: f.data });
+    for (const f of changed) files.set(f.name, { mtime: f.mtime, data: f.data });
+    pending = null;
+    return;
+  }
+  if (changed.length || gone.length) {
+    // The game may write the character and then the stash: wait for a look that finds nothing new
+    pending ??= { changed: new Map(), gone: new Set() };
+    for (const f of changed) pending.changed.set(f.name, f), pending.gone.delete(f.name);
+    for (const name of gone) pending.gone.add(name), pending.changed.delete(name);
+    return;
+  }
+  if (pending) await settle(g);
+}
+
+async function settle(g) {
   const change = pending;
   pending = null;
   const start = performance.now();
@@ -107,10 +120,12 @@ async function settle() {
   let wasmMs;
   if (!wasmReady) {
     await loadWasm();
+    if (g !== gen) return;
     wasmMs = Math.round(performance.now() - start);
   }
   const before = new Map(await Promise.all([...files].map(async ([name, f]) => [name, await parsedOf(name, f)])));
   const changed = new Map(await Promise.all([...change.changed].map(async ([name, f]) => [name, { mtime: f.mtime, data: await parse(name, f.data) }])));
+  if (g !== gen) return;
   const { taken, wait, picks, saves } = takeChange(before, changed, change.gone, tries);
   // waiting: files stays as it was, so the next look reports the whole change again
   if (!wait) for (const name of change.gone) files.delete(name);

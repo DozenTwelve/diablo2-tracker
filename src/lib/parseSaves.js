@@ -84,6 +84,13 @@ function collect(item, owner, place, out) {
   if (item.runeword_id == null) item.sockets.forEach((s) => s && collect(s, owner, "socketed", out));
 }
 
+// One raw save item's record, as parseSaveFiles lists it (sockets left out), for a tooltip
+export function recordOf(item, owner, place) {
+  const out = [];
+  collect(item, owner, place, out);
+  return out[0];
+}
+
 // Once-per-difficulty rewards, [normal, nightmare, hell]: "available", "used" or null (not unlocked yet).
 // Akara's skill/stat reset and Larzuk's socket (Siege on Harrogath)
 const rewardOf = (flags = "") => (flags.includes("REWARD_PENDING") ? "available" : flags.includes("REWARD_GRANTED") ? "used" : null);

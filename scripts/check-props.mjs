@@ -4,16 +4,15 @@
 // Also: per-level values show (not "+0/Lv"), and a stat summing to 0 from two sources shows nothing.
 // Usage: node scripts/check-props.mjs   (exit code 1 when some property shows nothing)
 import assert from "node:assert/strict";
-import { createServer } from "vite";
+import { withApp } from "./load.mjs";
 
 // Not shown in game, commented out in the tables (*), or one item's special random/affix property
 const NOT_SHOWN = new Set(["dur", "state", "bloody", "fade", "pois-len", "cold-len", "*hp", "*enr", "*charged", "roguesbow-affix1", "magdam-rand", "skilltab-war"]);
 
-const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
-try {
-  const { uniques, sets, runewords } = await vite.ssrLoadModule("/src/lib/gameData.js");
-  const { propLines, propStats, rollScore } = await vite.ssrLoadModule("/src/lib/props.js");
-  const { describeStats } = await vite.ssrLoadModule("/src/lib/stats.js");
+await withApp(async ({ load }) => {
+  const { uniques, sets, runewords } = await load("/src/lib/gameData.js");
+  const { propLines, propStats, rollScore } = await load("/src/lib/props.js");
+  const { describeStats } = await load("/src/lib/stats.js");
 
   const all = [
     ...uniques.filter((u) => !u.legacy).map((u) => [u.en, u.props, u.lvl]),
@@ -49,6 +48,4 @@ try {
     console.log(`${code}: ${names.length} (${names.slice(0, 4).join(", ")})`);
   }
   process.exitCode = silent.size ? 1 : 0;
-} finally {
-  await vite.close();
-}
+});

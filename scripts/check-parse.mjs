@@ -4,19 +4,17 @@
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { createServer } from "vite";
+import { withApp } from "./load.mjs";
 
 const dir = process.argv[2];
 if (!dir) throw new Error("usage: node scripts/check-parse.mjs <save dir>");
 
-const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
-try {
-  const wasm = await vite.ssrLoadModule("/wasm/pkg/d2_parser.js");
-  wasm.initSync({ module: readFileSync(new URL("../wasm/pkg/d2_parser_bg.wasm", import.meta.url)) });
-  const { parseSaveFiles } = await vite.ssrLoadModule("/src/lib/parseSaves.js");
-  const { catalog } = await vite.ssrLoadModule("/src/lib/gameData.js");
-  const { findsOf, inboxItems } = await vite.ssrLoadModule("/src/lib/newItems.js");
-  const { rollScore } = await vite.ssrLoadModule("/src/lib/props.js");
+await withApp(async ({ load, parser }) => {
+  const wasm = await parser();
+  const { parseSaveFiles } = await load("/src/lib/parseSaves.js");
+  const { catalog } = await load("/src/lib/gameData.js");
+  const { findsOf, inboxItems } = await load("/src/lib/newItems.js");
+  const { rollScore } = await load("/src/lib/props.js");
 
   const base = readdirSync(dir).filter((f) => /\.d2[si]$/.test(f)).map((name) => ({ name, bytes: new Uint8Array(readFileSync(join(dir, name))) }));
   const read = (files) => parseSaveFiles(files.map((f) => new File([f.bytes], f.name)));
@@ -120,6 +118,4 @@ try {
     assert(data.owners.find((o) => o.name === holder.name).dead);
     assert(held(first) > 0);
   });
-} finally {
-  await vite.close();
-}
+});

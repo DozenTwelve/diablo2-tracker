@@ -4,18 +4,16 @@
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { createServer } from "vite";
+import { withApp } from "./load.mjs";
 
 const dir = process.argv[2];
 if (!dir) throw new Error("usage: node scripts/check-organize.mjs <save dir>");
 
-const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
-try {
-  const wasm = await vite.ssrLoadModule("/wasm/pkg/d2_parser.js");
-  wasm.initSync({ module: readFileSync(new URL("../wasm/pkg/d2_parser_bg.wasm", import.meta.url)) });
-  const { byMuleName, copiesNeeded, isCharmOrJewel, isJunk, isLayoutName, museumLayout, muleTimes, organizeFiles, placeCopies, trashMules } = await vite.ssrLoadModule("/src/lib/organize.js");
-  const { scoreOfItem, versionOf } = await vite.ssrLoadModule("/src/lib/parseSaves.js");
-  const { codeOfNumber } = await vite.ssrLoadModule("/src/lib/gameData.js");
+await withApp(async ({ load, parser }) => {
+  const wasm = await parser();
+  const { byMuleName, copiesNeeded, isCharmOrJewel, isJunk, isLayoutName, museumLayout, muleTimes, organizeFiles, placeCopies, trashMules } = await load("/src/lib/organize.js");
+  const { scoreOfItem, versionOf } = await load("/src/lib/parseSaves.js");
+  const { codeOfNumber } = await load("/src/lib/gameData.js");
 
   const parse = (name, bytes) => JSON.parse(name.endsWith(".d2s") ? wasm.parseD2s(bytes) : wasm.parseD2i(bytes));
   const write = (name, json) => (name.endsWith(".d2s") ? wasm.writeD2s : wasm.writeD2i)(JSON.stringify(json));
@@ -280,6 +278,4 @@ try {
     assert.throws(() => run(base, { mules: [first.report.mules[0], "NoSuchMule"] }), /NoSuchMule/);
     assert.throws(() => run(base, { inbox: [99] }), /no page 99/);
   });
-} finally {
-  await vite.close();
-}
+});

@@ -1,10 +1,9 @@
 // Check src/data/builds.json: every named item is in the catalog, every text has all languages.
 import assert from "node:assert/strict";
-import { createServer } from "vite";
+import { withApp } from "./load.mjs";
 
-const vite = await createServer({ server: { middlewareMode: true, hmr: false }, appType: "custom", logLevel: "error" });
-try {
-  const { builds, keysOfOption, SLOTS } = await vite.ssrLoadModule("/src/lib/builds.js");
+await withApp(async ({ load }) => {
+  const { builds, keysOfOption, SLOTS } = await load("/src/lib/builds.js");
   const CLASSES = ["Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin", "Warlock"];
   const LANGS = ["en", "zh", "zh_tw", "ko"];
   const texts = (o, where) => LANGS.forEach((l) => assert.ok(o?.[l], `${where}: no ${l}`));
@@ -28,6 +27,4 @@ try {
     }
   }
   console.log(`${builds.length} builds ok`);
-} finally {
-  await vite.close();
-}
+});

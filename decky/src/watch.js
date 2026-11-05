@@ -111,8 +111,9 @@ async function settle() {
   }
   const before = new Map(await Promise.all([...files].map(async ([name, f]) => [name, await parsedOf(name, f)])));
   const changed = new Map(await Promise.all([...change.changed].map(async ([name, f]) => [name, { mtime: f.mtime, data: await parse(name, f.data) }])));
-  const { taken, picks, saves } = takeChange(before, changed, change.gone, tries);
-  for (const name of change.gone) files.delete(name);
+  const { taken, wait, picks, saves } = takeChange(before, changed, change.gone, tries);
+  // waiting: files stays as it was, so the next look reports the whole change again
+  if (!wait) for (const name of change.gone) files.delete(name);
   for (const name of taken) files.set(name, { mtime: changed.get(name).mtime, parsed: changed.get(name).data });
   last = { files: parsedNow, ms: Math.round(performance.now() - start), wasm: wasmMs };
   listeners.forEach((fn) => fn(last));

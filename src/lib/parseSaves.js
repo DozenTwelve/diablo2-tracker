@@ -9,12 +9,15 @@ import { codeOfNumber, keyOf, variantOf } from "./gameData";
 import { modeOfCharacter, modeOfStash } from "./modes";
 import { copyScore, socketStats } from "./props";
 
+// The promise is kept, so a second caller waits for the same init; a failed one is tried again
 let parser;
-export async function loadParser() {
-  if (!parser) {
-    parser = await import("../../wasm/pkg/d2_parser.js");
-    await parser.default();
-  }
+export function loadParser() {
+  parser ??= import("../../wasm/pkg/d2_parser.js")
+    .then(async (module) => (await module.default(), module))
+    .catch((e) => {
+      parser = null;
+      throw e;
+    });
   return parser;
 }
 

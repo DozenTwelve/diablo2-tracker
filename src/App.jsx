@@ -8,6 +8,7 @@ import { parseSaveFiles } from "./lib/parseSaves";
 import SaveLoader from "./components/SaveLoader";
 import SearchView from "./components/SearchView";
 import CollectionView from "./components/CollectionView";
+import CharmsView from "./components/CharmsView";
 import RunewordMaker from "./components/RunewordMaker";
 import CharacterView from "./components/CharacterView";
 import OrganizeView from "./components/OrganizeView";
@@ -22,7 +23,7 @@ import { Link, usePath } from "./lib/router";
 
 const TABS = ["new", "search", "collection", "characters", "organize", "about"];
 // The collection's own pages, /collection/<page>; the old /uniques... paths still lead there
-const COLLECTION = ["uniques", "sets", "runewords", "runes"];
+const COLLECTION = ["uniques", "sets", "runewords", "runes", "charms"];
 
 // Collection tabs as groups of keys; uniques grouped by item category
 function collectionGroups(tab, lang) {
@@ -180,14 +181,18 @@ export default function App() {
                       className={`gothic-btn gothic-btn-small no-underline ${p === page ? "" : "gothic-btn-secondary"}`}
                       aria-current={p === page ? "page" : undefined}
                     >
-                      {t(p, lang)} {keys.filter((k) => owned.has(k)).length}/{keys.length}
+                      {t(p, lang)} {p !== "charms" && `${keys.filter((k) => owned.has(k)).length}/${keys.length}`}
                     </Link>
                   );
                 })}
               </nav>
-              <CollectionView key={page} label={t(page, lang)} groups={collectionGroups(page, lang)} owned={owned} keep={keep} setKeep={setKeep} lang={lang}>
-                {page === "runewords" && saveData && <RunewordMaker saveData={saveData} lang={lang} />}
-              </CollectionView>
+              {page === "charms" ? (
+                saveData ? <CharmsView saveData={saveData} lang={lang} /> : <SaveLoader saveData={saveData} onLoad={load} notStored={notStored} lang={lang} />
+              ) : (
+                <CollectionView key={page} label={t(page, lang)} groups={collectionGroups(page, lang)} owned={owned} keep={keep} setKeep={setKeep} lang={lang}>
+                  {page === "runewords" && saveData && <RunewordMaker saveData={saveData} lang={lang} />}
+                </CollectionView>
+              )}
             </>
           )}
         </ErrorBoundary>

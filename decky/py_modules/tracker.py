@@ -220,7 +220,7 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, re
         return backup
 
 
-LAYOUT_NAME = re.compile(r"H?[LC]?(UW|UA|UJ|SET|DUP|RW|CHARM|JEWEL|RING|MAG|BASE|MISC|TRASH)-[A-Z]+", re.I)
+LAYOUT_NAME = re.compile(r"H?[LC]?(UW|UA|UJ|SET|DUP|RW|CHARM|LOWCHARM|JEWEL|LOWJEWEL|RING|MAG|BASE|MISC|TRASH)-[A-Z]+", re.I)
 
 
 def _order(folder, mules):

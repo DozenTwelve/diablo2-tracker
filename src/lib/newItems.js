@@ -1,7 +1,7 @@
 // What each new find on the inbox pages of the shared stash is worth, before organizing. Unique and set items are
 // placed by organizing's own placeCopies over what organizing would take (the mode's mules and inbox pages), so the
 // verdict is what organizing will do; charms and jewels by isJunk.
-import { byMuleName, copiesNeeded, isJunk, modePrefix, museumLayout, placeCopies } from "./organize";
+import { byMuleName, copiesNeeded, isCharmOrJewel, isJunk, modePrefix, museumLayout, placeCopies } from "./organize";
 import { copyScore } from "./props";
 import { ownersOf, roleOf } from "./inventory";
 import items from "../data/items.json";
@@ -27,8 +27,9 @@ export function inboxItems(saveData, inboxes) {
 // Every find with its verdict: [{ r, verdict: { kind, ... } }], kind one of
 //   new: nothing like it anywhere; museum: owned elsewhere but organizing puts this one in its empty museum slot;
 //   upgrade: organizing swaps it into the museum { score, museum }; needed: a duplicate organizing keeps in DUP
-//   { have, need, merc }; extra: organizing puts it in TRASH { have, need, merc }; junk / keep: a magic charm or
-//   jewel that is likely junk / worth keeping; newRune: a rune type not owned yet; other: anything else.
+//   { have, need, merc, charm: a charm or jewel kept past need, as every copy is }; extra: organizing puts it in TRASH
+//   { have, need, merc }; junk / keep: a magic charm or jewel that is likely junk (to the LOWCHARM / LOWJEWEL mules) /
+//   worth keeping; newRune: a rune type not owned yet; other: anything else.
 // roles: the Characters page's main/mule choice (roleOf), as the Organize page passes it.
 export const findsOf = (saveData, inboxes, roles = {}) => verdictsOf(saveData, inboxItems(saveData, inboxes), roles);
 
@@ -69,7 +70,10 @@ export function verdictsOf(saveData, finds, roles = {}) {
       else if (group === "MUSEUM") {
         const now = copies.find((o) => o.key === r.key && o.home);
         verdict = !elsewhere ? { kind: "new" } : now ? { kind: "upgrade", score: c.score, museum: now.score } : { kind: "museum" };
-      } else verdict = { kind: group === "DUP" ? "needed" : "extra", have: kept(r.key, r), need, merc: r.ethereal };
+      } else {
+        const have = kept(r.key, r);
+        verdict = { kind: group === "DUP" ? "needed" : "extra", have, need, merc: r.ethereal, charm: isCharmOrJewel(r.code) && have >= need };
+      }
       verdicts.set(r, verdict);
     }
   }

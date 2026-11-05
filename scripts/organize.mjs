@@ -61,13 +61,13 @@ try {
   console.log(report.newMules.map((m) => `${m.name}:${m.items}`).join(" "));
   const names = (keys) => keys.map((k) => labelOf(k, "en")).join(", ") || "none";
   console.log(`shared stash pages ${inbox?.join(",") ?? "all"} bring: ${report.inbox.museum.length} new to the museum (${names(report.inbox.museum)}),`);
-  console.log(`  ${report.inbox.dup.length} duplicates (${names(report.inbox.dup)}), ${report.inbox.trash.length} likely junk, ${report.inbox.other} other`);
+  console.log(`  ${report.inbox.dup.length} duplicates (${names(report.inbox.dup)}), ${report.inbox.trash.length} extra copies to TRASH, ${report.inbox.other} other`);
   const trash = report.moves.filter((m) => m.group === "TRASH");
   const notEmptied = remove.filter((n) => !report.leftEmpty.some((e) => e.toLowerCase() === n.toLowerCase()));
   if (notEmptied.length) throw new Error(`--delete takes only characters left empty: ${notEmptied.join(", ")}`);
   const doomed = report.leftEmpty.filter((e) => remove.some((n) => e.toLowerCase() === n.toLowerCase()));
   if (report.leftEmpty.length) console.log(`left empty, no new mule takes their name: ${report.leftEmpty.join(", ")}; to delete: ${doomed.join(", ") || "none (--delete a,b)"}`);
-  if (trash.length) console.log(`likely junk, to TRASH mules:\n${trash.map((m) => `  ${labelOf(m.key, "en")}: ${junkText(m, "en")}`).join("\n")}`);
+  if (trash.length) console.log(`extra copies, to TRASH mules:\n${trash.map((m) => `  ${labelOf(m.key, "en")}: ${junkText(m, "en")}`).join("\n")}`);
   if (!yes) {
     console.log("nothing written; check the characters above and run again with --yes");
     process.exit(0);

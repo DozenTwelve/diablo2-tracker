@@ -34,6 +34,8 @@ back the new saves. Only tested on one real save folder so far; expect messier s
   `src/lib/organize.js`), and extra copies of uniques and set items past `copiesNeeded` (one per class whose
   builds use the item, two for a ring; in single player a copy nobody wears only takes room), for the player to
   look through. Nothing is deleted. The app lists them under "To clean". The museum keeps the best-rolled copy.
+- Charms and jewels never go to TRASH (2026-11-05): low rolls get `LOWCHARM`/`LOWJEWEL` mules, extra unique and set
+  ones stay in `DUP`.
 - The dry run reports what the inbox pages bring: new museum items, new duplicates, likely junk.
 
 ## 5. Steam Deck plugin (released, not in the Decky store yet)

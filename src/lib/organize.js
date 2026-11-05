@@ -6,7 +6,8 @@
 // Other characters, other modes and the stackable stash page are not touched.
 // Uniques and set items get fixed slots laid out from the whole catalog, so an empty slot is one not
 // owned yet. Extra copies, runewords, charms, jewels, rings and amulets, other magic/rare items, bases
-// and the rest are packed into their own mules.
+// and the rest are packed into their own mules. Charms and jewels never go to TRASH: low rolls get their own
+// LOWCHARM and LOWJEWEL mules, extra unique and set ones stay in DUP.
 import { uniques, sets, uniqueKey, setItemKey, keyOf, codeOfNumber } from "./gameData";
 import { modeOfCharacter, modeOfStash } from "./modes";
 import { scoreOfItem, versionOf } from "./parseSaves";
@@ -77,7 +78,9 @@ export function byMuleName(a, b) {
 }
 
 // Mule names start with H for hardcore, L for legacy and C for classic saves ("HUW-A"), so every mode's mules fit in one folder
-const GROUP_NAMES = ["UW", "UA", "UJ", "SET", "DUP", "RW", "CHARM", "JEWEL", "RING", "MAG", "BASE", "MISC", "TRASH"];
+// The rest after the museum's four are packed in this order. LOWCHARM can't read as L + CHARM: L is only a mode prefix
+// before a group name, and no group is named OWCHARM. Longest name: HLLOWCHARM-AA, 13 of the 15 characters D2R allows.
+const GROUP_NAMES = ["UW", "UA", "UJ", "SET", "DUP", "RW", "CHARM", "LOWCHARM", "JEWEL", "LOWJEWEL", "RING", "MAG", "BASE", "MISC", "TRASH"];
 // A mule named by the layout, in any mode (HUW-A, LCHARM-B...)
 export const isLayoutName = (name) => new RegExp(`^H?[LC]?(${GROUP_NAMES.join("|")})-[A-Z]+$`, "i").test(name);
 export const modePrefix = (mode) =>
@@ -132,8 +135,8 @@ export const copiesNeeded = (key) => NEEDED.get(key) ?? 0;
 // already there, so organizing again moves nothing. Copies past what is worth having (copiesNeeded, the museum
 // copy counting as one, plus one ethereal weapon or armor for a mercenary when any build uses the item) go to
 // TRASH, the lowest rolls first. Items without a museum slot (legacy) stay in DUP.
-// Never to TRASH: a copy holding runes, gems or jewels or personalized (fixed), nor the first copy of a version
-// (Rainbow Facet's element and trigger, Hellfire Torch's class) no copy kept so far has.
+// Never to TRASH: a charm or jewel (Annihilus, Hellfire Torch, Rainbow Facet...: every copy stays in DUP), a copy
+// holding runes, gems or jewels or personalized (fixed), nor the first copy of a version no copy kept so far has.
 // copies: [{ key, code, eth, score (-1: none), home (in its museum slot now), fixed, version }],
 // slots: museumLayout().slots -> Map copy -> "MUSEUM" | "DUP" | "TRASH", in the order they were decided
 export function placeCopies(copies, slots) {
@@ -166,13 +169,14 @@ export function placeCopies(copies, slots) {
     if (left[kind] > 0) {
       left[kind]--;
       where.set(c, "DUP");
-    } else where.set(c, c.fixed || newVersion ? "DUP" : "TRASH");
+    } else where.set(c, c.fixed || newVersion || isCharmOrJewel(c.code) ? "DUP" : "TRASH");
   }
   return where;
 }
 
 // Magic, rare and crafted items by base type
 const MAGIC_GROUPS = { scha: "CHARM", mcha: "CHARM", lcha: "CHARM", csch: "CHARM", jewl: "JEWEL", cjwl: "JEWEL", ring: "RING", amul: "RING" };
+export const isCharmOrJewel = (code) => ["CHARM", "JEWEL"].includes(MAGIC_GROUPS[items[code]?.type]);
 
 // Within those groups, items sort by what they are for (a rank, then a sub rank), then base type, then
 // the stat's value, highest first. Ranks per group, first to last:
@@ -222,6 +226,8 @@ const PURPOSE = {
     return [5, 0, 0];
   },
 };
+PURPOSE.LOWCHARM = PURPOSE.CHARM;
+PURPOSE.LOWJEWEL = PURPOSE.JEWEL;
 const purpose = (group, item) => {
   const v = statsOf(item);
   return PURPOSE[group](item, v, (ids) => ids.some((id) => v.has(id)));
@@ -231,7 +237,7 @@ const byPurpose = (group) => (a, b) => {
   return byOrder(a.code, b.code) * (group === "RING") || pa[0] - pb[0] || pa[1] - pb[1] || byOrder(a.code, b.code) || pb[2] - pa[2];
 };
 
-// Likely junk, gathered in TRASH mules for the player to delete: a magic charm or jewel on which every
+// Likely junk, gathered in LOWCHARM and LOWJEWEL mules for the player to look through: a magic charm or jewel on which every
 // stat is below what is worth keeping. Values as the game shows them, for [small, large, grand charm, jewel];
 // Infinity: never worth keeping on its own. Any stat not listed (skills, attack speed, hit recovery, run
 // speed, enhanced damage...) keeps the item, so does all resistances at its own value.
@@ -262,7 +268,7 @@ export function isJunk(item, code) {
 function groupOf(key, item, code) {
   if (key.startsWith("u:") || key.startsWith("s:")) return "DUP"; // extra copies and legacy uniques
   if (key.startsWith("w:")) return "RW";
-  if (isJunk(item, code)) return "TRASH";
+  if (isJunk(item, code)) return `LOW${MAGIC_GROUPS[items[code].type]}`;
   if (!["Normal", "Superior", "Inferior"].includes(item.quality)) return MAGIC_GROUPS[items[code].type] ?? "MAG";
   return ["weapons", "armor"].includes(items[code].table) ? "BASE" : "MISC";
 }
@@ -302,8 +308,9 @@ export const filesOfCharacter = (name, fileNames) =>
 
 // This mode's TRASH mules, for the player to delete after organizing: [{ name, items, refused? }] in name order.
 // Never a dead hardcore hero, as in mulesOf: organizing never filled it, so what it holds isn't junk it was given.
-// refused ("level" | "gold" | "corpse"): not a mule organizing made (its own level, gold, or items it can't see
-// on a corpse or in an Iron Golem), so it is never deleted with the junk.
+// refused ("level" | "gold" | "corpse" | "charm"): not a mule organizing made (its own level, gold, or items it can't see
+// on a corpse or in an Iron Golem), so it is never deleted with the junk; "charm": it holds a charm or jewel, which
+// organizing no longer puts in TRASH (an older run did): organizing again moves it out.
 export const trashMules = (saves, mode) =>
   saves
     .filter((s) => s.ext === "d2s" && new RegExp(`^${modePrefix(mode)}TRASH-[A-Z]+$`, "i").test(s.name) && modeOfCharacter(s.json) === mode && !deadHardcore(s.json))
@@ -312,7 +319,15 @@ export const trashMules = (saves, mode) =>
       name,
       items: [...json.items, ...(json.merc_items?.items ?? [])],
       refused:
-        json.character.level > 1 ? "level" : goldOf(json) ? "gold" : json.corpses?.some((c) => c.items.length) || json.iron_golem?.golem_item ? "corpse" : undefined,
+        json.character.level > 1
+          ? "level"
+          : goldOf(json)
+            ? "gold"
+            : json.corpses?.some((c) => c.items.length) || json.iron_golem?.golem_item
+              ? "corpse"
+              : json.items.some((i) => isCharmOrJewel(codeOfNumber(i.code)))
+                ? "charm"
+                : undefined,
     }));
 
 // saves: [{ name, ext: "d2s" | "d2i", json }]; options: { mode, mules: names, inbox: shared stash page numbers }
@@ -375,7 +390,7 @@ export function organize(saves, { mode = "SoftCore:Modern", mules: names, inbox 
   const namePrefix = modePrefix(mode);
   const museum = museumLayout(namePrefix);
   const filled = new Map(); // museum key -> item
-  const loose = { DUP: [], RW: [], CHARM: [], JEWEL: [], RING: [], MAG: [], BASE: [], MISC: [], TRASH: [] };
+  const loose = Object.fromEntries(GROUP_NAMES.slice(4).map((g) => [g, []])); // packed in GROUP_NAMES order
   const entries = source.map((e) => ({ ...e, code: codeOfNumber(e.item.code), key: keyOf(e.item, codeOfNumber(e.item.code)) }));
   // Unique and set item copies are placed together (placeCopies); everything else by groupOf, non-ethereal first
   const home = (e) => e.from.split(" ")[0].toLowerCase() === museum.slots.get(e.key)?.mule.toLowerCase();
@@ -441,7 +456,7 @@ export function organize(saves, { mode = "SoftCore:Modern", mules: names, inbox 
 
   const fromStash = (group) => moves.filter((m) => m.stash && m.group === group).map((m) => m.key);
   const owned = (prefix) => [...museum.slots.values()].filter((s) => s.mule.startsWith(`${namePrefix}${prefix}-`));
-  const groups = ["UW", "UA", "UJ", "SET", ...Object.keys(loose)].join("|");
+  const groups = GROUP_NAMES.join("|");
   const ownName = new RegExp(`^${namePrefix}(${groups})-[A-Z]+$`, "i");
   const report = {
     mode,

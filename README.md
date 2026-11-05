@@ -29,8 +29,8 @@ tracking.
   guides, link back to them, and may be out of date.
 - **Organize.** Sort your mules and chosen shared stash pages into numbered mules by fixed rules: uniques and set
   items in fixed "museum" slots (always the best-rolled copy), then duplicates, runewords, charms, jewels, rings,
-  magic items, bases, and likely junk for you to look through, including duplicates past what the builds of every
-  class could use. Duplicates show whether they rolled better or worse than the museum copy. The page checks that every item is kept exactly once and hands the result back as
+  magic items, bases, low-roll charms and jewels in their own mules, and duplicates past what the builds of every
+  class could use for you to look through (never charms or jewels, which stay in the duplicates). Duplicates show whether they rolled better or worse than the museum copy. The page checks that every item is kept exactly once and hands the result back as
   a zip of the whole organized save folder; it never writes to your save folder.
 - **Languages.** Traditional Chinese, Simplified Chinese, English and Korean, with the game's own item names.
 

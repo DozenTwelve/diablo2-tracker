@@ -47,6 +47,7 @@ const UI = {
   find_keep: ["值得留的神符和珠宝", "值得留的咒符和珠寶", "Charms and jewels worth keeping", "남길 만한 부적과 주얼"],
   find_extra: ["多余，整理时进 TRASH", "多餘，整理時進 TRASH", "Extra, goes to TRASH when organizing", "남는 것, 정리 시 TRASH로"],
   find_junk: ["属性偏低的神符和珠宝", "屬性偏低的咒符和珠寶", "Low-roll charms and jewels", "옵션이 낮은 부적과 주얼"],
+  find_legacy: ["旧版物品", "舊版物品", "Legacy item", "레거시 아이템"],
   find_other: ["其他", "其他", "Other", "기타"],
   // Pickup alerts on the Steam Deck (src/lib/pickups.js)
   pickupHaveRunes: [(n) => `已经有 ${n} 个`, (n) => `已經有 ${n} 個`, (n) => `You have ${n} already`, (n) => `이미 ${n}개 있음`],
@@ -88,6 +89,12 @@ const UI = {
     () => "每條屬性都偏低：整理時放進 LOWCHARM 或 LOWJEWEL 騾子",
     () => "Every stat is a low roll: organizing puts it in the LOWCHARM or LOWJEWEL mules",
     () => "모든 옵션이 낮음: 정리하면 LOWCHARM 또는 LOWJEWEL 창고캐로 갑니다",
+  ],
+  findWhy_legacy: [
+    () => "图鉴没有这件的格子：整理时放进 DUP",
+    () => "圖鑑沒有這件的格子：整理時放進 DUP",
+    () => "The museum has no slot for it: organizing puts it in DUP",
+    () => "도감에 칸이 없음: 정리하면 DUP에 들어갑니다",
   ],
   findWhy_other: [() => "整理时按类型放进对应的骡子", () => "整理時按類型放進對應的騾子", () => "Organizing puts it with its kind", () => "정리하면 종류별 창고캐로 갑니다"],
   uniques: ["暗金", "暗金", "Uniques", "고유"],

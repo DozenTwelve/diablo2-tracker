@@ -187,10 +187,10 @@ export default function App() {
               </nav>
               {page === "charms" ? (
                 saveData ? <CharmsView saveData={saveData} lang={lang} /> : <SaveLoader saveData={saveData} onLoad={load} notStored={notStored} lang={lang} />
+              ) : page === "runewords" && saveData ? (
+                <RunewordMaker saveData={saveData} label={t(page, lang)} groups={collectionGroups(page, lang)} owned={owned} keep={keep} setKeep={setKeep} lang={lang} />
               ) : (
-                <CollectionView key={page} label={t(page, lang)} groups={collectionGroups(page, lang)} owned={owned} keep={keep} setKeep={setKeep} lang={lang}>
-                  {page === "runewords" && saveData && <RunewordMaker saveData={saveData} lang={lang} />}
-                </CollectionView>
+                <CollectionView key={page} label={t(page, lang)} groups={collectionGroups(page, lang)} owned={owned} keep={keep} setKeep={setKeep} lang={lang} />
               )}
             </>
           )}

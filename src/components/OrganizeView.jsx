@@ -6,7 +6,7 @@ import { LOCALES, t } from "../lib/i18n";
 import { SKILL } from "../lib/links";
 import { byMuleName, filesOfCharacter, isJunk, muleTimes, organizeFiles, trashMules } from "../lib/organize";
 import { modeLabel, modeOfCharacter, modeOfStash } from "../lib/modes";
-import { loadParser, saveFolder, statsOf } from "../lib/parseSaves";
+import { loadParser, recordOf, saveFolder, statsOf } from "../lib/parseSaves";
 import { describeStats } from "../lib/stats";
 import { Link } from "../lib/router";
 import { useStoredState } from "../lib/useStoredState";
@@ -14,6 +14,7 @@ import { zip } from "../lib/zip";
 import OrganizeDemo from "./OrganizeDemo";
 import PageTitle from "./PageTitle";
 import Segmented from "./Segmented";
+import { Tooltip, tipHandlers, useTip } from "./StashGrid";
 
 const toBase64 = (bytes) => {
   let s = "";
@@ -65,6 +66,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
   const [backups, setBackups] = useState([]); // the plugin's backups, on the Deck
   const [backupsOpen, setBackupsOpen] = useState(false); // the player opened the backup list
   const [reads, setReads] = useState(0); // bumped to read the files again
+  const [tip, setTip] = useTip();
   // "How organizing works" is open on the first visit only
   const [introSeen, setIntroSeen] = useStoredState("organizeIntroSeen", false);
   const [introOpen] = useState(!introSeen);
@@ -333,6 +335,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
   const remove = state.remove ?? []; // characters ticked for deletion
   const removeFiles = remove.flatMap((name) => filesOfCharacter(name, files.map((f) => f.name)));
   const names = (keys) => keys.map((k) => labelOf(k, lang)).join(t("listSeparator", lang));
+  const tipOf = (item, owner) => tipHandlers((e) => setTip({ item: recordOf(item, owner, "stash"), rect: e.currentTarget.getBoundingClientRect() }), setTip);
   const toTrash = report?.moves.filter((m) => m.group === "TRASH" && m.stash) ?? [];
   // On the Deck only: the web hands back a zip and can't delete files
   const trash = onDeck ? trashMules(saves.filter((s) => s.json), current, keep) : [];
@@ -429,7 +432,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
             {toTrash.length > 0 && (
               <ul className="text-sm pl-4 space-y-1">
                 {toTrash.map((m, i) => (
-                  <li key={i}>
+                  <li key={i} tabIndex={0} {...tipOf(m.item, m.from)}>
                     {labelOf(m.key, lang)}
                     <span style={{ color: "var(--color-accent-blue)" }}>
                       {t("colon", lang)}
@@ -510,7 +513,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
                 return (
                   <li key={i}>
                     {/* Ticked: junk. Unticked: this copy is not junk, kept by its id */}
-                    <label className="gothic-checkbox">
+                    <label className="gothic-checkbox" {...tipOf(item, mule)}>
                       <input
                         type="checkbox"
                         checked={!keep.includes(id)}
@@ -611,6 +614,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, keep, setKee
           </details>
         )}
       </div>
+      {tip && <Tooltip tip={tip} lang={lang} />}
     </>
   );
 }

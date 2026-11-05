@@ -17,11 +17,11 @@ export default function NewItemsView({ saveData, lang }) {
   const [tip, setTip] = useTip();
   const pagesOf = (stash) => {
     const used = saveData.items.filter((r) => r.owner === stash.name && /^shared\d+$/.test(r.place)).map((r) => Number(r.place.slice(6)));
-    const last = Math.max(0, ...used, ...picked(stash.mode));
+    const last = Math.max(stash.pages ?? 0, ...used, ...picked(stash.mode));
     return Array.from({ length: last }, (_, i) => ({ page: i + 1, count: used.filter((p) => p === i + 1).length }));
   };
-  // Shared stashes the game reads, with any page in use or picked
-  const stashes = ownersOf(saveData).filter((o) => !o.cls && o.mode && pagesOf(o).length);
+  // Shared stashes the game reads, empty ones too
+  const stashes = ownersOf(saveData).filter((o) => !o.cls && o.mode);
   const toggle = (mode, page) => {
     const now = picked(mode);
     setInboxes({ ...inboxes, [mode]: now.includes(page) ? now.filter((p) => p !== page) : [...now, page].sort((a, b) => a - b) });

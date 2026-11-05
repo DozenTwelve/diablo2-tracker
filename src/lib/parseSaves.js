@@ -119,7 +119,7 @@ export function saveFolder(files) {
 export async function parseSaveFiles(files) {
   const { parseD2s, parseD2i, writeD2s, writeD2i } = await loadParser();
   const items = [];
-  const owners = []; // { name, mode, cls?, level?, quests?, dead? }; shared stashes have no class
+  const owners = []; // { name, mode, cls?, level?, quests?, dead? }; shared stashes have no class, but pages (empty ones too)
   const errors = [];
   const damaged = []; // file names that parse but don't write back the same: cut short or damaged
   // A folder pick includes its subfolders: only the picked folder's own saves, or every backup kept in it
@@ -146,11 +146,13 @@ export async function parseSaveFiles(files) {
         damaged.push(file.name);
       }
       if (stash) {
+        let pages = 0;
         JSON.parse(json).forEach((tab, i) => {
           const place = tab.tab_type === "AdvancedStash" ? "advanced" : `shared${i + 1}`;
+          if (place !== "advanced") pages = i + 1;
           tab.items.forEach((it) => collect(it, owner, place, items));
         });
-        owners.push({ name: owner, mode: modeOfStash(file.name) });
+        owners.push({ name: owner, mode: modeOfStash(file.name), pages });
       } else {
         const save = JSON.parse(json);
         const { flags } = save.character;

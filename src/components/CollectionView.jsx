@@ -2,8 +2,9 @@ import { useState } from "react";
 import { catalog, iconOf, imageOf, labelOf } from "../lib/gameData";
 import { locationLines, ownerLabel, totalCount } from "../lib/inventory";
 import { t } from "../lib/i18n";
+import { useStoredState } from "../lib/useStoredState";
 import PageTitle from "./PageTitle";
-import { Tooltip, tipHandlers, useTip } from "./StashGrid";
+import { SET_GREEN, Tooltip, tipHandlers, useTip } from "./StashGrid";
 import Copies from "./Copies";
 
 // "LastOne ×2、JavaZon、Zanna ×2": owners of several copies on one line
@@ -32,10 +33,13 @@ function Icon({ entryKey, records, lang }) {
 // One collection tab: groups of entry keys, each an icon tile, owned or dimmed.
 // Hovering shows an owned copy's stats and where it is; with several copies, the catalog ranges and their
 // owners in one line, and clicking lists every copy (Copies).
-// groups: [{ title, keys: [key], notes?: [[color, line]] }] (notes: set bonuses); tabs: shown under the title;
+// groups: [{ title, keys: [key], notes?: [[color, line]] }] (notes: set bonuses, shown when ticked); tabs: shown under the title;
 // children: shown in place of the tiles (another tab picked)
 export default function CollectionView({ label, groups, owned, keep, setKeep, lang, tabs, children }) {
   const [missingOnly, setMissingOnly] = useState(false);
+  // Set bonuses: hundreds of lines on the Sets page, shown only when asked for
+  const [showNotes, setShowNotes] = useStoredState("setBonuses", false);
+  const hasNotes = groups.some((g) => g.notes?.length);
   const [tip, setTip] = useTip();
   const [opened, setOpened] = useState(null); // key whose copies are listed
   const all = groups.flatMap((g) => g.keys);
@@ -60,13 +64,26 @@ export default function CollectionView({ label, groups, owned, keep, setKeep, la
     <>
       <PageTitle label={label} owned={ownedIn(all)} total={all.length}>
         {!children && (
-          <label className="gothic-checkbox text-sm">
-            <input type="checkbox" checked={missingOnly} onChange={(e) => setMissingOnly(e.target.checked)} />
-            <span>{t("missingOnly", lang)}</span>
-          </label>
+          <div className="flex flex-wrap gap-x-5 gap-y-1">
+            <label className="gothic-checkbox text-sm">
+              <input type="checkbox" checked={missingOnly} onChange={(e) => setMissingOnly(e.target.checked)} />
+              <span>{t("missingOnly", lang)}</span>
+            </label>
+            {hasNotes && (
+              <label className="gothic-checkbox text-sm">
+                <input type="checkbox" checked={showNotes} onChange={(e) => setShowNotes(e.target.checked)} />
+                <span>{t("showSetBonuses", lang)}</span>
+              </label>
+            )}
+          </div>
         )}
       </PageTitle>
       {tabs}
+      {!children && hasNotes && showNotes && (
+        <p className="text-sm mb-4">
+          <span style={{ color: SET_GREEN }}>{t("setPartial", lang)}</span> · <span style={{ color: "var(--color-gold)" }}>{t("fullSet", lang)}</span>
+        </p>
+      )}
       {children || (
       <div className="lg:grid lg:gap-10 items-start" style={{ gridTemplateColumns: groups.length > 1 ? "13rem minmax(0, 1fr)" : "minmax(0, 1fr)" }}>
         {groups.length > 1 && (
@@ -97,7 +114,7 @@ export default function CollectionView({ label, groups, owned, keep, setKeep, la
                     </span>
                   </div>
                 )}
-                {notes.length > 0 && (
+                {showNotes && notes.length > 0 && (
                   <div className="text-sm leading-snug mb-4 max-w-prose">
                     {notes.map(([color, line], j) => (
                       <div key={j} style={{ color }}>

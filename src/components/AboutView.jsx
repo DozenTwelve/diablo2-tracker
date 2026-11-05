@@ -7,12 +7,12 @@ import PageTitle from "./PageTitle";
 const COLUMNS = ["zh", "zh_tw", "en", "ko"];
 const pick = (row, lang) => nameOf(Object.fromEntries(COLUMNS.map((c, i) => [c, row[i]])), lang);
 
-// /about: the source code, then questions on what the project is, privacy, where it lives
+// /about: the source code, then questions on what the project is, privacy, where it lives, each folded to its question
 export default function AboutView({ lang }) {
   return (
     <>
       <PageTitle label={t("about", lang)} />
-      <div className="max-w-2xl space-y-8">
+      <div className="max-w-2xl space-y-4">
         <p>
           {t("sourceCode", lang)}{t("colon", lang)}
           <a href={REPO} target="_blank" rel="noreferrer" className="gothic-text-gold break-all">
@@ -23,15 +23,15 @@ export default function AboutView({ lang }) {
           <h2>{t("faq", lang)}</h2>
         </div>
         {FAQ.filter((f) => !onDeck || f.deck !== false).map(({ q, a, deck, link }, i) => (
-          <section key={i}>
-            <h3 className="gothic-text-gold text-lg mb-2">{pick(q, lang)}</h3>
-            <p className="leading-relaxed">{pick((onDeck && deck) || a, lang)}</p>
+          <details key={i}>
+            <summary className="cursor-pointer gothic-text-gold text-lg">{pick(q, lang)}</summary>
+            <p className="leading-relaxed mt-2">{pick((onDeck && deck) || a, lang)}</p>
             {link && (
               <a href={link} target="_blank" rel="noreferrer" className="text-sm gothic-text-gold break-all">
                 {link.replace(/^https:\/\//, "")}
               </a>
             )}
-          </section>
+          </details>
         ))}
       </div>
     </>

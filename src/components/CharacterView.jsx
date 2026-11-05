@@ -33,15 +33,16 @@ const GROUPS = ["mainCharacters", "museumMules", "otherMules", "trashMules", "sh
 const byName = (a, b) => a.name.localeCompare(b.name, undefined, { numeric: true });
 const ordered = (saveData, roles) => GROUPS.flatMap((g) => ownersOf(saveData).filter((o) => groupOf(o, roles) === g).sort(byName));
 
-// Akara's reset and Larzuk's socket still to collect: "阿卡拉重置 可用：惡夢、地獄", one line per kind
+// Akara's reset and Larzuk's socket still to collect: [{ kind: "respec", open: ["nightmare", "hell"] }]
 const DIFFICULTIES = ["normal", "nightmare", "hell"];
-function openRewards(quests, lang) {
+function openRewards(quests) {
   if (!quests) return [];
-  return ["respec", "socket"].flatMap((kind) => {
-    const open = DIFFICULTIES.filter((_, i) => quests[kind][i] === "available").map((d) => t(d, lang));
-    return open.length ? [`${t(kind, lang)} ${t("available", lang)}${t("colon", lang)}${open.join(t("listSeparator", lang))}`] : [];
-  });
+  return ["respec", "socket"]
+    .map((kind) => ({ kind, open: DIFFICULTIES.filter((_, i) => quests[kind][i] === "available") }))
+    .filter((x) => x.open.length);
 }
+// "阿卡拉重置 可用：惡夢、地獄"
+const rewardLine = ({ kind, open }, lang) => `${t(kind, lang)} ${t("available", lang)}${t("colon", lang)}${open.map((d) => t(d, lang)).join(t("listSeparator", lang))}`;
 
 const PREFIXES = ["SoftCore", "HardCore"].flatMap((core) => ["Modern", "Legacy", "Classic"].map((v) => modePrefix(`${core}:${v}`)));
 
@@ -126,12 +127,15 @@ function CharacterList({ saveData, lang }) {
             {build && <span style={{ color: "var(--color-gold-light)" }}> · {nameOf(build.name, lang)}</span>}
           </div>
         )}
-        {group === "mainCharacters" &&
-          openRewards(o.quests, lang).map((line) => (
-            <div key={line} className="text-xs gothic-text-gold">
-              {line}
-            </div>
-          ))}
+        {group === "mainCharacters" && openRewards(o.quests).length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {openRewards(o.quests).map((x) => (
+              <span key={x.kind} title={rewardLine(x, lang)} className="text-xs px-1 rounded-sm border border-current gothic-text-gold">
+                {t(`${x.kind}Short`, lang)} {x.open.map((d) => t(`${d}Short`, lang)).join("/")}
+              </span>
+            ))}
+          </div>
+        )}
         {f && (
           <div className="-mt-1">
             <FillRule {...f} label={ownerLabel(o.name, lang)} />
@@ -163,6 +167,9 @@ function CharacterList({ saveData, lang }) {
           <h2>{t(group, lang)}</h2>
           <span className="section-count">{list.length}</span>
         </div>
+        {group === "mainCharacters" && shown.some((o) => openRewards(o.quests).length) && (
+          <p className="text-xs gothic-text-muted mb-2">{t("rewardLegend", lang)}</p>
+        )}
         <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${group === "mainCharacters" ? 15 : 10}rem, 1fr))` }}>
           {shown.map((o) => card(o, group))}
         </div>
@@ -291,9 +298,9 @@ function CharacterPage({ saveData, name, keep, onWritten, lang }) {
                 {t("itemCount", lang, totalCount(records))}
               </p>
               {main &&
-                openRewards(owner.quests, lang).map((line) => (
-                  <p key={line} className="gothic-text-gold">
-                    {line}
+                openRewards(owner.quests).map((x) => (
+                  <p key={x.kind} className="gothic-text-gold">
+                    {rewardLine(x, lang)}
                   </p>
                 ))}
             </>

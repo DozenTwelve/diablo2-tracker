@@ -153,6 +153,11 @@ with tempfile.TemporaryDirectory() as tmp:
     assert post({"files": [], "delete": ["htrash-b"], "reason": "clean"})[0] == 200
     assert not [f for f in os.listdir(saves) if f.startswith("htrash-b.")]
     assert tracker.list_backups(backups, saves)[0]["reason"] == "clean"  # labelled as a TRASH clean
+    # Putting on a loadout writes like organizing, labelled as such; a clean still can't write files under that label
+    time.sleep(1)
+    assert post({"files": [{**new[0], "data": base64.b64encode(b"mule 3").decode()}], "reason": "loadout"})[0] == 200
+    assert tracker.list_backups(backups, saves)[0]["reason"] == "loadout" and open(os.path.join(saves, "UW-A.d2s"), "rb").read() == b"mule 3"
+    assert post({"files": new, "delete": ["TRASH-A"], "reason": "clean"})[0] == 400
     time.sleep(1)
     status, result = post({"files": new, "delete": ["Zanna"]})
     assert status == 200, result

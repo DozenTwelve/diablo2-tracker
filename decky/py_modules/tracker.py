@@ -187,7 +187,7 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, re
     mules: every mule after organizing, put below the other characters in D2R's list (_order); expect: the saves
     the page organized ({name: sha256}), checked under the lock so a second write or a game save in between
     can't be overwritten by a plan made from older saves, required; reason: what the backup is labelled, "clean" when only
-    TRASH mules are deleted.
+    TRASH mules are deleted, "loadout" when a loadout is put on (applyLoadoutFiles: main characters are written too).
     The game must not be running. The folder's files are backed up first, each file is written next to its
     target and renamed over it, then read back. Returns the backup folder."""
     with _lock:
@@ -204,7 +204,7 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, re
         for name in delete:
             if not SAVE_NAME.fullmatch(name + ".d2s") or any(f["name"] == name + ".d2s" for f in files):
                 raise ValueError(f"not a character to delete: {name}")
-        if reason not in ("organize", "clean"):
+        if reason not in ("organize", "clean", "loadout"):
             raise BadRequest(f"not a reason: {reason}")
         # A clean only deletes TRASH mules: the label a backup gets must not hide that other saves changed
         if reason == "clean" and (files or not all(TRASH_NAME.fullmatch(name) for name in delete)):
@@ -269,7 +269,7 @@ def _order(folder, mules):
 BACKUP_NAME = re.compile(r"\d{8}-\d{6}Z?(-\d+)?")
 # What organizing writes (.tmp: one cut short); not settings or loot filters
 SAVE_FILE = re.compile(r".+\.(d2s|d2i|ctl|key|map|ma\d+)(\.tmp)?")
-ABOUT = ".d2r-backup.json"  # in each backup: {"reason": "organize" | "clean" | "restore", "from"?: name, "folder", "seq"}
+ABOUT = ".d2r-backup.json"  # in each backup: {"reason": "organize" | "clean" | "loadout" | "restore", "from"?: name, "folder", "seq"}
 PENDING = ".in-progress"  # in the backups folder while a write or restore runs: {"backup": name}
 KEEP = 10  # backups kept per save folder, besides the oldest (the saves before the plugin first wrote)
 _lock = threading.Lock()  # one write, restore or delete at a time
@@ -441,7 +441,7 @@ def _rmtree(path):
 
 def list_backups(backup_root, folder=None):
     """The plugin's backups of a save folder, newest first: [{name, characters, reason?, from?, interrupted?}].
-    reason: why it was made ("organize", "clean", "restore"); backups from older plugin versions have none, and are listed
+    reason: why it was made ("organize", "clean", "loadout", "restore"); backups from older plugin versions have none, and are listed
     for any folder. interrupted: the backup of an operation that was cut off."""
     if not os.path.isdir(backup_root):
         return []

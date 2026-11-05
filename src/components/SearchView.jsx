@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { catalog, iconOf, labelOf, searchTextOf } from "../lib/gameData";
-import { statLines } from "../lib/inventory";
+import { statLines, totalCount } from "../lib/inventory";
 import { t } from "../lib/i18n";
 import { onDeck } from "../lib/deck";
 import Locations from "./Locations";
@@ -37,9 +37,10 @@ export default function SearchView({ owned, lang }) {
   // Owned first, then by name
   matches.sort((a, b) => !a.records - !b.records || labelOf(a.key, lang).localeCompare(labelOf(b.key, lang)));
 
-  // Owned copies grouped by where they are (Locations), then what is missing, with the catalog's icon (a missing
+  // How many of each owned item, once; its copies grouped by where they are (Locations); then what is missing, with the catalog's icon (a missing
   // runeword has none)
   const shown = matches.slice(0, MAX_RESULTS);
+  const found = shown.filter((m) => m.records);
   const missing = shown.filter((m) => !m.records);
   return (
     <>
@@ -55,7 +56,18 @@ export default function SearchView({ owned, lang }) {
       <div className="mt-6 max-w-3xl">
         {q && matches.length === 0 && <p className="gothic-text-muted">{t("noResults", lang)}</p>}
         {matches.length > MAX_RESULTS && <p className="gothic-text-muted mb-3">{t("tooMany", lang, MAX_RESULTS)}</p>}
-        {shown.some((m) => m.records) && <Locations records={shown.flatMap((m) => m.records ?? [])} lang={lang} />}
+        {found.length > 0 && (
+          <>
+            <ul className="flex flex-wrap gap-x-5 gap-y-1 text-sm mb-4">
+              {found.map(({ key, records }) => (
+                <li key={key} className="gothic-text-gold">
+                  {labelOf(key, lang)} ×{totalCount(records)}
+                </li>
+              ))}
+            </ul>
+            <Locations records={found.flatMap((m) => m.records)} lang={lang} />
+          </>
+        )}
         {missing.length > 0 && (
           <section className="mt-8">
             <div className="section-head">

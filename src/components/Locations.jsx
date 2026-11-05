@@ -25,10 +25,15 @@ export default function Locations({ records, lang }) {
                       <span className="gothic-text-gold">{labelOf(r.key, lang)}</span>
                       {copies.map(({ record, stats, count }, i) => (
                         <div key={i}>
-                          {[record.ethereal && t("ethereal", lang), record.sockets > 0 && t("sockets", lang, record.sockets)].filter(Boolean).map((d) => (
-                            <span key={d} className="gothic-text-muted">{d} · </span>
+                          {[
+                            ...[record.ethereal && t("ethereal", lang), record.sockets > 0 && t("sockets", lang, record.sockets)].filter(Boolean).map((text) => ({ text, muted: true })),
+                            ...stats.map((text) => ({ text })),
+                          ].map(({ text, muted }, j) => (
+                            <span key={j} className={muted ? "gothic-text-muted" : undefined} style={muted ? undefined : { color: STAT_COLOR }}>
+                              {j > 0 && " · "}
+                              {text}
+                            </span>
                           ))}
-                          <span style={{ color: STAT_COLOR }}>{stats.join(" · ")}</span>
                           {count > 1 && <span className="gothic-text-gold"> ×{count}</span>}
                         </div>
                       ))}

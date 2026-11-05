@@ -53,14 +53,20 @@ characters live on Blizzard's servers and can't be read; consoles aren't support
 ## Safety
 
 Everything stays on your machine: saves are read in the browser or by the plugin on the Deck, never uploaded.
-Before any write to the save folder (Deck only), the plugin and the page check that:
+Only the plugin on the Deck writes to the save folder. Before every write:
 
-- the whole save folder is backed up first;
-- D2R is closed (it saves on exit and would undo the write; the plugin refuses while it runs);
+- every file in the save folder is backed up first;
+- D2R is closed (it saves on exit and would undo the write; the plugin refuses while it runs).
+
+Organizing and putting on a loadout also check, in the plugin and the page, that:
+
 - the saves are byte for byte the ones the page read, so a game save in between is never overwritten;
 - no item is lost or duplicated over all files;
 - for a loadout, every main character changed only in what the loadout covers, and other mains only lost the
   pieces taken.
+
+A restore puts a backup back in place of the saves, and Clean TRASH deletes the `TRASH` mules with their items:
+both by design, after the same backup.
 
 Files are written next to their targets, renamed over them and read back, the saves receiving items before the
 ones giving them up, so a write cut off half way (power loss, Decky killed) leaves an item on two saves rather
@@ -99,11 +105,11 @@ tracker can also do what the web page can't:
   main). Put a loadout on in one checked write: the pieces come from the mules, the shared stash or other mains
   (untick one to leave it where it is), and what comes off goes into the mules as organizing puts it. Quest items
   never move. Loadout pieces count as kept: never `TRASH`, never cleaned.
-- **Backups.** Every write backs up the save folder first. The Organize page lists the backups (the newest 10 and
-  the oldest are kept) with buttons to restore or delete them; a restore backs up the folder first too, so it can
-  be undone.
+- **Backups.** Every write backs up the save folder first. The Organize page lists the backups with buttons to
+  restore or delete them; the newest 10 and the oldest are kept, and so are interrupted ones and those from older
+  plugin versions. A restore backs up the folder first too, so it can be undone.
 
-It isn't in the Decky store yet. To install: Decky → settings → General → turn on Developer mode, then Developer →
+It isn't in the Decky store. To install: Decky → settings → General → turn on Developer mode, then Developer →
 Install Plugin from URL, and enter
 
 ```
@@ -135,7 +141,7 @@ The app is React and Vite. `src/lib/` holds the logic (reading saves, item looku
 | Command | What it does |
 |---|---|
 | `npm run gen:data [dir]` | Regenerate item data from extracted game files (default `~/Projects/Diablo2/d2r-gamedata`) |
-| `node scripts/gen-images.mjs [dir]` | Convert the game's inventory icons (`data/hd/global/ui/items/<group>/<type>/*.sprite`) to `public/items/*.webp` |
+| `node scripts/gen-images.mjs [dir]` | Convert the game's inventory icons (`data/hd/global/ui/items/<group>/<type>/*.sprite`) to `public/items/<type>/*.webp` |
 | `npm run deploy` | Build with the local icons and upload to Cloudflare Pages (`npx wrangler login` once first) |
 | `npm run build:wasm` | Rebuild the save parser (needs Rust, the `wasm32-unknown-unknown` target and `wasm-pack`) |
 | `node scripts/check-saves.mjs <save dir>` | Read a save folder with the app's code and print a summary |

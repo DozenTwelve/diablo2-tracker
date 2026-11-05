@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { codeOfNumber, keyOf, labelOf } from "../lib/gameData";
-import { deckBackups, deckSaveFiles, deleteDeckBackup, onDeck, restoreDeck } from "../lib/deck";
+import { deckBackups, deckSaveFiles, deleteDeckBackup, dismissDeckInterrupted, onDeck, restoreDeck } from "../lib/deck";
 import { roleOf } from "../lib/inventory";
 import { LOCALES, t } from "../lib/i18n";
 import { SKILL } from "../lib/links";
@@ -47,7 +47,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
   const [wasm, setWasm] = useState(null);
   const [mode, setMode] = useState(null);
   // confirm: { name, action: "restore" | "delete", at } a backup button pressed once, or { action: "trash", at }
-  const [state, setState] = useState({}); // { plan, remove, error, busy, backup, downloaded, readError, confirm, restored, restoreError, cleaned, cleanError }
+  const [state, setState] = useState({}); // { plan, remove, error, busy, backup, downloaded, readError, confirm, restored, restoreError, cleaned, cleanError, interrupted }
   const [backups, setBackups] = useState([]); // the plugin's backups, on the Deck
   const [backupsOpen, setBackupsOpen] = useState(false); // the player opened the backup list
   const [reads, setReads] = useState(0); // bumped to read the files again
@@ -232,6 +232,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
       });
       const result = await response.json();
       if (result.running) setState({ ...state, error: t("gameRunning", lang) });
+      else if (result.interrupted) setState({ interrupted: result.interrupted });
       else if (result.changed) {
         setReads(reads + 1);
         setState((s) => ({ backup: s.backup, error: t("savesChanged", lang), changed: true }));
@@ -281,6 +282,7 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
       });
       const result = await response.json();
       if (result.running) setState({ cleanError: t("gameRunning", lang) });
+      else if (result.interrupted) setState({ interrupted: result.interrupted });
       else if (result.changed) again();
       else if (!response.ok) setState({ cleanError: t("writeFailed", lang, result.error) });
       else {
@@ -303,6 +305,19 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
       setBackups(await deckBackups());
     } catch (e) {
       setState({ restoreError: t("deleteBackupFailed", lang, e.message ?? e) });
+    }
+  };
+  // An earlier write or restore was cut off: the plugin writes nothing until its backup is restored or this is dismissed
+  const interrupted = backups.find((b) => b.interrupted)?.name ?? state.interrupted;
+  const dismiss = async () => {
+    setState({ ...state, busy: true });
+    try {
+      const response = await dismissDeckInterrupted(interrupted);
+      setState(response.ok ? {} : { interrupted, restoreError: t("dismissFailed", lang, (await response.json()).error) });
+    } catch (e) {
+      setState({ interrupted, restoreError: t("dismissFailed", lang, e.message ?? e) });
+    } finally {
+      deckBackups().then(setBackups, () => {});
     }
   };
   // A backup's name is when it was made: in UTC with a Z (shown in local time), or local time (older plugins)
@@ -328,6 +343,14 @@ export default function OrganizeView({ rawFiles, picker, onWritten, lang }) {
       {about}
       <div className="max-w-3xl space-y-8">
         {state.readError && <p className="text-red-400">{t("readFailed", lang, state.readError)}</p>}
+        {onDeck && interrupted && (
+          <div className="space-y-2">
+            <p className="text-red-400">{t("writeInterrupted", lang, when(interrupted))}</p>
+            <button className="gothic-btn gothic-btn-secondary gothic-btn-small" disabled={state.busy} onClick={dismiss}>
+              {t("dismissInterrupted", lang)}
+            </button>
+          </div>
+        )}
         {folder && <p className="text-sm gothic-text-muted">{t("organizingFolder", lang, folder)}</p>}
         {saves
           .filter((s) => s.error)

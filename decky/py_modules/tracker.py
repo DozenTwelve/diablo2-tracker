@@ -163,6 +163,15 @@ class SavesChanged(Exception):
     """Not written: the saves are not the ones the page organized (the game saved since, or another write ran)."""
 
 
+class Interrupted(Exception):
+    """Not written: an earlier write or restore was cut off. Its backup is the way back; another write would take
+    PENDING from it (and so its protection from _prune). Restore it, or dismiss (dismiss_interrupted)."""
+
+    def __init__(self, backup):
+        super().__init__(f"an earlier write or restore was cut off; restore backup {backup} or dismiss it first")
+        self.backup = backup
+
+
 def _hashes(folder):
     """{name: sha256 hex} of the folder's .d2s and .d2i files, as the page hashes the saves it read."""
     out = {}
@@ -177,13 +186,18 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, re
     organizeFiles; delete: names of emptied characters the player chose to delete, with their other files;
     mules: every mule after organizing, put below the other characters in D2R's list (_order); expect: the saves
     the page organized ({name: sha256}), checked under the lock so a second write or a game save in between
-    can't be overwritten by a plan made from older saves; reason: what the backup is labelled, "clean" when only
+    can't be overwritten by a plan made from older saves, required; reason: what the backup is labelled, "clean" when only
     TRASH mules are deleted.
     The game must not be running. The folder's files are backed up first, each file is written next to its
     target and renamed over it, then read back. Returns the backup folder."""
     with _lock:
         if game_running():
             raise GameRunning("D2R is running; quit the game first")
+        if not isinstance(expect, dict):
+            raise BadRequest("expect (the hashes of the saves organized) is required")
+        pending = _pending(backup_root)
+        if pending and os.path.isdir(os.path.join(backup_root, pending)):
+            raise Interrupted(pending)
         for f in files:
             if not SAVE_NAME.fullmatch(f["name"]):
                 raise ValueError(f"not a save file name: {f['name']}")
@@ -198,8 +212,15 @@ def write_saves(folder, files, backup_root, delete=(), mules=(), expect=None, re
         for name in mules:
             if not SAVE_NAME.fullmatch(name + ".d2s"):
                 raise ValueError(f"not a mule name: {name}")
-        if expect is not None and _hashes(folder) != expect:
+        if _hashes(folder) != expect:
             raise SavesChanged("the saves changed since the page read them; nothing was written")
+        # A write cut off between two renames (power loss, Decky killed) must leave items on two saves, never on
+        # none: the files that receive items first (new mules, not in the folder yet), then the rewritten ones in
+        # the page's order (organizeFiles: those holding items before those only emptied), the shared stash (only
+        # ever emptied) last. Sorted here too, so a page sending another order can't undo it.
+        # ponytail: layout mules trading items with each other can still lose one when cut between them; the
+        # backup (PENDING) is the way back then
+        files = sorted(files, key=lambda f: (os.path.exists(os.path.join(folder, f["name"])), f["name"].lower().endswith(".d2i")))
         backup = _backup(folder, backup_root, {"reason": reason})
         if game_running():  # started while the backup was copied
             raise GameRunning("D2R is running; quit the game first")
@@ -320,8 +341,9 @@ def _backup(folder, backup_root, about):
     for b in _ours(backup_root, folder)[:-1]:
         if _same_saves(folder, os.path.join(backup_root, b["name"])):
             backup = os.path.join(backup_root, _new_name(backup_root))
+            kept = {"interrupted": True} if _info(backup_root, b["name"]).get("interrupted") else {}
             os.rename(os.path.join(backup_root, b["name"]), backup)
-            _json_to(os.path.join(backup, ABOUT), about)
+            _json_to(os.path.join(backup, ABOUT), {**about, **kept})
             return backup
     backup = os.path.join(backup_root, _new_name(backup_root))
     try:
@@ -361,7 +383,8 @@ def _put_back(folder, backup):
 
 
 # An operation cut off (power, a killed process) leaves PENDING behind: the backup it names is the way back,
-# listed as interrupted and never pruned until another write or restore succeeds.
+# listed as interrupted and never pruned. Writes are refused until it is restored or dismissed; a restore of
+# another backup or a dismiss records "interrupted" in the backup's own ABOUT first, so it is still never pruned.
 def _mark(backup_root, backup):
     _json_to(os.path.join(backup_root, PENDING), {"backup": os.path.basename(backup)})
 
@@ -376,9 +399,27 @@ def _unmark(backup_root):
 def _pending(backup_root):
     try:
         with open(os.path.join(backup_root, PENDING)) as f:
-            return json.load(f).get("backup")
+            name = json.load(f).get("backup")
     except (OSError, ValueError, AttributeError):
         return None
+    return name if isinstance(name, str) and BACKUP_NAME.fullmatch(name) else None  # a backup's name, never a path
+
+
+def _keep_pending(backup_root):
+    name = _pending(backup_root)
+    if name and os.path.isdir(os.path.join(backup_root, name)):
+        _json_to(os.path.join(backup_root, name, ABOUT), {**_info(backup_root, name), "interrupted": True})
+
+
+def dismiss_interrupted(backup_root, name):
+    """The player saw the interrupted backup and goes on without restoring it: writes are allowed again, and that
+    backup is kept for good (until the player deletes it). name: the one the page was shown, so a stale page
+    can't dismiss a newer one."""
+    with _lock:
+        if _pending(backup_root) != name:
+            raise ValueError(f"backup {name} is not the interrupted one")
+        _keep_pending(backup_root)
+        _unmark(backup_root)
 
 
 def _undo(folder, backup_root, backup, error):
@@ -434,7 +475,7 @@ def _prune(backup_root, folder, keep):
     wrote), one in keep (made, used or restored just now) or an interrupted one. Backups from older plugin
     versions don't say which folder they are of: they are left for the player to delete."""
     for b in _ours(backup_root, folder)[KEEP:-1]:
-        if b["name"] not in keep and not b.get("interrupted"):
+        if b["name"] not in keep and not b.get("interrupted") and not _info(backup_root, b["name"]).get("interrupted"):
             try:
                 _rmtree(os.path.join(backup_root, b["name"]))
             except OSError:
@@ -456,6 +497,8 @@ def restore_backup(folder, backup_root, name):
             if _pending(backup_root) == name:
                 _unmark(backup_root)  # cut off before anything was written: nothing to go back to
             return None  # the saves are that backup already: nothing to do
+        if _pending(backup_root) != name:
+            _keep_pending(backup_root)  # restoring another one: _mark below takes PENDING from the interrupted one
         backup = _backup(folder, backup_root, {"reason": "restore", "from": name})
         if game_running():
             raise GameRunning("D2R is running; quit the game first")
@@ -508,7 +551,8 @@ class Handler(SimpleHTTPRequestHandler):
     anything else: the web app, index.html for unknown paths (the app routes on the client).
     /api/backups: the plugin's backups (list_backups).
     POST /api/write: organized saves to write and characters to delete (write_saves); /api/restore: a backup to put
-    back (restore_backup); /api/delete-backup: a backup to delete (delete_backup); /api/close: the app's close
+    back (restore_backup); /api/delete-backup: a backup to delete (delete_backup); /api/dismiss: go on without
+    restoring the interrupted backup (dismiss_interrupted); /api/close: the app's close
     button (on_close).
     POSTs only from the app itself."""
 
@@ -571,7 +615,7 @@ class Handler(SimpleHTTPRequestHandler):
         # Only the app's own page: browsers send Origin on every POST, and another site can't send JSON here
         # without a CORS preflight, which this server never answers
         origin = f"http://127.0.0.1:{self.server.server_address[1]}"
-        if not self.local() or self.path not in ("/api/write", "/api/restore", "/api/delete-backup", "/api/close") or self.headers.get("Origin") != origin or self.headers.get("Content-Type") != "application/json":
+        if not self.local() or self.path not in ("/api/write", "/api/restore", "/api/delete-backup", "/api/dismiss", "/api/close") or self.headers.get("Origin") != origin or self.headers.get("Content-Type") != "application/json":
             return self.send_error(403)
         if self.path == "/api/close":
             self.send_response(204)
@@ -584,6 +628,9 @@ class Handler(SimpleHTTPRequestHandler):
             elif self.path == "/api/delete-backup":
                 delete_backup(self.backup_dir, body["name"], self.save_folder())
                 result = {}
+            elif self.path == "/api/dismiss":
+                dismiss_interrupted(self.backup_dir, body["name"])
+                result = {}
             else:
                 files = [{**f, "bytes": base64.b64decode(f["data"])} for f in body["files"]]
                 folder = self.save_folder()
@@ -593,6 +640,8 @@ class Handler(SimpleHTTPRequestHandler):
             result, status = {"error": str(e), "running": True}, 409
         except SavesChanged as e:
             result, status = {"error": str(e), "changed": True}, 409
+        except Interrupted as e:
+            result, status = {"error": str(e), "interrupted": e.backup}, 409
         except BadRequest as e:
             result, status = {"error": str(e)}, 400
         except Exception as e:

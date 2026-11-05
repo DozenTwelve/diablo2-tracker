@@ -574,6 +574,11 @@ export function organizeFiles(files, wasm, options) {
         }
     }
   }
+  // In the order to write them (the plugin sorts the same way, write_saves in decky/py_modules/tracker.py): a
+  // write cut off between two files leaves items on two saves, never on none. New mules first, then rewritten
+  // saves that hold items, then emptied ones, the shared stash (only ever emptied) last.
+  const rank = (f) => (!input.has(f.name) ? 0 : f.name.endsWith(".d2i") ? 3 : held(written.get(f.name), "d2s").length ? 1 : 2);
   // A save that comes out as it went in is not handed back: rewriting it would only make it look newly played
-  return { files: out.filter((f) => !(input.has(f.name) && equal(input.get(f.name), f.bytes))), saves, report };
+  const handed = out.filter((f) => !(input.has(f.name) && equal(input.get(f.name), f.bytes)));
+  return { files: handed.sort((a, b) => rank(a) - rank(b)), saves, report };
 }

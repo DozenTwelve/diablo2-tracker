@@ -45,6 +45,10 @@ export function Modal({ open, title, onClose, lang, children }) {
 export default function Copies({ entryKey, records, onClose, keep = [], setKeep, lang }) {
   const copies = [...(records ?? [])].sort(compareCopies).map((r) => ({ r, score: copyScore(r) }));
   const markBest = copies.length > 1 && ranksBest(entryKey);
+  // Lines every copy has (the fixed properties, and ranges that rolled alike) are listed once above the copies,
+  // each copy only with what differs
+  const lines = copies.map(({ r }) => statLines(r, lang));
+  const common = copies.length > 1 ? lines[0].filter((line) => lines.every((l) => l.includes(line))) : [];
 
   return (
     <Modal
@@ -60,6 +64,16 @@ export default function Copies({ entryKey, records, onClose, keep = [], setKeep,
         )
       }
     >
+      {common.length > 0 && (
+        <div>
+          <div className="gothic-text-muted">{t("everyCopyHas", lang)}</div>
+          {common.map((line) => (
+            <div key={line} style={{ color: STAT_COLOR }}>
+              {line}
+            </div>
+          ))}
+        </div>
+      )}
       <div className="grid sm:grid-cols-2 gap-3">
         {copies.map(({ r, score }, i) => (
           <div key={i} className="flex gap-3 p-2" style={{ background: "rgba(0, 0, 0, 0.5)", border: "1px solid #333" }}>
@@ -77,7 +91,7 @@ export default function Copies({ entryKey, records, onClose, keep = [], setKeep,
                 {r.sockets > 0 && ` · ${t("sockets", lang, r.sockets)}`}
                 {markBest && damageOf(r) && ` · ${t("damageRange", lang, ...damageOf(r))}`}
               </div>
-              {statLines(r, lang).map((line, j) => (
+              {lines[i].filter((line) => !common.includes(line)).map((line, j) => (
                 <div key={j} style={{ color: STAT_COLOR }}>
                   {line}
                 </div>

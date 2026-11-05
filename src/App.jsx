@@ -38,15 +38,12 @@ function collectionGroups(tab, lang) {
     return [...byCategory].map(([title, keys]) => ({ title, keys }));
   }
   if (tab === "sets") {
-    // Set bonuses under each set: for more pieces worn (green), then the full set (gold)
+    // Set bonuses under each set: for more pieces worn (green), then the full set (gold; the colors are explained once
+    // on the page)
     return sets.filter((s) => !s.legacy).map((s) => ({
       title: nameOf(s, lang),
       keys: s.items.map(setItemKey),
-      notes: [
-        ...setBonusLines(s.bonus, lang).map((line) => [SET_GREEN, line]),
-        ["var(--color-gold)", `${t("fullSet", lang)}${t("colon", lang)}`],
-        ...propLines(s.full, lang).map((line) => ["var(--color-gold)", line]),
-      ],
+      notes: [...setBonusLines(s.bonus, lang).map((line) => [SET_GREEN, line]), ...propLines(s.full, lang).map((line) => ["var(--color-gold)", line])],
     }));
   }
   if (tab === "runes") return [{ title: t("runes", lang), keys: runes.map(runeKey) }];

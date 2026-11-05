@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { catalog, iconOf, labelOf, searchTextOf } from "../lib/gameData";
-import { statLines, totalCount } from "../lib/inventory";
+import { statLines } from "../lib/inventory";
 import { t } from "../lib/i18n";
 import { onDeck } from "../lib/deck";
 import Locations from "./Locations";
@@ -37,7 +37,10 @@ export default function SearchView({ owned, lang }) {
   // Owned first, then by name
   matches.sort((a, b) => !a.records - !b.records || labelOf(a.key, lang).localeCompare(labelOf(b.key, lang)));
 
-  // Icon of an owned copy, else the catalog's (a missing runeword has none)
+  // Owned copies grouped by where they are (Locations), then what is missing, with the catalog's icon (a missing
+  // runeword has none)
+  const shown = matches.slice(0, MAX_RESULTS);
+  const missing = shown.filter((m) => !m.records);
   return (
     <>
       <PageTitle label={t("search", lang)} />
@@ -52,35 +55,26 @@ export default function SearchView({ owned, lang }) {
       <div className="mt-6 max-w-3xl">
         {q && matches.length === 0 && <p className="gothic-text-muted">{t("noResults", lang)}</p>}
         {matches.length > MAX_RESULTS && <p className="gothic-text-muted mb-3">{t("tooMany", lang, MAX_RESULTS)}</p>}
-        <div className="rows">
-          {matches.slice(0, MAX_RESULTS).map(({ key, records }) => {
-            const icon = iconOf(key, records);
-            return (
-              <div key={key} className="flex gap-4 py-3">
-                <span className="w-10 h-10 shrink-0">
-                  {icon && (
-                    <img
-                      src={icon}
-                      alt=""
-                      loading="lazy"
-                      className="w-full h-full object-contain"
-                      style={records ? undefined : { opacity: 0.3, filter: "grayscale(1)" }}
-                    />
-                  )}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex justify-between gap-4">
-                    <span className={records ? "gothic-text-gold" : "gothic-text-muted"}>{labelOf(key, lang)}</span>
-                    <span className={records ? "gothic-text-gold" : "gothic-text-muted"}>
-                      {records ? `×${totalCount(records)}` : t("missing", lang)}
-                    </span>
-                  </div>
-                  {records && <Locations records={records} lang={lang} />}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        {shown.some((m) => m.records) && <Locations records={shown.flatMap((m) => m.records ?? [])} lang={lang} />}
+        {missing.length > 0 && (
+          <section className="mt-8">
+            <div className="section-head">
+              <h2>{t("missing", lang)}</h2>
+              <span className="section-count">{missing.length}</span>
+            </div>
+            <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm gothic-text-muted">
+              {missing.map(({ key }) => {
+                const icon = iconOf(key);
+                return (
+                  <li key={key} className="inline-flex items-center gap-2">
+                    {icon && <img src={icon} alt="" loading="lazy" className="w-8 h-8 object-contain" style={{ opacity: 0.3, filter: "grayscale(1)" }} />}
+                    {labelOf(key, lang)}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
       </div>
     </>
   );

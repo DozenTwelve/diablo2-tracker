@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { imageOf, labelOf } from "../lib/gameData";
 import { ownerLabel, ownersOf, placeLabel } from "../lib/inventory";
 import { t } from "../lib/i18n";
@@ -7,6 +8,10 @@ import { useLoadoutIds } from "../lib/useLoadoutIds";
 import { useStoredState } from "../lib/useStoredState";
 import PageTitle from "./PageTitle";
 import { colorOf, Tooltip, tipHandlers, useTip } from "./StashGrid";
+
+// Kinds whose reason differs per find: the group says how to read the row (these strings), each row its numbers
+// (findRow_*). Every other kind's reason (findWhy_*) is the same for each find, so it is said once under the heading.
+const VARIES = { upgrade: ["findNote_upgrade"], needed: ["findNote_needed", "findLegend"], extra: ["findLegend"] };
 
 // /new: what the finds dropped on the inbox pages of the shared stash are worth (src/lib/newItems.js), read only,
 // so it can be checked with the game still running. The inbox pages are picked here, per shared stash, and the
@@ -31,10 +36,23 @@ export default function NewItemsView({ saveData, keep, lang }) {
 
   const finds = findsOf(saveData, inboxes, roles, [...keep, ...(loadouts.ids ?? [])]);
   const chosen = Object.keys(inboxes).some((mode) => picked(mode).length);
+  const onePage = new Set(finds.map((f) => f.r.place)).size < 2; // the page label would be the same on every row
+  // What the page is for: open on the first visit only
+  const [introSeen, setIntroSeen] = useStoredState("newIntroSeen", false);
+  const [introOpen] = useState(!introSeen);
+  useEffect(() => setIntroSeen(true), [setIntroSeen]);
 
   return (
     <>
-      <PageTitle label={t("new", lang)} sub={<p className="text-sm gothic-text-muted">{t("newItemsAbout", lang)}</p>} />
+      <PageTitle
+        label={t("new", lang)}
+        sub={
+          <details className="text-sm gothic-text-muted" open={introOpen}>
+            <summary className="cursor-pointer">{t("newItemsHow", lang)}</summary>
+            <p className="mt-1">{t("newItemsAbout", lang)}</p>
+          </details>
+        }
+      />
       <div className="max-w-3xl space-y-8">
         {saveData.skipped > 0 && <p className="text-sm gothic-text-muted">{t("skippedSubfolders", lang, saveData.skipped)}</p>}
         <section className="space-y-3">
@@ -73,6 +91,7 @@ export default function NewItemsView({ saveData, keep, lang }) {
                 <h2>{t(`find_${kind}`, lang)}</h2>
                 <span className="gothic-text-muted">{list.length}</span>
               </div>
+              <p className="text-sm gothic-text-muted mb-1">{(VARIES[kind] ?? [`findWhy_${kind}`]).map((k) => t(k, lang, {})).join("")}</p>
               <div className="rows">
                 {list.map(({ r, verdict }, i) => {
                   const show = (e) => setTip({ item: r, rect: e.currentTarget.getBoundingClientRect() });
@@ -80,7 +99,7 @@ export default function NewItemsView({ saveData, keep, lang }) {
                     <button
                       type="button"
                       key={i}
-                      className="flex gap-4 py-2 w-full text-left"
+                      className="flex gap-4 py-2 w-full text-left items-center"
                       {...tipHandlers(show, setTip)}
                       onClick={show}
                     >
@@ -91,9 +110,9 @@ export default function NewItemsView({ saveData, keep, lang }) {
                             {labelOf(r.key, lang)}
                             {r.ethereal && <span className="gothic-text-muted"> · {t("ethereal", lang)}</span>}
                           </span>
-                          <span className="text-sm gothic-text-muted shrink-0">{placeLabel(r.place, lang)}</span>
+                          {!onePage && <span className="text-sm gothic-text-muted shrink-0">{placeLabel(r.place, lang)}</span>}
                         </span>
-                        <span className="block text-sm gothic-text-muted">{t(`findWhy_${kind}`, lang, verdict)}</span>
+                        {VARIES[kind] && <span className="block text-sm gothic-text-muted">{t(`findRow_${kind}`, lang, verdict)}</span>}
                       </span>
                     </button>
                   );

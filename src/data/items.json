@@ -4062,6 +4062,7 @@
     "w": 1,
     "h": 2,
     "img": "knife/decoy_dagger",
+    "quest": true,
     "minDamage": 1,
     "maxDamage": 2,
     "gemSlot": "weapon"
@@ -4076,6 +4077,7 @@
     "w": 1,
     "h": 2,
     "img": "knife/gidbinn",
+    "quest": true,
     "minDamage": 3,
     "maxDamage": 7,
     "gemSlot": "weapon"
@@ -4090,6 +4092,7 @@
     "w": 1,
     "h": 3,
     "img": "club/wirts_leg",
+    "quest": true,
     "maxSockets": 3,
     "minDamage": 2,
     "maxDamage": 8,
@@ -4105,6 +4108,7 @@
     "w": 1,
     "h": 2,
     "img": "hammer/horadric_malus",
+    "quest": true,
     "minDamage": 6,
     "maxDamage": 15,
     "gemSlot": "weapon"
@@ -4119,6 +4123,7 @@
     "w": 2,
     "h": 3,
     "img": "hammer/hellforge_hammer",
+    "quest": true,
     "maxSockets": 5,
     "minDamage": 6,
     "maxDamage": 15,
@@ -4134,6 +4139,7 @@
     "w": 1,
     "h": 4,
     "img": "staff/horadric_staff",
+    "quest": true,
     "minDamage": 12,
     "maxDamage": 20,
     "gemSlot": "weapon"
@@ -4148,6 +4154,7 @@
     "w": 1,
     "h": 3,
     "img": "staff/staff_of_the_kings",
+    "quest": true,
     "minDamage": 10,
     "maxDamage": 15,
     "gemSlot": "weapon"
@@ -5353,6 +5360,7 @@
     "w": 2,
     "h": 3,
     "img": "mace/khalim_flail",
+    "quest": true,
     "maxSockets": 3,
     "minDamage": 1,
     "maxDamage": 15,
@@ -5368,6 +5376,7 @@
     "w": 2,
     "h": 3,
     "img": "mace/super_khalim_flail",
+    "quest": true,
     "maxSockets": 3,
     "minDamage": 1,
     "maxDamage": 15,
@@ -7439,7 +7448,8 @@
     "w": 1,
     "h": 1,
     "img": "amulet/viper_amulet",
-    "variants": 3
+    "variants": 3,
+    "quest": true
   },
   "rin": {
     "en": "Ring",
@@ -7473,7 +7483,8 @@
     "type": "ques",
     "w": 2,
     "h": 2,
-    "img": "quest/bark_scroll"
+    "img": "quest/bark_scroll",
+    "quest": true
   },
   "bkd": {
     "en": "Key to the Cairn Stones",
@@ -7484,7 +7495,8 @@
     "type": "ques",
     "w": 2,
     "h": 2,
-    "img": "scroll/deciphered_bark_scroll"
+    "img": "scroll/deciphered_bark_scroll",
+    "quest": true
   },
   "aqv": {
     "en": "Arrows",
@@ -7695,7 +7707,8 @@
     "type": "key",
     "w": 1,
     "h": 2,
-    "img": "key/mephisto_key"
+    "img": "key/mephisto_key",
+    "quest": true
   },
   "j34": {
     "en": "A Jade Figurine",
@@ -7706,7 +7719,8 @@
     "type": "ques",
     "w": 1,
     "h": 2,
-    "img": "quest/jade_figurine"
+    "img": "quest/jade_figurine",
+    "quest": true
   },
   "g34": {
     "en": "The Golden Bird",
@@ -7717,7 +7731,8 @@
     "type": "ques",
     "w": 1,
     "h": 2,
-    "img": "quest/gold_bird"
+    "img": "quest/gold_bird",
+    "quest": true
   },
   "bbb": {
     "en": "Lam Esen's Tome",
@@ -7728,7 +7743,8 @@
     "type": "ques",
     "w": 2,
     "h": 2,
-    "img": "quest/lam_esens_tome"
+    "img": "quest/lam_esens_tome",
+    "quest": true
   },
   "box": {
     "en": "Horadric Cube",
@@ -7739,7 +7755,8 @@
     "type": "ques",
     "w": 2,
     "h": 2,
-    "img": "quest/horadric_cube"
+    "img": "quest/horadric_cube",
+    "quest": true
   },
   "tr1": {
     "en": "Horadric Scroll",
@@ -7750,7 +7767,8 @@
     "type": "ques",
     "w": 2,
     "h": 2,
-    "img": "quest/scroll_of_horadric_quest_info"
+    "img": "quest/scroll_of_horadric_quest_info",
+    "quest": true
   },
   "mss": {
     "en": "Mephisto's Soulstone",
@@ -7761,7 +7779,8 @@
     "type": "ques",
     "w": 1,
     "h": 1,
-    "img": "quest/mephisto_soul_stone"
+    "img": "quest/mephisto_soul_stone",
+    "quest": true
   },
   "qey": {
     "en": "Khalim's Eye",
@@ -7772,7 +7791,8 @@
     "type": "ques",
     "w": 1,
     "h": 1,
-    "img": "body_part/eye"
+    "img": "body_part/eye",
+    "quest": true
   },
   "qhr": {
     "en": "Khalim's Heart",
@@ -7783,7 +7803,8 @@
     "type": "ques",
     "w": 1,
     "h": 1,
-    "img": "body_part/heart"
+    "img": "body_part/heart",
+    "quest": true
   },
   "qbr": {
     "en": "Khalim's Brain",
@@ -7794,7 +7815,8 @@
     "type": "ques",
     "w": 1,
     "h": 1,
-    "img": "body_part/brain"
+    "img": "body_part/brain",
+    "quest": true
   },
   "ear": {
     "en": "Ear",
@@ -8803,7 +8825,8 @@
     "type": "ques",
     "w": 1,
     "h": 1,
-    "img": "quest/scroll_of_self_resurrect"
+    "img": "quest/scroll_of_self_resurrect",
+    "quest": true
   },
   "0sc": {
     "en": "Scroll of Knowledge",
@@ -8825,7 +8848,8 @@
     "type": "ques",
     "w": 2,
     "h": 2,
-    "img": "quest/bark_scroll"
+    "img": "quest/bark_scroll",
+    "quest": true
   },
   "pk1": {
     "en": "Key of Terror",

@@ -6,6 +6,7 @@ import sets from "../data/sets.json";
 import runewords from "../data/runewords.json";
 import runes from "../data/runes.json";
 import items from "../data/items.json";
+import mercs from "../data/mercs.json";
 import { nameOf, t } from "./i18n";
 
 export { uniques, sets, runewords, runes };
@@ -37,6 +38,9 @@ export const codeOfNumber = (n) => String.fromCharCode(n & 255, (n >>> 8) & 255,
 
 // One copy of an item, the same in every save it moves to: its code, own random seed and quality. item: a record of
 // src/lib/parseSaves.js, or an item parsed from a save with its code (codeOfNumber) given
+// A hired mercenary's kind (its act) from json.character.merc.hireling_id
+export const mercClassOf = (hirelingId) => mercs[hirelingId];
+
 export const idOf = (item, code = item.code) => `${code}:${item.seed}:${item.quality}`;
 
 // Key for an item parsed from a save (see wasm/: d2s crate JSON).

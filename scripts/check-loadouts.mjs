@@ -22,6 +22,15 @@ await withApp(async ({ load }) => {
   const items = (await load("/src/data/items.json")).default;
   const { codeOfNumber, mercClassOf } = await load("/src/lib/gameData.js");
 
+  {
+    // Chinese has its own words for charm and amulet: the loadout texts about charms use the charm one
+    const { t } = await load("/src/lib/i18n.js");
+    for (const lang of ["zh", "zh_tw"])
+      for (const text of [t("loadoutsAbout", lang), t("loadoutBlocked", lang, "X", 1, 1)])
+        assert(text.includes(t("slot_charm", lang)) && !text.includes(t("slot_amulet", lang)), `${lang} calls a charm an amulet: ${text}`);
+    console.log("ok  the loadout texts say charm, not amulet");
+  }
+
   for (const dir of dirs) {
     console.log(dir);
     // KEEP_GOING=1: report every failing check, not only the first

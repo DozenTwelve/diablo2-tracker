@@ -700,7 +700,7 @@ const UI = {
   // Loadouts (src/components/Loadouts.jsx, on the Deck)
   loadouts: ["配装", "配裝", "Loadouts", "장비 구성"],
   loadoutsAbout: [
-    "在游戏里把身上的装备（含切换武器）、佣兵的装备和背包里的护符摆好，退出游戏后在这里存成一套配装，取个名字（如 MF、打王）。每套配装会显示每件东西现在在哪。",
+    "在游戏里把身上的装备（含切换武器）、佣兵的装备和背包里的神符摆好，退出游戏后在这里存成一套配装，取个名字（如 MF、打王）。每套配装会显示每件东西现在在哪。",
     "在遊戲裡把身上的裝備（含切換武器）、傭兵的裝備和背包裡的咒符擺好，退出遊戲後在這裡存成一套配裝，取個名字（如 MF、打王）。每套配裝會顯示每件東西現在在哪。",
     "Set up in game what the character wears (weapon swap too), what its mercenary wears and the charms in its inventory, quit, and save it here as a named loadout (MF, Boss...). Each loadout shows where every piece is now.",
     "게임에서 캐릭터 장비(무기 교체 포함), 용병 장비, 소지품의 부적을 갖춘 뒤 게임을 종료하고, 여기서 이름을 붙여(MF, 보스 등) 장비 구성으로 저장하세요. 구성마다 각 아이템이 지금 어디 있는지 보여 줍니다.",
@@ -717,11 +717,42 @@ const UI = {
   where_main: [(o, p) => `另一个角色 ${o}（${p}）`, (o, p) => `另一個角色 ${o}（${p}）`, (o, p) => `another main, ${o} (${p})`, (o, p) => `다른 캐릭터 ${o} (${p})`],
   where_mule: [(o, p) => `${o}（${p}）`, (o, p) => `${o}（${p}）`, (o, p) => `${o} (${p})`, (o, p) => `${o} (${p})`],
   where_missing: ["找不到", "找不到", "Missing", "찾을 수 없음"],
+  where_corpse: [(o) => `在${o}的尸体上`, (o) => `在${o}的屍體上`, (o) => `On ${o}'s corpse`, (o) => `${o}의 시체에 있음`],
   applyLoadout: ["换上", "換上", "Put on", "착용"],
   applyFrom: [(w) => `从${w}拿来`, (w) => `從${w}拿來`, (w) => `taken from ${w}`, (w) => `${w}에서 가져옴`],
   applyLeft: [(w) => `留在${w}，这格照旧`, (w) => `留在${w}，這格照舊`, (w) => `left in ${w}: that slot stays as it is`, (w) => `${w}에 그대로 둠: 그 자리는 그대로`],
   applyMissing: ["找不到，这格照旧", "找不到，這格照舊", "Missing: that slot stays as it is", "찾을 수 없음: 그 자리는 그대로"],
   applyNoMerc: ["没有佣兵，略过", "沒有傭兵，略過", "No mercenary: skipped", "용병 없음: 건너뜀"],
+  applyOtherMerc: [
+    "现在的佣兵和存配装时不是同一种，略过，佣兵照旧",
+    "現在的傭兵和存配裝時不是同一種，略過，傭兵照舊",
+    "Another kind of mercenary than the loadout was saved with: skipped, the mercenary stays as it is",
+    "구성을 저장할 때와 다른 종류의 용병: 건너뛰고 용병은 그대로",
+  ],
+  applyCorpse: [
+    (o) => `在${o}的尸体上：先在游戏里捡回来，这格照旧`,
+    (o) => `在${o}的屍體上：先在遊戲裡撿回來，這格照舊`,
+    (o) => `on ${o}'s corpse: pick it up in the game first; that slot stays as it is`,
+    (o) => `${o}의 시체에 있음: 먼저 게임에서 주우세요. 그 자리는 그대로`,
+  ],
+  applyQuest: [
+    "牵涉任务物品：任务物品不会被移动，这格（和同一组武器的另一只手）照旧",
+    "牽涉任務物品：任務物品不會被移動，這格（和同一組武器的另一隻手）照舊",
+    "A quest item: it is never moved, so this slot (and the other hand of its weapon set) stays as it is",
+    "퀘스트 아이템: 옮기지 않으므로 이 자리(같은 무기 세트의 다른 손 포함)는 그대로",
+  ],
+  applyTwins: [
+    (names) => `这些东西有一模一样的复制品（同一件出现在两处）：${names}。用已经在位置上或在这个角色身上的那件，另一件不动。`,
+    (names) => `這些東西有一模一樣的複製品（同一件出現在兩處）：${names}。用已經在位置上或在這個角色身上的那件，另一件不動。`,
+    (names) => `Identical twins (the same item in two places): ${names}. The copy in place or on this character is used; the other stays where it is.`,
+    (names) => `완전히 같은 복제품이 있음(같은 아이템이 두 곳에): ${names}. 제자리나 이 캐릭터에 있는 것을 쓰고 다른 하나는 그대로 둡니다.`,
+  ],
+  applyReorganizes: [
+    (n, names) => `换装的同时会把骡子重新整理一遍，改写 ${n} 个骡子：${names}`,
+    (n, names) => `換裝的同時會把騾子重新整理一遍，改寫 ${n} 個騾子：${names}`,
+    (n, names) => `Putting this on also organizes the mules again, rewriting ${count(n, "mule")}: ${names}`,
+    (n, names) => `착용하면서 창고캐도 다시 정리해 ${n}개를 다시 씁니다: ${names}`,
+  ],
   applyHand: [
     "同一组武器的另一只手照旧，这件也不动",
     "同一組武器的另一隻手照舊，這件也不動",
@@ -751,7 +782,7 @@ const UI = {
     (dir) => `장비 교체 완료. 이전 저장 파일은 ${dir}에 백업되어 있습니다`,
   ],
   loadoutBlocked: [
-    (name, x, y) => `背包第 ${y} 行第 ${x} 格被${name}占着，它不是护符，不会被移走：先在游戏里把它挪开。没有写入任何文件。`,
+    (name, x, y) => `背包第 ${y} 行第 ${x} 格被${name}占着，它不是神符，不会被移走：先在游戏里把它挪开。没有写入任何文件。`,
     (name, x, y) => `背包第 ${y} 列第 ${x} 格被${name}佔著，它不是咒符，不會被移走：先在遊戲裡把它挪開。沒有寫入任何檔案。`,
     (name, x, y) => `The inventory cell at row ${y}, column ${x} that a charm goes in holds ${name}, which is no charm and isn't moved: move it in the game first. Nothing was written.`,
     (name, x, y) => `부적이 들어갈 소지품 ${y}행 ${x}열 칸에 ${name}이(가) 있습니다. 부적이 아니라 옮기지 않으니 게임에서 먼저 치우세요. 아무것도 쓰지 않았습니다.`,
@@ -763,6 +794,13 @@ const UI = {
     "이전 쓰기나 복원이 중간에 끊겨 처리하기 전까지는 더 쓰지 않습니다. 정리 페이지의 백업에서 복원하거나 무시하세요.",
   ],
   backupBeforeLoadout: ["换装前", "換裝前", "Before a loadout", "장비 교체 전"],
+  inLoadout: ["在配装里，留着", "在配裝裡，留著", "in a loadout, kept", "장비 구성에 있어 보관"],
+  trashLoadoutsUnknown: [
+    (e) => `读不到配装（${e}）：配装里的东西可能在 TRASH 里，所以不清理，没有删除任何东西`,
+    (e) => `讀不到配裝（${e}）：配裝裡的東西可能在 TRASH 裡，所以不清理，沒有刪除任何東西`,
+    (e) => `The loadouts can't be read (${e}): their pieces may be in TRASH, so it isn't cleaned; nothing is deleted`,
+    (e) => `장비 구성을 읽을 수 없음(${e}): 구성의 아이템이 TRASH에 있을 수 있어 정리하지 않습니다. 아무것도 삭제하지 않습니다`,
+  ],
   colon: ["：", "：", ": ", ": "],
   listSeparator: ["、", "、", ", ", ", "],
 };

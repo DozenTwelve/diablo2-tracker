@@ -4,9 +4,9 @@ import { SLOT_OF } from "../lib/builds";
 import { deckLoadouts, deckSaveFiles, hashes, saveDeckLoadouts, toBase64, writeDeck } from "../lib/deck";
 import { ownerLabel, placeLabel, roleOf } from "../lib/inventory";
 import { t } from "../lib/i18n";
-import { applyLoadoutFiles, loadoutOf, whereIs } from "../lib/loadouts";
+import { applyLoadoutFiles, loadoutIds, loadoutOf, whereIs } from "../lib/loadouts";
 import { byMuleName, sameBytes } from "../lib/organize";
-import { loadParser } from "../lib/parseSaves";
+import { loadParser, parseSaveFiles } from "../lib/parseSaves";
 import { Link } from "../lib/router";
 import { useStoredState } from "../lib/useStoredState";
 import { ConfirmButton } from "./OrganizeView";
@@ -20,6 +20,7 @@ const spotOf = (p, lang) =>
 
 function whereText(w, lang) {
   if (w.kind === "on" || w.kind === "missing") return t(`where_${w.kind}`, lang);
+  if (w.kind === "corpse") return t("where_corpse", lang, w.owner === undefined ? "" : ownerLabel(w.owner, lang));
   return w.kind === "self" ? t("where_self", lang, placeLabel(w.place, lang)) : t(`where_${w.kind}`, lang, ownerLabel(w.owner, lang), placeLabel(w.place, lang));
 }
 
@@ -36,7 +37,7 @@ function Pieces({ loadout, saveData, roles, lang }) {
             <span className="min-w-0">
               <Name piece={p} lang={lang} />
               <span className="gothic-text-muted"> · {spotOf(p, lang)} · </span>
-              <span className={w.kind === "on" ? "gothic-text-gold" : w.kind === "missing" ? "text-red-400" : ""}>{whereText(w, lang)}</span>
+              <span className={w.kind === "on" ? "gothic-text-gold" : w.kind === "missing" || w.kind === "corpse" ? "text-red-400" : ""}>{whereText(w, lang)}</span>
             </span>
           </li>
         );
@@ -55,7 +56,8 @@ const readFiles = async () => {
 
 // Putting a loadout on (applyLoadoutFiles): a preview from the saves as they are now, where the player may untick a
 // piece to leave it where it is, then a confirmed write through the plugin, as organizing writes (backed up first,
-// only if the saves are still the ones previewed, never while D2R runs).
+// only if the saves are still the ones previewed, never while D2R runs). keep: the player's keep list and every saved
+// loadout's pieces: organizing the mules again never puts one in TRASH.
 function Apply({ loadout, saveData, roles, keep, onWritten, lang }) {
   const [state, setState] = useState(null); // { files, wasm, leave, plan?, error?, message?, confirm?, busy?, interrupted?, backup? }
   const owner = saveData.owners.find((o) => o.name === loadout.character);
@@ -86,7 +88,7 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang }) {
       // The game may have saved since the preview (played in between): writing would undo that
       const now = await readFiles();
       const same = now.files.length === state.files.length && now.files.every((f) => state.files.some((o) => o.name === f.name && sameBytes(o.bytes, f.bytes)));
-      if (!same) return again(state, t("savesChanged", lang));
+      if (!same) return await again(state, t("savesChanged", lang));
       const done = applyLoadoutFiles(state.files, state.wasm, loadout, { mules, keep, leave: state.leave });
       const response = await writeDeck({
         files: done.files.map((f) => ({ name: f.name, template: f.template, data: toBase64(f.bytes) })),
@@ -109,14 +111,18 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang }) {
     }
   };
 
-  const kindOf = (name) => {
+  const kindOf = (name, place) => {
     const o = saveData.owners.find((o) => o.name === name);
-    return name === loadout.character ? "self" : o?.cls && roleOf(o, roles) === "main" ? "main" : "mule";
+    return place === "corpse" ? "corpse" : name === loadout.character ? "self" : o?.cls && roleOf(o, roles) === "main" ? "main" : "mule";
   };
-  const from = (f) => whereText({ kind: kindOf(f.owner), ...f }, lang);
+  const from = (f) => whereText({ kind: kindOf(f.owner, f.place), ...f }, lang);
   const report = state?.plan?.report;
   const lines = report?.pieces.filter((p) => p.status !== "on") ?? [];
   const on = (report?.pieces.length ?? 0) - lines.length;
+  const twins = report?.pieces.filter((p) => p.twins) ?? [];
+  // The mules organizing writes again besides putting the loadout on
+  const muleNames = new Set((report?.organize?.muleNames ?? []).map((n) => n.toLowerCase()));
+  const muleFiles = state?.plan?.files.filter((f) => muleNames.has(f.name.slice(0, -4).toLowerCase())).map((f) => f.name.slice(0, -4)) ?? [];
   const tick = (id, ticked) => setState(plan({ ...state, confirm: null, message: undefined, leave: ticked ? state.leave.filter((x) => x !== id) : [...state.leave, id] }));
   const error = state?.error;
   return (
@@ -152,13 +158,22 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang }) {
                       <Name piece={piece} lang={lang} />
                       <span className="gothic-text-muted"> · {spotOf(piece, lang)} · </span>
                       <span className={status === "take" ? "" : "gothic-text-muted"}>
-                        {status === "take" ? t("applyFrom", lang, from(f)) : status === "left" ? t("applyLeft", lang, from(f)) : t({ missing: "applyMissing", noMerc: "applyNoMerc", hand: "applyHand" }[status], lang)}
+                        {status === "take"
+                          ? t("applyFrom", lang, from(f))
+                          : status === "left"
+                            ? t("applyLeft", lang, from(f))
+                            : status === "corpse"
+                              ? t("applyCorpse", lang, ownerLabel(f.owner, lang))
+                              : t({ missing: "applyMissing", noMerc: "applyNoMerc", otherMerc: "applyOtherMerc", hand: "applyHand", quest: "applyQuest" }[status], lang)}
                       </span>
                     </span>
                   </li>
                 ))}
               </ul>
               {on > 0 && <p className="text-sm gothic-text-muted">{t("applyOnCount", lang, on)}</p>}
+              {twins.length > 0 && (
+                <p className="text-sm gothic-text-muted">{t("applyTwins", lang, twins.map((p) => labelOf(p.piece.key, lang)).join(t("listSeparator", lang)))}</p>
+              )}
               {report.off.length > 0 && (
                 <>
                   <p className="text-sm">{t("applyOff", lang)}</p>
@@ -171,6 +186,7 @@ function Apply({ loadout, saveData, roles, keep, onWritten, lang }) {
                   </ul>
                 </>
               )}
+              {muleFiles.length > 0 && <p className="text-sm break-words">{t("applyReorganizes", lang, muleFiles.length, muleFiles.join(t("listSeparator", lang)))}</p>}
               {state.plan.files.length > 0 ? (
                 <p className="text-sm gothic-text-muted break-words">
                   {t("applyFiles", lang, state.plan.files.map((f) => f.name.slice(0, -4)).join(t("listSeparator", lang)))}
@@ -237,9 +253,18 @@ export default function Loadouts({ owner, saveData, keep, onWritten, lang }) {
     }
   };
   const update = (id, change) => store({ ...doc, loadouts: doc.loadouts.flatMap((l) => (l.id === id ? change(l) : [l])) });
+  // From the saves as they are now (the game may have saved since this page read them), as putting one on reads them
   const add = async () => {
-    const loadout = { id: crypto.randomUUID(), name: name.trim(), ...loadoutOf(saveData, owner.name) };
-    if (await store({ ...doc, loadouts: [...doc.loadouts, loadout] })) setName("");
+    setState({ busy: true });
+    try {
+      const now = await parseSaveFiles(await deckSaveFiles());
+      const bad = [...now.errors, ...now.damaged].filter((e) => e.startsWith(`${owner.name}.d2s`));
+      if (bad.length || !now.owners.some((o) => o.name === owner.name)) throw new Error(bad.join(", ") || `no character ${owner.name}`);
+      const loadout = { id: crypto.randomUUID(), name: name.trim(), ...loadoutOf(now, owner.name) };
+      if (await store({ ...doc, loadouts: [...doc.loadouts, loadout] })) setName("");
+    } catch (e) {
+      setState({ error: e.message ?? String(e) });
+    }
   };
   const mine = doc?.loadouts.filter((l) => l.character === owner.name) ?? [];
 
@@ -328,7 +353,7 @@ export default function Loadouts({ owner, saveData, keep, onWritten, lang }) {
             )}
           </div>
           <Pieces loadout={l} saveData={saveData} roles={roles} lang={lang} />
-          <Apply loadout={l} saveData={saveData} roles={roles} keep={keep} onWritten={onWritten} lang={lang} />
+          <Apply loadout={l} saveData={saveData} roles={roles} keep={[...keep, ...loadoutIds(doc)]} onWritten={onWritten} lang={lang} />
         </div>
       ))}
     </section>

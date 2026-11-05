@@ -196,9 +196,9 @@ export const isCharmOrJewel = (code) => ["CHARM", "JEWEL"].includes(MAGIC_GROUPS
 //   charms: skills, resistances (all, fire, cold, lightning, poison), life, attack, attributes, magic find
 //   jewels: attack (enhanced/max damage, attack speed), hit recovery, resistances, life, attributes
 //   rings, amulets: skills (by class), cast rate (with magic find first), magic find, life leech, attack
-const RESISTS = [39, 43, 41, 45];
-const ATTACK = [17, 18, 19, 21, 22, 48, 49, 50, 51, 54, 55, 57, 58, 93];
-const SKILLS = [83, 107, 127, 188];
+export const RESISTS = [39, 43, 41, 45];
+export const ATTACK = [17, 18, 19, 21, 22, 48, 49, 50, 51, 54, 55, 57, 58, 93];
+export const SKILLS = [83, 107, 127, 188];
 const statsOf = (item) => new Map(item.stats.map((s) => [s.id, s.value]));
 const layerOf = (item, id) => item.stats.find((s) => s.id === id)?.layer;
 function resistRank(v) {
@@ -241,7 +241,7 @@ const PURPOSE = {
 };
 PURPOSE.LOWCHARM = PURPOSE.CHARM;
 PURPOSE.LOWJEWEL = PURPOSE.JEWEL;
-const purpose = (group, item) => {
+export const purpose = (group, item) => {
   const v = statsOf(item);
   return PURPOSE[group](item, v, (ids) => ids.some((id) => v.has(id)));
 };

@@ -32,7 +32,7 @@ export default function NewItemsView({ saveData, lang }) {
 
   return (
     <>
-      <PageTitle label={t("newItems", lang)} sub={<p className="text-sm gothic-text-muted">{t("newItemsAbout", lang)}</p>} />
+      <PageTitle label={t("new", lang)} sub={<p className="text-sm gothic-text-muted">{t("newItemsAbout", lang)}</p>} />
       <div className="max-w-3xl space-y-8">
         {saveData.skipped > 0 && <p className="text-sm gothic-text-muted">{t("skippedSubfolders", lang, saveData.skipped)}</p>}
         <section className="space-y-3">

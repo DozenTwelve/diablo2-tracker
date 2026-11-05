@@ -15,7 +15,7 @@ export function maxSocketsOf(code, ilvl) {
 }
 
 // The cube's socket recipes (cubemain.txt): two runes and a perfect gem, used up, on a normal base without sockets
-export const CUBE_SOCKETS = [
+const CUBE_SOCKETS = [
   { type: "weap", runes: ["r08", "r11"], gem: "gpv" }, // Ral + Amn + Perfect Amethyst
   { type: "tors", runes: ["r07", "r10"], gem: "gpy" }, // Tal + Thul + Perfect Topaz
   { type: "helm", runes: ["r08", "r10"], gem: "gpb" }, // Ral + Thul + Perfect Sapphire

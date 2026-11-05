@@ -110,6 +110,13 @@ export function museumLayout(namePrefix = "") {
   return { names: mules.map((m) => m.name), slots };
 }
 
+// museumLayout(prefix).slots, made once per mule name prefix (one per game mode); read only
+const museums = new Map();
+export function museumSlots(prefix) {
+  if (!museums.has(prefix)) museums.set(prefix, museumLayout(prefix).slots);
+  return museums.get(prefix);
+}
+
 // How many copies of a unique or set item are worth having: one for each class with a build recommending it,
 // two where it is a ring (src/data/builds.json), so every class could wear it; none for one no build uses. In
 // single player nothing can be traded: a copy no character would wear only takes room. A weapon a build holds in
@@ -301,11 +308,9 @@ const moveTo = (item, { page, x, y }) => ({
 const goldOf = (json) => json.stats.filter((s) => GOLD_STATS.has(s.id)).reduce((n, s) => n + s.value, 0);
 const deadHardcore = (json) => json.character.flags.includes("HARDCORE") && json.character.flags.includes("DEAD");
 
-export { modeOfCharacter, modeOfStash };
-
 // Mules of a mode: the named characters, or else every level 1 character; never a dead hardcore hero (it
 // can't be played, its items stay with it)
-export const mulesOf = (saves, mode, names) =>
+const mulesOf = (saves, mode, names) =>
   saves.filter(
     (s) =>
       s.ext === "d2s" &&

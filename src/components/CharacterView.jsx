@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { imageOf, labelOf } from "../lib/gameData";
 import { groupByKey, itemsByPlace, ownerLabel, ownersOf, placeLabel, roleOf, totalCount } from "../lib/inventory";
-import { modePrefix, muleGroupOf, museumLayout } from "../lib/organize";
+import { modePrefix, muleGroupOf, museumSlots } from "../lib/organize";
 import { copyScore } from "../lib/props";
 import { nameOf, t } from "../lib/i18n";
 import { Link, navigate } from "../lib/router";
@@ -41,12 +41,6 @@ function openRewards(quests, lang) {
   });
 }
 
-// Fixed slots of the museum layout per mule name prefix, one per game mode (see src/lib/organize.js)
-const museums = new Map();
-function museumSlots(prefix) {
-  if (!museums.has(prefix)) museums.set(prefix, museumLayout(prefix).slots);
-  return museums.get(prefix);
-}
 const PREFIXES = ["SoftCore", "HardCore"].flatMap((core) => ["Modern", "Legacy", "Classic"].map((v) => modePrefix(`${core}:${v}`)));
 
 // Map record -> { score, museum }: a copy's roll score and the score of the copy in its museum slot (none: the

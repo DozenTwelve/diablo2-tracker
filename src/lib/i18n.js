@@ -14,7 +14,6 @@ const COLUMNS = ["zh", "zh_tw", "en", "ko"];
 const UI = {
   title: ["暗黑破坏神 II 收藏追踪", "暗黑破壞神 II 收藏追蹤", "Diablo II Collection Tracker", "디아블로 II 수집 추적기"],
   search: ["搜索", "搜尋", "Search", "검색"],
-  newItems: ["新物品", "新物品", "New finds", "새 아이템"],
   new: ["新物品", "新物品", "New finds", "새 아이템"],
   collection: ["图鉴", "圖鑑", "Collection", "도감"],
   newItemsAbout: [
@@ -156,8 +155,6 @@ const UI = {
   nightmare: ["噩梦", "惡夢", "Nightmare", "나이트메어"],
   hell: ["地狱", "地獄", "Hell", "헬"],
   available: ["可用", "可用", "Available", "사용 가능"],
-  used: ["已用", "已用", "Used", "사용함"],
-  locked: ["未解锁", "未解鎖", "Not yet", "미해금"],
   mainCharacters: ["主力号", "主力號", "Main characters", "주력 캐릭터"],
   museumMules: ["图鉴骡子", "圖鑑騾子", "Collection mules", "도감 창고캐"],
   otherMules: ["其他骡子", "其他騾子", "Other mules", "기타 창고캐"],
@@ -550,7 +547,6 @@ const UI = {
     "The saves changed since this page read them (played since?), so nothing was deleted. They are read again; look over the list once more.",
     "페이지가 읽은 뒤 저장 파일이 바뀌어(그사이 플레이?) 삭제하지 않았습니다. 다시 읽었으니 목록을 한 번 더 확인하세요.",
   ],
-  closeApp: ["关闭", "關閉", "Close", "닫기"],
   reloadSaves: ["重新读取存档", "重新讀取存檔", "Read saves again", "저장 파일 다시 읽기"],
   savesShort: [(n) => `${n} 个存档`, (n) => `${n} 個存檔`, (n) => count(n, "save"), (n) => `저장 파일 ${n}개`],
   prevCharacter: ["上一个角色", "上一個角色", "Previous character", "이전 캐릭터"],

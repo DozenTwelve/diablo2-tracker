@@ -4,7 +4,8 @@ import { deckBackups, deckSaveFiles, deleteDeckBackup, dismissDeckInterrupted, o
 import { roleOf } from "../lib/inventory";
 import { LOCALES, t } from "../lib/i18n";
 import { SKILL } from "../lib/links";
-import { byMuleName, filesOfCharacter, isJunk, modeOfCharacter, modeOfStash, muleTimes, organizeFiles, trashMules } from "../lib/organize";
+import { byMuleName, filesOfCharacter, isJunk, muleTimes, organizeFiles, trashMules } from "../lib/organize";
+import { modeLabel, modeOfCharacter, modeOfStash } from "../lib/modes";
 import { loadParser, saveFolder, statsOf } from "../lib/parseSaves";
 import { describeStats } from "../lib/stats";
 import { Link } from "../lib/router";
@@ -14,10 +15,6 @@ import OrganizeDemo from "./OrganizeDemo";
 import PageTitle from "./PageTitle";
 import Segmented from "./Segmented";
 
-const modeLabel = (mode, lang) => {
-  const [core, version] = mode.split(":");
-  return t(core === "HardCore" ? "hardcore" : "softcore", lang) + ({ Legacy: t("legacyMode", lang), Classic: t("classicMode", lang) }[version] ?? "");
-};
 const toBase64 = (bytes) => {
   let s = "";
   for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));

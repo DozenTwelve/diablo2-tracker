@@ -112,7 +112,7 @@ export default function App() {
             <Segmented label={t("language", lang)} options={Object.entries(LANGS)} value={lang} onChange={setLang} />
             {onDeck && (
               <button className="gothic-btn gothic-btn-secondary gothic-btn-small" onClick={closeDeck}>
-                {t("closeApp", lang)}
+                {t("close", lang)}
               </button>
             )}
           </div>

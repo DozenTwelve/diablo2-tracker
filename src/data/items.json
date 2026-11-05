@@ -7710,6 +7710,18 @@
     "img": "key/mephisto_key",
     "quest": true
   },
+  "xyz": {
+    "en": "Potion of Life",
+    "zh": "生命药水",
+    "zh_tw": "生命藥水",
+    "ko": "생명력 물약",
+    "table": "misc",
+    "type": "ques",
+    "w": 1,
+    "h": 1,
+    "img": "quest/scroll_of_self_resurrect",
+    "quest": true
+  },
   "j34": {
     "en": "A Jade Figurine",
     "zh": "玉石雕像",
@@ -7780,6 +7792,18 @@
     "w": 1,
     "h": 1,
     "img": "quest/mephisto_soul_stone",
+    "quest": true
+  },
+  "ass": {
+    "en": "Book of Skill",
+    "zh": "技能书",
+    "zh_tw": "技能之書",
+    "ko": "기술 책",
+    "table": "misc",
+    "type": "ques",
+    "w": 2,
+    "h": 2,
+    "img": "quest/book_of_skill",
     "quest": true
   },
   "qey": {

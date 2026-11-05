@@ -195,6 +195,13 @@ for (let i = 1; i <= 33; i++) {
 // What new characters start with (charstats.txt item1-10): weapons, buckler, potions, scrolls
 const starterCodes = new Set(table("charstats").flatMap((r) => numbered(10, (i) => r[`item${i}`]).filter((c) => c && c !== "0")));
 
+// Strings the items, stats and skills below use besides the item ones: before the items, as some quest items (Potion
+// of Life, Book of Skill) are named only in ui.json
+for (const f of ["skills", "ui", "monsters"]) {
+  const raw = readFileSync(join(root, `data/local/lng/strings/${f}.json`), "utf8").replace(/^\uFEFF/, "");
+  for (const s of JSON.parse(raw)) if (!strings.has(s.Key)) strings.set(s.Key, s);
+}
+
 // Every base item code -> name, for bases, gems, charms, rares and anything else found in saves.
 // Also its table, item type, inventory size (w x h cells) and icon, in table order, for laying out mules and stashes
 const items = {};
@@ -219,10 +226,6 @@ for (const t of ["armor", "weapons", "misc"]) {
 
 // Stat descriptions (itemstatcost.txt) with every string they need, as [en, zh, zh_tw].
 // Formatting lives in src/lib/stats.js.
-for (const f of ["skills", "ui", "monsters"]) {
-  const raw = readFileSync(join(root, `data/local/lng/strings/${f}.json`), "utf8").replace(/^\uFEFF/, "");
-  for (const s of JSON.parse(raw)) if (!strings.has(s.Key)) strings.set(s.Key, s);
-}
 const statStrings = {};
 const keepString = (key) => {
   if (key && strings.has(key)) statStrings[key] = Object.values(LANGS).map((column) => str(key, column));

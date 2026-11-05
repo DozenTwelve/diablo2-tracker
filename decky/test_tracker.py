@@ -391,6 +391,22 @@ with tempfile.TemporaryDirectory() as tmp:
     saved = [n for n in renamed if n.endswith((".d2s", ".d2i"))]
     assert saved == ["New.d2s", "Old.d2s", "SharedStash.d2i"], saved
 
+    # One save twice (a loadout's mule: first holding both, then as it ends up): in order, each read back against its
+    # own bytes, one backup, the last version kept
+    twice = tempfile.mkdtemp(dir=tmp)
+    open(os.path.join(twice, "Mule.d2s"), "wb").write(b"before")
+    open(os.path.join(twice, "Main.d2s"), "wb").write(b"main")
+    backups = len(tracker.list_backups(root, twice))
+    renamed.clear()
+    tracker.os.replace = lambda a, b: (renamed.append((os.path.basename(b), open(a, "rb").read())), replace(a, b))
+    files = [{"name": "Mule.d2s", "bytes": b"both"}, {"name": "Main.d2s", "bytes": b"main2"}, {"name": "Mule.d2s", "bytes": b"final"}]
+    tracker.write_saves(twice, files, root, expect=tracker._hashes(twice), reason="loadout")
+    tracker.os.replace = replace
+    saved = [n for n in renamed if n[0].endswith(".d2s")]
+    assert saved == [("Mule.d2s", b"both"), ("Main.d2s", b"main2"), ("Mule.d2s", b"final")], saved
+    assert read(os.path.join(twice, "Mule.d2s")) == b"final" and read(os.path.join(twice, "Main.d2s")) == b"main2"
+    assert len(tracker.list_backups(root, twice)) == backups + 1
+
 if len(sys.argv) > 1:
     with tempfile.TemporaryDirectory() as out:
         print(tracker.convert_sprites(sys.argv[1], out), "icons converted")
